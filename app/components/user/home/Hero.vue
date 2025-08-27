@@ -1,8 +1,8 @@
 <template>
   <div class="relative">
-    <!-- Main container with modern glassmorphism -->
+    <!-- Main container -->
     <div
-      class="relative backdrop-blur-2xl bg-white/80 dark:bg-dark/80 rounded-3xl p-8 md:p-12 shadow-2xl border border-white/30 dark:border-gray-700/30 overflow-hidden"
+      class="relative bg-white/80 dark:bg-dark/80 rounded-3xl p-8 md:p-12 shadow-2xl border border-white/30 dark:border-gray-700/30 overflow-hidden"
     >
       <!-- Animated gradient background -->
       <div
@@ -38,7 +38,7 @@
           </h2>
 
           <p
-            class="text-gray-600 dark:text-gray-300 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-medium"
+            class="text-gray-600 dark:text-gray-300 md:text-lg max-w-3xl mx-auto leading-relaxed font-medium"
           >
             Ciptakan undangan digital yang memukau dengan template premium dan
             fitur-fitur canggih yang akan membuat momen spesial Anda semakin

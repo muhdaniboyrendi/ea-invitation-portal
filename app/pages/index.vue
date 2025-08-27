@@ -3,7 +3,10 @@
 <template>
   <div class="bg-off-white dark:bg-dark">
     <NuxtLayout>
-      <UserHomeHero />
+      <div class="flex flex-col gap-y-6">
+        <UserHomeHero />
+        <UserHomeLatestInvitation />
+      </div>
     </NuxtLayout>
   </div>
 </template>
