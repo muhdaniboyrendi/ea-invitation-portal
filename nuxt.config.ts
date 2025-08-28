@@ -2,13 +2,20 @@
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
-  compatibilityDate: "2025-07-15",
+  compatibilityDate: "2025-08-15",
   devtools: { enabled: true },
   css: ["~/assets/css/main.css", "bootstrap-icons/font/bootstrap-icons.css"],
   vite: {
     plugins: [tailwindcss()],
   },
-  modules: ["@nuxtjs/color-mode"],
+  modules: ["@nuxtjs/color-mode", "@pinia/nuxt"],
+  runtimeConfig: {
+    public: {
+      apiBaseUrl: process.env.API_BASE_URL || "http://127.0.0.1:8000/api",
+      storageBaseUrl:
+        process.env.STORAGE_BASE_URL || "http://127.0.0.1:8000/storage",
+    },
+  },
   colorMode: {
     preference: "system",
     fallback: "light",

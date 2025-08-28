@@ -3,7 +3,12 @@ const route = useRoute();
 
 const routelist = ref([
   { name: "beranda", label: "Beranda", path: "/", icon: "bi-house-door" },
-  { name: "undangan", label: "Undangan", path: "/", icon: "bi-envelope" },
+  {
+    name: "undangan",
+    label: "Undangan",
+    path: "/invitation",
+    icon: "bi-envelope",
+  },
   { name: "transaksi", label: "Transaksi", path: "/", icon: "bi-wallet2" },
   { name: "menu", label: "Menu", path: "/", icon: "bi-list" },
 ]);
@@ -45,7 +50,7 @@ const activeTab = computed(() => {
           <!-- Active indicator -->
           <div
             v-if="activeTab === route.name"
-            class="absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full"
+            class="absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-8 bg-dark dark:bg-white rounded-r-full"
           ></div>
 
           <!-- Icon container -->

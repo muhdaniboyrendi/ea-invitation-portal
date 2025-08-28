@@ -4,9 +4,8 @@
   <div class="bg-off-white dark:bg-dark">
     <NuxtLayout>
       <div class="flex flex-col gap-y-6">
-        <UserHomeHero />
-        <UserHomeLatestInvitation />
-        <UserHomeMenu />
+        <UserInvitationHeader />
+        <UserInvitationList />
       </div>
     </NuxtLayout>
   </div>

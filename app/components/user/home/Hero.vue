@@ -4,11 +4,6 @@
     <div
       class="relative bg-white/80 dark:bg-dark/80 rounded-3xl p-8 md:p-12 shadow-2xl border border-white/30 dark:border-gray-700/30 overflow-hidden"
     >
-      <!-- Animated gradient background -->
-      <div
-        class="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-indigo-500/5 to-purple-500/10 dark:from-blue-500/20 dark:via-indigo-500/10 dark:to-purple-500/20"
-      ></div>
-
       <!-- Content -->
       <div class="relative z-10 text-center max-w-4xl mx-auto">
         <!-- Enhanced icon container -->
@@ -31,7 +26,7 @@
             Selamat Datang di
             <br />
             <span
-              class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent bg-size-200 animate-gradient-x text-4xl md:text-5xl lg:text-6xl font-extrabold"
+              class="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent bg-size-200 animate-gradient-x text-4xl md:text-5xl lg:text-6xl font-extrabold"
             >
               EA Invitation
             </span>
