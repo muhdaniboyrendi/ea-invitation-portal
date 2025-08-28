@@ -1,7 +1,7 @@
 <template>
   <div class="relative grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div
-      class="relative bg-white/80 dark:bg-dark/80 rounded-3xl p-4 lg:p-6 shadow-xl border border-white/30 dark:border-gray-700/30 overflow-hidden grid items-stretch gap-4"
+      class="relative bg-off-white dark:bg-gray-900 rounded-3xl p-4 lg:p-6 shadow-xl border border-white/30 dark:border-gray-700/30 overflow-hidden grid items-stretch gap-4"
     >
       <div>
         <div class="w-full flex items-center gap-4 mb-4">
@@ -28,7 +28,7 @@
     </div>
 
     <div
-      class="relative bg-white/80 dark:bg-dark/80 rounded-3xl p-4 lg:p-6 shadow-xl border border-white/30 dark:border-gray-700/30 overflow-hidden grid content-between gap-4"
+      class="relative bg-off-white dark:bg-gray-900 rounded-3xl p-4 lg:p-6 shadow-xl border border-white/30 dark:border-gray-700/30 overflow-hidden grid content-between gap-4"
     >
       <div>
         <div class="w-full flex items-center gap-4 mb-4">

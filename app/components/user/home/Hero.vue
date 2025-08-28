@@ -2,7 +2,7 @@
   <div class="relative">
     <!-- Main container -->
     <div
-      class="relative bg-white/80 dark:bg-dark/80 rounded-3xl p-8 md:p-12 shadow-2xl border border-white/30 dark:border-gray-700/30 overflow-hidden"
+      class="relative bg-off-white dark:bg-gray-900 rounded-3xl p-8 md:p-12 shadow-2xl border border-white/30 dark:border-gray-700/30 overflow-hidden"
     >
       <!-- Content -->
       <div class="relative z-10 text-center max-w-4xl mx-auto">
@@ -44,7 +44,7 @@
         <!-- Enhanced CTA button -->
         <div>
           <NuxtLink
-            to="/"
+            to="/invitation/create"
             class="group relative inline-flex items-center gap-4 px-10 py-5 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-lg md:text-xl font-bold rounded-2xl shadow-2xl shadow-blue-500/25 dark:shadow-blue-400/20 hover:shadow-blue-500/40 dark:hover:shadow-blue-400/30 transition-all duration-300 transform hover:scale-105 active:scale-95 overflow-hidden"
           >
             <!-- Background glow -->

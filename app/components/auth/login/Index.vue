@@ -2,7 +2,6 @@
 const form = reactive({
   email: "",
   password: "",
-  remember: false,
 });
 
 const showPassword = ref(false);
