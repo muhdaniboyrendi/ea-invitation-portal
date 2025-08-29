@@ -11,7 +11,7 @@
             <div
               class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/25 dark:shadow-blue-400/20"
             >
-              <i class="bi bi-envelope text-white text-xl"></i>
+              <i class="bi bi-wallet2 text-white text-xl"></i>
             </div>
             <!-- Enhanced glow effect -->
             <div
@@ -23,10 +23,12 @@
             <h2
               class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent"
             >
-              Buat Undangan Baru
+              Riwayat Transaksi
             </h2>
-            <p class="text-sm text-dark/60 dark:text-white/60">
-              Pilih paket yang anda inginkan
+            <p
+              class="text-sm text-gray-600 dark:text-gray-400 -mt-1 font-medium"
+            >
+              3 transaksi bulan ini
             </p>
           </div>
         </div>

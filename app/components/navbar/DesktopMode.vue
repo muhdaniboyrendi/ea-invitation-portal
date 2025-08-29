@@ -9,7 +9,7 @@ const routelist = ref([
     path: "/invitation",
     icon: "bi-envelope",
   },
-  { name: "transaksi", label: "Transaksi", path: "/", icon: "bi-wallet2" },
+  { name: "transaksi", label: "Transaksi", path: "/transaction", icon: "bi-wallet2" },
   { name: "menu", label: "Menu", path: "/", icon: "bi-list" },
 ]);
 
@@ -24,12 +24,7 @@ const activeTab = computed(() => {
   <div class="hidden lg:block fixed left-0 top-0 bottom-0 z-40 w-64">
     <!-- Modern backdrop blur -->
     <div
-      class="absolute inset-0 backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border-r border-white/20 dark:border-gray-700/30"
-    ></div>
-
-    <!-- Animated gradient background -->
-    <div
-      class="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-indigo-50/30 to-purple-50/50 dark:from-blue-950/20 dark:via-indigo-950/10 dark:to-purple-950/20"
+      class="absolute inset-0 backdrop-blur-xl bg-off-white/80 dark:bg-gray-900/80 border-r border-white/20 dark:border-gray-700/30"
     ></div>
 
     <!-- Navigation container -->

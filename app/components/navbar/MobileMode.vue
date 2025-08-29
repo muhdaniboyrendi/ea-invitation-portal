@@ -3,8 +3,18 @@ const route = useRoute();
 
 const routelist = ref([
   { name: "beranda", label: "Beranda", path: "/", icon: "bi-house-door" },
-  { name: "undangan", label: "Undangan", path: "/", icon: "bi-envelope" },
-  { name: "transaksi", label: "Transaksi", path: "/", icon: "bi-wallet2" },
+  {
+    name: "undangan",
+    label: "Undangan",
+    path: "/invitation",
+    icon: "bi-envelope",
+  },
+  {
+    name: "transaksi",
+    label: "Transaksi",
+    path: "/transaction",
+    icon: "bi-wallet2",
+  },
   { name: "menu", label: "Menu", path: "/", icon: "bi-list" },
 ]);
 
@@ -19,12 +29,7 @@ const activeTab = computed(() => {
   <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50">
     <!-- Modern backdrop blur with enhanced glassmorphism -->
     <div
-      class="absolute inset-0 backdrop-blur-2xl bg-white/70 dark:bg-gray-900/70 border-t border-white/20 dark:border-gray-700/30"
-    ></div>
-
-    <!-- Animated gradient background -->
-    <div
-      class="absolute inset-0 bg-gradient-to-r from-blue-50/50 via-indigo-50/30 to-purple-50/50 dark:from-blue-950/20 dark:via-indigo-950/10 dark:to-purple-950/20"
+      class="absolute inset-0 backdrop-blur-2xl bg-off-white/80 dark:bg-gray-900/80 border-t border-white/20 dark:border-gray-700/30"
     ></div>
 
     <!-- Floating accent line at top -->
