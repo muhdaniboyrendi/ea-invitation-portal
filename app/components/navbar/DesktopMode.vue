@@ -9,8 +9,13 @@ const routelist = ref([
     path: "/invitation",
     icon: "bi-envelope",
   },
-  { name: "transaksi", label: "Transaksi", path: "/transaction", icon: "bi-wallet2" },
-  { name: "menu", label: "Menu", path: "/", icon: "bi-list" },
+  {
+    name: "transaksi",
+    label: "Transaksi",
+    path: "/transaction",
+    icon: "bi-wallet2",
+  },
+  { name: "menu", label: "Menu", path: "/menu", icon: "bi-list" },
 ]);
 
 const activeTab = computed(() => {

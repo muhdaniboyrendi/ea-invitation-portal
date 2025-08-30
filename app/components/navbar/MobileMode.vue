@@ -15,7 +15,7 @@ const routelist = ref([
     path: "/transaction",
     icon: "bi-wallet2",
   },
-  { name: "menu", label: "Menu", path: "/", icon: "bi-list" },
+  { name: "menu", label: "Menu", path: "/menu", icon: "bi-list" },
 ]);
 
 const activeTab = computed(() => {

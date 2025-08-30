@@ -15,7 +15,7 @@
           </h4>
         </div>
         <p class="text-gray-600 dark:text-gray-300 text-sm">
-          Pilih paket undangan yang sesuai dengan kebutuhan Anda.
+          Daftar paket undangan yang tersedia.
         </p>
       </div>
       <NuxtLink
@@ -40,7 +40,7 @@
           <h4 class="text-dark dark:text-white font-semibold">Galeri Tema</h4>
         </div>
         <p class="text-gray-600 dark:text-gray-300 text-sm">
-          Pilih tema yang sesuai dengan kebutuhan Anda.
+          Daftar tema yang tersedia.
         </p>
       </div>
       <NuxtLink
