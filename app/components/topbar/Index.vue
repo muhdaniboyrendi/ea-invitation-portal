@@ -183,7 +183,7 @@
               </div>
 
               <!-- Menu Items -->
-              <div class="relative py-3">
+              <div class="relative pt-3">
                 <!-- Profile -->
                 <button
                   @click="navigateToProfile"

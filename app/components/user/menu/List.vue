@@ -19,7 +19,7 @@
         </p>
       </div>
       <NuxtLink
-        to="/"
+        to="/packages"
         class="py-3 px-6 w-fit rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-center font-semibold shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 hover:scale-105 transition duration-300"
       >
         Lihat Paket
@@ -44,7 +44,7 @@
         </p>
       </div>
       <NuxtLink
-        to="/"
+        to="/themes"
         class="py-3 px-6 w-fit rounded-2xl bg-gradient-to-r from-green-500 to-teal-500 text-white text-center font-semibold shadow-lg shadow-green-500/30 hover:shadow-green-500/40 hover:scale-105 transition duration-300"
       >
         Lihat Tema
