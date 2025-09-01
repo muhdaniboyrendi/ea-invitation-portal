@@ -1,4 +1,7 @@
 export const useAuthStore = defineStore("auth", () => {
+  const config = useRuntimeConfig();
+  const apiBaseUrl = config.public.apiBaseUrl;
+
   const user = useState("user", () => null);
   const isAuthenticated = computed(() => !!user.value);
   const token = useState("token", () => null);
@@ -76,12 +79,12 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       const response = await $fetch("/api/auth/user", {
         method: "GET",
-        headers: {
-          "Cache-Control": "no-cache",
-        },
+        // headers: {
+        //   "Cache-Control": "no-cache",
+        // },
       });
 
-      user.value = response.value.data;
+      user.value = response;
 
       return response;
     } catch (error) {
@@ -97,7 +100,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   const loginWithGoogle = async () => {
     try {
-      window.location.href = "/api/auth/google";
+      window.location.href = `${apiBaseUrl}/auth/google`;
       return true;
     } catch (error) {
       const err = new Error(
@@ -119,10 +122,11 @@ export const useAuthStore = defineStore("auth", () => {
 
       await fetchCurrentUser();
 
-      user.value.role == "admin" ? navigateTo("/dashboard") : navigateTo("/");
+      user.value?.role == "admin" ? navigateTo("/dashboard") : navigateTo("/");
 
       return response;
     } catch (error) {
+      console.error("Google callback error:", error);
       const err = new Error(
         error.data?.message || "Terjadi kesalahan pada server"
       );

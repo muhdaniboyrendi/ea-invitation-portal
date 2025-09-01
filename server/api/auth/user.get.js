@@ -1,17 +1,17 @@
 export default defineEventHandler(async (event) => {
   const token = getCookie(event, "auth_token");
 
-  if (!token) {
-    throw createError({
-      statusCode: 401,
-      message: "Unauthorized",
-    });
-    // return {
-    //   status: false,
-    //   message: "Unauthorized",
-    //   data: { user: null },
-    // };
-  }
+  // if (!token) {
+  //   // throw createError({
+  //   //   statusCode: 401,
+  //   //   message: "Unauthorized",
+  //   // });
+  //   return {
+  //     status: false,
+  //     message: "Unauthorized",
+  //     data: { user: null },
+  //   };
+  // }
 
   const config = useRuntimeConfig();
   const apiBaseUrl = config.public.apiBaseUrl;

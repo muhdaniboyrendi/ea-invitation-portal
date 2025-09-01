@@ -1,3 +1,74 @@
+<script setup>
+const { user } = storeToRefs(useAuthStore());
+
+const isMenuOpen = ref(false);
+const isThemeMenuOpen = ref(false);
+
+// const user = ref({
+//   name: "John Doe",
+//   username: "johndoe",
+//   email: "john@example.com",
+//   avatar: null,
+// });
+
+const currentTheme = ref("light");
+
+const themeOptions = [
+  {
+    value: "light",
+    icon: "bi-sun",
+  },
+  {
+    value: "dark",
+    icon: "bi-moon-stars-fill",
+  },
+  {
+    value: "system",
+    icon: "bi-display",
+  },
+];
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+  if (isMenuOpen.value) {
+    isThemeMenuOpen.value = false;
+  }
+};
+
+const navigateToProfile = () => {
+  navigateTo("/profile");
+  isMenuOpen.value = false;
+};
+
+const setTheme = (theme) => {
+  currentTheme.value = theme;
+  if (theme === "dark") {
+    document.documentElement.classList.add("dark");
+  } else if (theme === "light") {
+    document.documentElement.classList.remove("dark");
+  } else {
+    // System theme
+    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.classList.toggle("dark", isDark);
+  }
+
+  localStorage.setItem("theme", theme);
+  isThemeMenuOpen.value = false;
+};
+
+const handleLogout = () => {
+  console.log("Logging out...");
+  navigateTo("/login");
+  isMenuOpen.value = false;
+};
+
+onMounted(async () => {
+  // Initialize theme from localStorage
+  const savedTheme = localStorage.getItem("theme") || "system";
+  setTheme(savedTheme);
+});
+</script>
+
 <template>
   <div class="fixed top-0 left-0 right-0 z-50">
     <!-- Modern backdrop blur with enhanced glassmorphism -->
@@ -60,14 +131,20 @@
                     : 'ring-transparent group-hover:ring-blue-400/30 dark:group-hover:ring-blue-500/30',
                 ]"
               >
-                <img
+                <!-- <img
                   v-if="user.avatar"
                   :src="user.avatar"
                   :alt="user.name"
                   class="w-full h-full object-cover"
-                />
-                <i
+                /> -->
+                <!-- <i
                   v-else
+                  :class="[
+                    'bi bi-person text-xl',
+                    isMenuOpen ? 'text-white' : 'text-white',
+                  ]"
+                ></i> -->
+                <i
                   :class="[
                     'bi bi-person text-xl',
                     isMenuOpen ? 'text-white' : 'text-white',
@@ -93,7 +170,7 @@
                   : 'text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400',
               ]"
             >
-              {{ user.username }}
+              {{ user?.name || "Guest" }}
             </span>
 
             <!-- Enhanced Dropdown Arrow -->
@@ -156,13 +233,13 @@
                     <div
                       class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center overflow-hidden shadow-lg shadow-blue-500/25"
                     >
-                      <img
-                        v-if="user.avatar"
-                        :src="user.avatar"
-                        :alt="user.name"
+                      <!-- <img
+                        v-if="user?.avatar"
+                        :src="user?.avatar"
+                        :alt="user?.name"
                         class="w-full h-full object-cover"
                       />
-                      <i v-else class="bi bi-person text-white text-3xl"></i>
+                      <i v-else class="bi bi-person text-white text-3xl"></i> -->
                     </div>
                     <!-- Floating glow -->
                     <div
@@ -173,10 +250,10 @@
                     <p
                       class="font-bold text-lg text-gray-800 dark:text-gray-100"
                     >
-                      {{ user.name }}
+                      {{ user?.name || "Guest" }}
                     </p>
                     <p class="text-sm text-gray-600 dark:text-gray-400">
-                      {{ user.email }}
+                      {{ user?.email || "guest@example.com" }}
                     </p>
                   </div>
                 </div>
@@ -295,75 +372,6 @@
     </header>
   </div>
 </template>
-
-<script setup>
-const isMenuOpen = ref(false);
-const isThemeMenuOpen = ref(false);
-
-const user = ref({
-  name: "John Doe",
-  username: "johndoe",
-  email: "john@example.com",
-  avatar: null,
-});
-
-const currentTheme = ref("light");
-
-const themeOptions = [
-  {
-    value: "light",
-    icon: "bi-sun",
-  },
-  {
-    value: "dark",
-    icon: "bi-moon-stars-fill",
-  },
-  {
-    value: "system",
-    icon: "bi-display",
-  },
-];
-
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value;
-  if (isMenuOpen.value) {
-    isThemeMenuOpen.value = false;
-  }
-};
-
-const navigateToProfile = () => {
-  navigateTo("/profile");
-  isMenuOpen.value = false;
-};
-
-const setTheme = (theme) => {
-  currentTheme.value = theme;
-  if (theme === "dark") {
-    document.documentElement.classList.add("dark");
-  } else if (theme === "light") {
-    document.documentElement.classList.remove("dark");
-  } else {
-    // System theme
-    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    document.documentElement.classList.toggle("dark", isDark);
-  }
-
-  localStorage.setItem("theme", theme);
-  isThemeMenuOpen.value = false;
-};
-
-const handleLogout = () => {
-  console.log("Logging out...");
-  navigateTo("/login");
-  isMenuOpen.value = false;
-};
-
-onMounted(() => {
-  // Initialize theme from localStorage
-  const savedTheme = localStorage.getItem("theme") || "system";
-  setTheme(savedTheme);
-});
-</script>
 
 <style scoped>
 /* Enhanced border styles */
