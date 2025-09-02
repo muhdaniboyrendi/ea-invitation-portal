@@ -1,4 +1,8 @@
 <script setup>
+definePageMeta({
+  middleware: ["guest"],
+});
+
 useHead({
   title: "EA Invitation - Login ke Dashboard",
   meta: [

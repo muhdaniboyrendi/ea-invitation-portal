@@ -1,9 +1,9 @@
 <script setup>
 const { fetchCurrentUser } = useAuthStore();
 
-onMounted(async () => {
-  await fetchCurrentUser();
-});
+// onBeforeMount(async () => {
+//   await fetchCurrentUser();
+// });
 </script>
 
 <template>

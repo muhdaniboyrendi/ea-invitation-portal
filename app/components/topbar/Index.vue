@@ -4,13 +4,6 @@ const { user } = storeToRefs(useAuthStore());
 const isMenuOpen = ref(false);
 const isThemeMenuOpen = ref(false);
 
-// const user = ref({
-//   name: "John Doe",
-//   username: "johndoe",
-//   email: "john@example.com",
-//   avatar: null,
-// });
-
 const currentTheme = ref("light");
 
 const themeOptions = [
@@ -170,7 +163,7 @@ onMounted(async () => {
                   : 'text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400',
               ]"
             >
-              {{ user?.name || "Guest" }}
+              {{ user?.name || "User" }}
             </span>
 
             <!-- Enhanced Dropdown Arrow -->
