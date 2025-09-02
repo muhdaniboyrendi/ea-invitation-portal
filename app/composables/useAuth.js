@@ -3,7 +3,7 @@ export const useAuthStore = defineStore("auth", () => {
   const apiBaseUrl = config.public.apiBaseUrl;
 
   const user = useState("user", () => null);
-  const isAuthenticated = computed(() => !!user.value);
+  const isLoggedIn = computed(() => !!user.value);
   const token = useState("token", () => null);
 
   // const register = async (userData) => {
@@ -38,10 +38,10 @@ export const useAuthStore = defineStore("auth", () => {
         credentials: "include",
       });
 
-      user.value = response.value.data.user;
-      user.value.role == "admin"
-        ? navigateTo("/dashboard")
-        : navigateTo("/");
+      if (response) {
+        user.value = response.data.user;
+        await navigateTo("/");
+      }
 
       return response;
     } catch (error) {
@@ -85,8 +85,10 @@ export const useAuthStore = defineStore("auth", () => {
         credentials: "include",
       });
 
-      user.value = response.data.user;
-      user.value.role == "admin" ? navigateTo("/dashboard") : navigateTo("/");
+      if (response) {
+        user.value = response.data.user;
+        user.value.role == "admin" ? navigateTo("/dashboard") : navigateTo("/");
+      }
 
       return response;
     } catch (error) {
@@ -130,7 +132,7 @@ export const useAuthStore = defineStore("auth", () => {
 
       user.value = null;
 
-      navigateTo("/login");
+      await navigateTo("/login");
       return response;
     } catch (error) {
       const err = new Error(
@@ -166,11 +168,11 @@ export const useAuthStore = defineStore("auth", () => {
   //   }
   // };
 
-  const fetchCurrentUser = async () => {
+  const fetchUser = async () => {
     try {
       const response = await $fetch(`${apiBaseUrl}/user`, {
         method: "GET",
-        credentials: 'include',
+        credentials: "include",
       });
 
       user.value = response;
@@ -190,14 +192,15 @@ export const useAuthStore = defineStore("auth", () => {
   const refreshToken = async () => {
     try {
       const response = await $fetch(`${apiBaseUrl}/refresh`, {
-        method: 'POST',
-        credentials: 'include',
-      })
-      
-      user.value = response.data
-      return response
+        method: "POST",
+        credentials: "include",
+      });
+
+      user.value = response.data.user;
+
+      return response;
     } catch (error) {
-      console.error('Refresh token error:', error)
+      console.error("Refresh token error:", error);
 
       const err = new Error(
         error.data?.message || "Terjadi kesalahan pada server"
@@ -207,7 +210,7 @@ export const useAuthStore = defineStore("auth", () => {
 
       throw err;
     }
-  }
+  };
 
   const loginWithGoogle = async () => {
     try {
@@ -231,7 +234,7 @@ export const useAuthStore = defineStore("auth", () => {
         params: { code },
       });
 
-      await fetchCurrentUser();
+      await fetchUser();
 
       user.value?.role == "admin" ? navigateTo("/dashboard") : navigateTo("/");
 
@@ -249,13 +252,13 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   return {
-    user,
-    isAuthenticated,
+    user: readonly(user),
+    isLoggedIn,
     token,
     register,
     login,
     logout,
-    fetchCurrentUser,
+    fetchUser,
     loginWithGoogle,
     handleGoogleCallback,
     refreshToken,

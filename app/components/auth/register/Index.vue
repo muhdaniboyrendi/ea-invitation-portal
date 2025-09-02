@@ -1,7 +1,10 @@
 <script setup>
+const { register } = useAuthStore();
+
 const form = reactive({
   fullName: "",
   email: "",
+  phone: "",
   password: "",
   confirmPassword: "",
   agreeToTerms: false,
@@ -26,12 +29,9 @@ const handleRegister = async () => {
   isLoading.value = true;
 
   try {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const res = await register(form);
 
-    console.log("Register attempt:", form);
-
-    // Redirect to login after successful registration
-    await navigateTo("/login");
+    console.log("Register attempt:", res);
   } catch (error) {
     console.error("Registration error:", error);
   } finally {
@@ -70,7 +70,9 @@ const handleRegister = async () => {
         </div>
 
         <!-- Register Card -->
-        <div class="group relative bg-linear-to-r from-slate-900 via-purple-900 to-slate-900 dark:from-cyan-400 dark:via-purple-400 dark:to-pink-400 rounded-3xl">
+        <div
+          class="group relative bg-linear-to-r from-slate-900 via-purple-900 to-slate-900 dark:from-cyan-400 dark:via-purple-400 dark:to-pink-400 rounded-3xl"
+        >
           <!-- Glow Effect -->
           <div
             class="absolute -inset-4 bg-gradient-to-r from-cyan-400/30 via-purple-400/30 to-pink-400/30 blur-2xl rounded-3xl group-hover:blur-3xl transition-all duration-500"
@@ -146,6 +148,28 @@ const handleRegister = async () => {
                     class="absolute inset-y-0 right-0 pr-4 flex items-center"
                   >
                     <i class="bi bi-envelope text-white/40"></i>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Phone Input -->
+              <div class="space-y-2">
+                <label for="phone" class="text-white/90 font-medium block">
+                  WhatsApp
+                </label>
+                <div class="relative">
+                  <input
+                    id="phone"
+                    v-model="form.phone"
+                    type="tel"
+                    required
+                    class="w-full px-4 py-4 backdrop-blur-md bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 transition-all duration-300"
+                    placeholder="08** **** ****"
+                  />
+                  <div
+                    class="absolute inset-y-0 right-0 pr-4 flex items-center"
+                  >
+                    <i class="bi bi-whatsapp text-white/40"></i>
                   </div>
                 </div>
               </div>
