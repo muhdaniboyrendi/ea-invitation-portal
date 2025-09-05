@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
       },
     });
 
-    if (response && response.status && response.data.token) {
+    if (response) {
       // Set the token as an HttpOnly cookie
       setCookie(event, "auth_token", response.data.token, {
         httpOnly: true,

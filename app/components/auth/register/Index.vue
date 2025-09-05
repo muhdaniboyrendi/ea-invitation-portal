@@ -2,7 +2,7 @@
 const { register } = useAuthStore();
 
 const form = reactive({
-  nama: "",
+  name: "",
   email: "",
   phone: "",
   password: "",
@@ -13,16 +13,210 @@ const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 const agreeToTerms = ref(false);
 const isLoading = ref(false);
+const error = ref(false);
+const errorMessage = ref("");
+
+const validationErrors = reactive({
+  name: "",
+  email: "",
+  phone: "",
+  password: "",
+  password_confirmation: "",
+});
+
+const validationState = reactive({
+  name: null,
+  email: null,
+  phone: null,
+  password: null,
+  password_confirmation: null,
+});
+
+const validateName = (value) => {
+  if (!value || value.trim().length === 0) {
+    return "Name lengkap tidak boleh kosong";
+  }
+  if (value.trim().length < 2) {
+    return "Name lengkap minimal 2 karakter";
+  }
+  if (value.trim().length > 50) {
+    return "Name lengkap maksimal 50 karakter";
+  }
+  if (!/^[a-zA-Z\s]+$/.test(value.trim())) {
+    return "Name hanya boleh mengandung huruf dan spasi";
+  }
+  return "";
+};
+
+const validateEmail = (value) => {
+  if (!value || value.trim().length === 0) {
+    return "Email tidak boleh kosong";
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(value)) {
+    return "Format email tidak valid";
+  }
+  return "";
+};
+
+const validatePhone = (value) => {
+  if (!value || value.trim().length === 0) {
+    return "Nomor WhatsApp tidak boleh kosong";
+  }
+  // Remove all non-digits
+  const phoneDigits = value.replace(/\D/g, "");
+
+  // Check if starts with 08 or +628 or 628
+  if (!/^(08|628|\+628)/.test(value)) {
+    return "Nomor harus diawali dengan 08, +628, atau 628";
+  }
+
+  if (phoneDigits.length < 10 || phoneDigits.length > 15) {
+    return "Nomor WhatsApp harus 10-15 digit";
+  }
+
+  return "";
+};
+
+const validatePassword = (value) => {
+  if (!value || value.length === 0) {
+    return "Password tidak boleh kosong";
+  }
+  if (value.length < 8) {
+    return "Password minimal 8 karakter";
+  }
+  if (!/(?=.*[a-z])/.test(value)) {
+    return "Password harus mengandung huruf kecil";
+  }
+  if (!/(?=.*[A-Z])/.test(value)) {
+    return "Password harus mengandung huruf besar";
+  }
+  if (!/(?=.*\d)/.test(value)) {
+    return "Password harus mengandung angka";
+  }
+  return "";
+};
+
+const validatePasswordConfirmation = (value) => {
+  if (!value || value.length === 0) {
+    return "Konfirmasi password tidak boleh kosong";
+  }
+  if (value !== form.password) {
+    return "Konfirmasi password tidak cocok";
+  }
+  return "";
+};
+
+const validateField = (field, value) => {
+  let errorMsg = "";
+
+  switch (field) {
+    case "name":
+      errorMsg = validateName(value);
+      break;
+    case "email":
+      errorMsg = validateEmail(value);
+      break;
+    case "phone":
+      errorMsg = validatePhone(value);
+      break;
+    case "password":
+      errorMsg = validatePassword(value);
+      // Re-validate password confirmation if it exists
+      if (form.password_confirmation) {
+        const confirmError = validatePasswordConfirmation(
+          form.password_confirmation
+        );
+        validationErrors.password_confirmation = confirmError;
+        validationState.password_confirmation =
+          confirmError === "" ? true : false;
+      }
+      break;
+    case "password_confirmation":
+      errorMsg = validatePasswordConfirmation(value);
+      break;
+  }
+
+  validationErrors[field] = errorMsg;
+  validationState[field] = errorMsg === "" ? true : false;
+};
+
+// Watchers for live validation
+watch(
+  () => form.name,
+  (newVal) => {
+    if (newVal !== "") validateField("name", newVal);
+  }
+);
+
+watch(
+  () => form.email,
+  (newVal) => {
+    if (newVal !== "") validateField("email", newVal);
+  }
+);
+
+watch(
+  () => form.phone,
+  (newVal) => {
+    if (newVal !== "") validateField("phone", newVal);
+  }
+);
+
+watch(
+  () => form.password,
+  (newVal) => {
+    if (newVal !== "") validateField("password", newVal);
+  }
+);
+
+watch(
+  () => form.password_confirmation,
+  (newVal) => {
+    if (newVal !== "") validateField("password_confirmation", newVal);
+  }
+);
+
+// Validate all fields
+const validateAllFields = () => {
+  validateField("name", form.name);
+  validateField("email", form.email);
+  validateField("phone", form.phone);
+  validateField("password", form.password);
+  validateField("password_confirmation", form.password_confirmation);
+
+  return Object.values(validationErrors).every((error) => error === "");
+};
+
+// Check if form is valid
+const isFormValid = computed(() => {
+  return (
+    Object.values(validationState).every((state) => state === true) &&
+    agreeToTerms.value
+  );
+});
 
 const handleRegister = async () => {
-  // Validation
-  if (form.password !== form.confirmPassword) {
-    alert("Password dan konfirmasi password tidak cocok!");
+  // Validate all fields first
+  const isValid = validateAllFields();
+
+  if (!isValid) {
+    error.value = true;
+    errorMessage.value = "Mohon perbaiki kesalahan pada form";
+    setTimeout(() => {
+      error.value = false;
+      errorMessage.value = "";
+    }, 5000);
     return;
   }
 
   if (!agreeToTerms.value) {
-    alert("Anda harus menyetujui syarat dan ketentuan!");
+    errorMessage.value = "Anda harus menyetujui syarat dan ketentuan!";
+    error.value = true;
+    setTimeout(() => {
+      error.value = false;
+      errorMessage.value = "";
+    }, 5000);
     return;
   }
 
@@ -30,14 +224,33 @@ const handleRegister = async () => {
 
   try {
     const res = await register(form);
-
     console.log("Register attempt:", res);
   } catch (error) {
-    // console.error("Registration error:", error);
     console.error("Registration error:", error.validationErrors);
   } finally {
     isLoading.value = false;
   }
+};
+
+// Format phone number as user types
+const formatPhoneNumber = (value) => {
+  // Remove all non-digits
+  let cleaned = value.replace(/\D/g, "");
+
+  // Format as Indonesian phone number
+  if (cleaned.startsWith("62")) {
+    cleaned = "+" + cleaned;
+  } else if (cleaned.startsWith("8")) {
+    cleaned = "0" + cleaned;
+  }
+
+  return cleaned;
+};
+
+// Handle phone input
+const handlePhoneInput = (event) => {
+  const value = event.target.value;
+  form.phone = formatPhoneNumber(value);
 };
 </script>
 
@@ -81,7 +294,7 @@ const handleRegister = async () => {
 
           <!-- Main Register Form -->
           <div
-            class="relative bg-dark/10 dark:bg-dark/80 border border-white/20 rounded-3xl shadow-2xl p-8 md:p-10 overflow-hidden"
+            class="relative bg-dark/10 dark:bg-dark/80 border border-white/20 rounded-3xl shadow-2xl p-6 md:p-8 lg:p-10 overflow-hidden"
           >
             <!-- Header -->
             <div class="text-center mb-8">
@@ -105,136 +318,311 @@ const handleRegister = async () => {
               <p class="text-white/70">
                 Buat akun baru dan mulai kelola undangan digital
               </p>
+
+              <div
+                v-if="error"
+                class="p-4 text-center bg-red-900/70 border border-red-400/50 rounded-2xl backdrop-blur-sm shadow-lg mt-5"
+              >
+                <p
+                  class="font-semibold mb-2 flex items-center justify-center text-red-200"
+                >
+                  <i class="bi bi-exclamation-triangle mr-2"></i> Registrasi
+                  Gagal
+                </p>
+                <p class="text-sm text-red-300">
+                  {{ errorMessage }}
+                </p>
+              </div>
             </div>
 
             <!-- Register Form -->
             <form @submit.prevent="handleRegister" class="space-y-6">
               <!-- Full Name Input -->
-              <div class="space-y-2">
+              <div>
                 <label for="name" class="text-white/90 font-medium block">
                   Nama Lengkap
                 </label>
-                <div class="relative">
+                <div class="relative mt-2 mb-1">
                   <input
                     id="name"
                     v-model="form.name"
                     type="text"
                     required
-                    class="w-full px-4 py-4 backdrop-blur-md bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 transition-all duration-300"
+                    :class="[
+                      'w-full px-4 py-4 backdrop-blur-md bg-white/5 border rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 transition-all duration-300',
+                      validationState.name === true
+                        ? 'border-green-400/50 focus:ring-green-400/50 focus:border-green-400/50'
+                        : validationState.name === false
+                        ? 'border-red-400/50 focus:ring-red-400/50 focus:border-red-400/50'
+                        : 'border-white/20 focus:ring-cyan-400/50 focus:border-cyan-400/50',
+                    ]"
                     placeholder="Masukkan nama lengkap"
+                    @blur="validateField('name', form.name)"
                   />
                   <div
-                    class="absolute inset-y-0 right-0 pr-4 flex items-center"
+                    class="absolute inset-y-0 right-0 pr-4 flex items-center space-x-1"
                   >
+                    <i
+                      v-if="validationState.name === true"
+                      class="bi bi-check-circle text-green-400 text-sm"
+                    ></i>
+                    <i
+                      v-else-if="validationState.name === false"
+                      class="bi bi-exclamation-circle text-red-400 text-sm"
+                    ></i>
                     <i class="bi bi-person text-white/40"></i>
                   </div>
                 </div>
+                <span
+                  v-if="validationErrors.name"
+                  class="text-sm text-red-400 font-medium flex items-center"
+                >
+                  <i class="bi bi-exclamation-triangle mr-1 text-xs"></i>
+                  {{ validationErrors.name }}
+                </span>
               </div>
 
               <!-- Email Input -->
-              <div class="space-y-2">
+              <div>
                 <label for="email" class="text-white/90 font-medium block">
                   Email
                 </label>
-                <div class="relative">
+                <div class="relative mt-2 mb-1">
                   <input
                     id="email"
                     v-model="form.email"
                     type="email"
                     required
-                    class="w-full px-4 py-4 backdrop-blur-md bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 transition-all duration-300"
-                    placeholder="nama@email.com"
+                    :class="[
+                      'w-full px-4 py-4 backdrop-blur-md bg-white/5 border rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 transition-all duration-300',
+                      validationState.email === true
+                        ? 'border-green-400/50 focus:ring-green-400/50 focus:border-green-400/50'
+                        : validationState.email === false
+                        ? 'border-red-400/50 focus:ring-red-400/50 focus:border-red-400/50'
+                        : 'border-white/20 focus:ring-cyan-400/50 focus:border-cyan-400/50',
+                    ]"
+                    placeholder="name@email.com"
+                    @blur="validateField('email', form.email)"
                   />
                   <div
-                    class="absolute inset-y-0 right-0 pr-4 flex items-center"
+                    class="absolute inset-y-0 right-0 pr-4 flex items-center space-x-1"
                   >
+                    <i
+                      v-if="validationState.email === true"
+                      class="bi bi-check-circle text-green-400 text-sm"
+                    ></i>
+                    <i
+                      v-else-if="validationState.email === false"
+                      class="bi bi-exclamation-circle text-red-400 text-sm"
+                    ></i>
                     <i class="bi bi-envelope text-white/40"></i>
                   </div>
                 </div>
+                <span
+                  v-if="validationErrors.email"
+                  class="text-sm text-red-400 font-medium flex items-center"
+                >
+                  <i class="bi bi-exclamation-triangle mr-1 text-xs"></i>
+                  {{ validationErrors.email }}
+                </span>
               </div>
 
               <!-- Phone Input -->
-              <div class="space-y-2">
+              <div>
                 <label for="phone" class="text-white/90 font-medium block">
                   WhatsApp
                 </label>
-                <div class="relative">
+                <div class="relative mt-2 mb-1">
                   <input
                     id="phone"
                     v-model="form.phone"
                     type="tel"
                     required
-                    class="w-full px-4 py-4 backdrop-blur-md bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 transition-all duration-300"
+                    :class="[
+                      'w-full px-4 py-4 backdrop-blur-md bg-white/5 border rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 transition-all duration-300',
+                      validationState.phone === true
+                        ? 'border-green-400/50 focus:ring-green-400/50 focus:border-green-400/50'
+                        : validationState.phone === false
+                        ? 'border-red-400/50 focus:ring-red-400/50 focus:border-red-400/50'
+                        : 'border-white/20 focus:ring-cyan-400/50 focus:border-cyan-400/50',
+                    ]"
                     placeholder="08** **** ****"
+                    @input="handlePhoneInput"
+                    @blur="validateField('phone', form.phone)"
                   />
                   <div
-                    class="absolute inset-y-0 right-0 pr-4 flex items-center"
+                    class="absolute inset-y-0 right-0 pr-4 flex items-center space-x-1"
                   >
+                    <i
+                      v-if="validationState.phone === true"
+                      class="bi bi-check-circle text-green-400 text-sm"
+                    ></i>
+                    <i
+                      v-else-if="validationState.phone === false"
+                      class="bi bi-exclamation-circle text-red-400 text-sm"
+                    ></i>
                     <i class="bi bi-whatsapp text-white/40"></i>
                   </div>
                 </div>
+                <span
+                  v-if="validationErrors.phone"
+                  class="text-sm text-red-400 font-medium flex items-center"
+                >
+                  <i class="bi bi-exclamation-triangle mr-1 text-xs"></i>
+                  {{ validationErrors.phone }}
+                </span>
               </div>
 
               <!-- Password Input -->
-              <div class="space-y-2">
+              <div>
                 <label for="password" class="text-white/90 font-medium block">
                   Password
                 </label>
-                <div class="relative">
+                <div class="relative mt-2 mb-1">
                   <input
                     id="password"
                     v-model="form.password"
                     :type="showPassword ? 'text' : 'password'"
                     required
                     minlength="8"
-                    class="w-full px-4 py-4 backdrop-blur-md bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 transition-all duration-300"
+                    :class="[
+                      'w-full px-4 py-4 backdrop-blur-md bg-white/5 border rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 transition-all duration-300',
+                      validationState.password === true
+                        ? 'border-green-400/50 focus:ring-green-400/50 focus:border-green-400/50'
+                        : validationState.password === false
+                        ? 'border-red-400/50 focus:ring-red-400/50 focus:border-red-400/50'
+                        : 'border-white/20 focus:ring-cyan-400/50 focus:border-cyan-400/50',
+                    ]"
                     placeholder="Minimal 8 karakter"
+                    @blur="validateField('password', form.password)"
                   />
-                  <button
-                    type="button"
-                    @click="showPassword = !showPassword"
-                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-white/40 hover:text-white/70 transition-colors"
+                  <div
+                    class="absolute inset-y-0 right-0 pr-4 flex items-center space-x-1"
                   >
                     <i
-                      :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"
+                      v-if="validationState.password === true"
+                      class="bi bi-check-circle text-green-400 text-sm"
                     ></i>
-                  </button>
+                    <i
+                      v-else-if="validationState.password === false"
+                      class="bi bi-exclamation-circle text-red-400 text-sm"
+                    ></i>
+                    <button
+                      type="button"
+                      @click="showPassword = !showPassword"
+                      class="text-white/40 hover:text-white/70 transition-colors ml-1"
+                    >
+                      <i
+                        :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"
+                      ></i>
+                    </button>
+                  </div>
+                </div>
+                <span
+                  v-if="validationErrors.password"
+                  class="text-sm text-red-400 font-medium flex items-center"
+                >
+                  <i class="bi bi-exclamation-triangle mr-1 text-xs"></i>
+                  {{ validationErrors.password }}
+                </span>
+                <!-- Password strength indicator -->
+                <div v-if="form.password" class="mt-2">
+                  <div class="flex space-x-1">
+                    <div
+                      :class="[
+                        'h-1 flex-1 rounded-full transition-all duration-300',
+                        form.password.length >= 8
+                          ? 'bg-yellow-500'
+                          : 'bg-white/20',
+                      ]"
+                    ></div>
+                    <div
+                      :class="[
+                        'h-1 flex-1 rounded-full transition-all duration-300',
+                        /(?=.*[a-z])(?=.*[A-Z])/.test(form.password)
+                          ? 'bg-lime-500'
+                          : 'bg-white/20',
+                      ]"
+                    ></div>
+                    <div
+                      :class="[
+                        'h-1 flex-1 rounded-full transition-all duration-300',
+                        /(?=.*\d)/.test(form.password)
+                          ? 'bg-green-500'
+                          : 'bg-white/20',
+                      ]"
+                    ></div>
+                  </div>
+                  <p class="text-xs text-white/50 mt-1">
+                    Password harus mengandung: huruf besar, huruf kecil, dan
+                    angka
+                  </p>
                 </div>
               </div>
 
               <!-- Confirm Password Input -->
-              <div class="space-y-2">
+              <div>
                 <label
                   for="confirmPassword"
                   class="text-white/90 font-medium block"
                 >
                   Konfirmasi Password
                 </label>
-                <div class="relative">
+                <div class="relative mt-2 mb-1">
                   <input
                     id="password_confirmation"
                     v-model="form.password_confirmation"
                     :type="showConfirmPassword ? 'text' : 'password'"
                     required
-                    class="w-full px-4 py-4 backdrop-blur-md bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 transition-all duration-300"
+                    :class="[
+                      'w-full px-4 py-4 backdrop-blur-md bg-white/5 border rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 transition-all duration-300',
+                      validationState.password_confirmation === true
+                        ? 'border-green-400/50 focus:ring-green-400/50 focus:border-green-400/50'
+                        : validationState.password_confirmation === false
+                        ? 'border-red-400/50 focus:ring-red-400/50 focus:border-red-400/50'
+                        : 'border-white/20 focus:ring-cyan-400/50 focus:border-cyan-400/50',
+                    ]"
                     placeholder="Ulangi password"
-                  />
-                  <button
-                    type="button"
-                    @click="
-                      showConfirmPassword = !showConfirmPassword
+                    @blur="
+                      validateField(
+                        'password_confirmation',
+                        form.password_confirmation
+                      )
                     "
-                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-white/40 hover:text-white/70 transition-colors"
+                  />
+                  <div
+                    class="absolute inset-y-0 right-0 pr-4 flex items-center space-x-1"
                   >
                     <i
-                      :class="
-                        showConfirmPassword
-                          ? 'bi bi-eye-slash'
-                          : 'bi bi-eye'
-                      "
+                      v-if="validationState.password_confirmation === true"
+                      class="bi bi-check-circle text-green-400 text-sm"
                     ></i>
-                  </button>
+                    <i
+                      v-else-if="
+                        validationState.password_confirmation === false
+                      "
+                      class="bi bi-exclamation-circle text-red-400 text-sm"
+                    ></i>
+                    <button
+                      type="button"
+                      @click="showConfirmPassword = !showConfirmPassword"
+                      class="text-white/40 hover:text-white/70 transition-colors ml-1"
+                    >
+                      <i
+                        :class="
+                          showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'
+                        "
+                      ></i>
+                    </button>
+                  </div>
                 </div>
+                <span
+                  v-if="validationErrors.password_confirmation"
+                  class="text-sm text-red-400 font-medium flex items-center"
+                >
+                  <i class="bi bi-exclamation-triangle mr-1 text-xs"></i>
+                  {{ validationErrors.password_confirmation }}
+                </span>
               </div>
 
               <!-- Terms & Conditions -->
@@ -266,8 +654,13 @@ const handleRegister = async () => {
               <!-- Register Button -->
               <button
                 type="submit"
-                :disabled="isLoading"
-                class="group relative w-full px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 disabled:hover:scale-100 transition-all duration-300"
+                :disabled="isLoading || !isFormValid"
+                :class="[
+                  'group relative w-full px-8 py-4 text-white font-semibold rounded-xl shadow-lg transform transition-all duration-300',
+                  isFormValid && !isLoading
+                    ? 'bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 hover:scale-105'
+                    : 'bg-gradient-to-r from-gray-500 to-gray-600 cursor-not-allowed',
+                ]"
               >
                 <span
                   v-if="!isLoading"

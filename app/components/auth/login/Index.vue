@@ -84,7 +84,7 @@ const handleGoogleLogin = async () => {
 
           <!-- Main Login Form -->
           <div
-            class="relative bg-dark/10 dark:bg-dark/80 border border-white/20 rounded-3xl shadow-2xl p-8 md:p-10 overflow-hidden"
+            class="relative bg-dark/10 dark:bg-dark/80 border border-white/20 rounded-3xl shadow-2xl p-6 md:p-8 lg:p-10 overflow-hidden"
           >
             <!-- Header -->
             <div class="text-center mb-8">

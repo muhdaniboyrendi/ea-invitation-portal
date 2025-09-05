@@ -34,11 +34,11 @@ export const useAuthStore = defineStore("auth", () => {
 
   const login = async (credentials) => {
     isLoading.value = true;
+    
     try {
       const response = await $fetch(`/api/auth/login`, {
         method: "POST",
         body: credentials,
-        credentials: "include",
       });
 
       if (response) {
@@ -69,7 +69,6 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       await $fetch(`/api/auth/logout`, {
         method: "POST",
-        credentials: "include",
       });
     } catch (error) {
       console.error("Logout failed:", error);
@@ -88,10 +87,9 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       const response = await $fetch(`/api/auth/user`, {
         method: "GET",
-        credentials: "include",
       });
 
-      user.value = response.data;
+      user.value = response;
       return response;
     } catch (error) {
       user.value = null;
