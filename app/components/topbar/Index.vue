@@ -1,5 +1,6 @@
 <script setup>
 const { user } = storeToRefs(useAuthStore());
+const { fetchUser } = useAuthStore();
 
 const isMenuOpen = ref(false);
 const isThemeMenuOpen = ref(false);
@@ -59,6 +60,9 @@ onMounted(async () => {
   // Initialize theme from localStorage
   const savedTheme = localStorage.getItem("theme") || "system";
   setTheme(savedTheme);
+
+  // const data = await fetchUser();
+  // console.log(data);
 });
 </script>
 
@@ -163,7 +167,7 @@ onMounted(async () => {
                   : 'text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400',
               ]"
             >
-              {{ user?.name || "User" }}
+              {{ user }}
             </span>
 
             <!-- Enhanced Dropdown Arrow -->

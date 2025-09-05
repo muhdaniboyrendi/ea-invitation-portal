@@ -2,16 +2,16 @@
 const { register } = useAuthStore();
 
 const form = reactive({
-  fullName: "",
+  nama: "",
   email: "",
   phone: "",
   password: "",
-  confirmPassword: "",
-  agreeToTerms: false,
+  password_confirmation: "",
 });
 
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
+const agreeToTerms = ref(false);
 const isLoading = ref(false);
 
 const handleRegister = async () => {
@@ -21,7 +21,7 @@ const handleRegister = async () => {
     return;
   }
 
-  if (!form.agreeToTerms) {
+  if (!agreeToTerms.value) {
     alert("Anda harus menyetujui syarat dan ketentuan!");
     return;
   }
@@ -33,7 +33,8 @@ const handleRegister = async () => {
 
     console.log("Register attempt:", res);
   } catch (error) {
-    console.error("Registration error:", error);
+    // console.error("Registration error:", error);
+    console.error("Registration error:", error.validationErrors);
   } finally {
     isLoading.value = false;
   }
@@ -110,13 +111,13 @@ const handleRegister = async () => {
             <form @submit.prevent="handleRegister" class="space-y-6">
               <!-- Full Name Input -->
               <div class="space-y-2">
-                <label for="fullName" class="text-white/90 font-medium block">
+                <label for="name" class="text-white/90 font-medium block">
                   Nama Lengkap
                 </label>
                 <div class="relative">
                   <input
-                    id="fullName"
-                    v-model="form.fullName"
+                    id="name"
+                    v-model="form.name"
                     type="text"
                     required
                     class="w-full px-4 py-4 backdrop-blur-md bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 transition-all duration-300"
@@ -211,8 +212,8 @@ const handleRegister = async () => {
                 </label>
                 <div class="relative">
                   <input
-                    id="confirmPassword"
-                    v-model="form.confirmPassword"
+                    id="password_confirmation"
+                    v-model="form.password_confirmation"
                     :type="showConfirmPassword ? 'text' : 'password'"
                     required
                     class="w-full px-4 py-4 backdrop-blur-md bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 transition-all duration-300"
@@ -220,12 +221,16 @@ const handleRegister = async () => {
                   />
                   <button
                     type="button"
-                    @click="showConfirmPassword = !showConfirmPassword"
+                    @click="
+                      showConfirmPassword = !showConfirmPassword
+                    "
                     class="absolute inset-y-0 right-0 pr-4 flex items-center text-white/40 hover:text-white/70 transition-colors"
                   >
                     <i
                       :class="
-                        showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'
+                        showConfirmPassword
+                          ? 'bi bi-eye-slash'
+                          : 'bi bi-eye'
                       "
                     ></i>
                   </button>
@@ -235,7 +240,7 @@ const handleRegister = async () => {
               <!-- Terms & Conditions -->
               <div class="flex items-start space-x-3">
                 <input
-                  v-model="form.agreeToTerms"
+                  v-model="agreeToTerms"
                   type="checkbox"
                   required
                   class="w-4 h-4 mt-1 rounded border-white/20 bg-white/5 text-cyan-400 focus:ring-cyan-400/50 focus:ring-2"

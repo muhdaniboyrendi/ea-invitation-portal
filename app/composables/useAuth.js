@@ -4,38 +4,14 @@ export const useAuthStore = defineStore("auth", () => {
 
   const user = useState("user", () => null);
   const isLoggedIn = computed(() => !!user.value);
-  const token = useState("token", () => null);
-
-  // const register = async (userData) => {
-  //   try {
-  //     const response = await $fetch("/api/auth/register", {
-  //       method: "POST",
-  //       body: userData,
-  //     });
-
-  //     user.value = response.value.data.user;
-  //     user.value.role == "admin"
-  //       ? navigateTo("/dashboard")
-  //       : navigateTo("/dashboard/home");
-
-  //     return response;
-  //   } catch (error) {
-  //     const err = new Error(
-  //       error.data?.message || "Terjadi kesalahan pada server"
-  //     );
-  //     err.status = error.data?.statusCode;
-  //     err.validationErrors = error.data?.data.errors || {};
-
-  //     throw err;
-  //   }
-  // };
+  const isLoading = useState("auth-loading", () => false);
 
   const register = async (userData) => {
+    isLoading.value = true;
     try {
-      const response = await $fetch(`${apiBaseUrl}/register`, {
+      const response = await $fetch(`/api/auth/register`, {
         method: "POST",
         body: userData,
-        credentials: "include",
       });
 
       if (response) {
@@ -49,45 +25,29 @@ export const useAuthStore = defineStore("auth", () => {
         error.data?.message || "Terjadi kesalahan pada server"
       );
       err.status = error.data?.statusCode;
-      err.validationErrors = error.data?.data.errors || {};
-
+      err.validationErrors = error.data?.data?.errors || {};
       throw err;
+    } finally {
+      isLoading.value = false;
     }
   };
 
-  // const login = async (credentials) => {
-  //   try {
-  //     const response = await $fetch("/api/auth/login", {
-  //       method: "POST",
-  //       body: credentials,
-  //     });
-
-  //     user.value = response.data.user;
-  //     user.value.role == "admin" ? navigateTo("/dashboard") : navigateTo("/");
-
-  //     return response;
-  //   } catch (error) {
-  //     const err = new Error(
-  //       error.data?.message || "Terjadi kesalahan pada server"
-  //     );
-  //     err.status = error.data?.statusCode;
-  //     err.validationErrors = error.data?.data.errors || {};
-
-  //     throw err;
-  //   }
-  // };
-
   const login = async (credentials) => {
+    isLoading.value = true;
     try {
-      const response = await $fetch(`${apiBaseUrl}/login`, {
+      const response = await $fetch(`/api/auth/login`, {
         method: "POST",
         body: credentials,
         credentials: "include",
       });
 
       if (response) {
-        user.value = response.data.user;
-        user.value.role == "admin" ? navigateTo("/dashboard") : navigateTo("/");
+        user.value = response.data;
+        // Gunakan nextTick untuk memastikan state update
+        await nextTick();
+        user.value.role === "admin"
+          ? await navigateTo("/dashboard")
+          : await navigateTo("/");
       }
 
       return response;
@@ -96,133 +56,63 @@ export const useAuthStore = defineStore("auth", () => {
         error.data?.message || "Terjadi kesalahan pada server"
       );
       err.status = error.data?.statusCode;
-      err.validationErrors = error.data?.data.errors || {};
-
+      err.validationErrors = error.data?.data?.errors || {};
       throw err;
+    } finally {
+      isLoading.value = false;
     }
   };
 
-  // const logout = async () => {
-  //   try {
-  //     const response = await $fetch("/api/auth/logout", {
-  //       method: "POST",
-  //     });
-
-  //     user.value = null;
-
-  //     navigateTo("/login");
-  //     return response;
-  //   } catch (error) {
-  //     const err = new Error(
-  //       error.data?.message || "Terjadi kesalahan pada server"
-  //     );
-  //     err.status = error.data?.statusCode;
-  //     err.validationErrors = error.data?.data.errors || {};
-
-  //     throw err;
-  //   }
-  // };
-
   const logout = async () => {
+    isLoading.value = true;
+
     try {
-      const response = await $fetch(`${apiBaseUrl}/logout`, {
+      await $fetch(`/api/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
-
-      user.value = null;
-
-      await navigateTo("/login");
-      return response;
     } catch (error) {
-      const err = new Error(
-        error.data?.message || "Terjadi kesalahan pada server"
-      );
-      err.status = error.data?.statusCode;
-      err.validationErrors = error.data?.data.errors || {};
+      console.error("Logout failed:", error);
 
-      throw err;
+      throw error;
+    } finally {
+      user.value = null;
+      isLoading.value = false;
+      await navigateTo("/login");
     }
   };
 
-  // const fetchCurrentUser = async () => {
-  //   try {
-  //     const response = await $fetch("/api/auth/user", {
-  //       method: "GET",
-  //       headers: {
-  //         "Cache-Control": "no-cache",
-  //       },
-  //     });
-
-  //     user.value = response;
-
-  //     return response;
-  //   } catch (error) {
-  //     const err = new Error(
-  //       error.data?.message || "Terjadi kesalahan pada server"
-  //     );
-  //     err.status = error.data?.statusCode;
-  //     err.validationErrors = error.data?.data.errors || {};
-
-  //     throw err;
-  //   }
-  // };
-
   const fetchUser = async () => {
+    isLoading.value = true;
+
     try {
-      const response = await $fetch(`${apiBaseUrl}/user`, {
+      const response = await $fetch(`/api/auth/user`, {
         method: "GET",
         credentials: "include",
       });
 
-      user.value = response;
-
+      user.value = response.data;
       return response;
     } catch (error) {
-      const err = new Error(
-        error.data?.message || "Terjadi kesalahan pada server"
-      );
-      err.status = error.data?.statusCode;
-      err.validationErrors = error.data?.data.errors || {};
+      user.value = null;
+      const err = new Error(error.data?.message || "Unauthorized");
+      err.status = error.data?.statusCode || 401;
 
       throw err;
-    }
-  };
-
-  const refreshToken = async () => {
-    try {
-      const response = await $fetch(`${apiBaseUrl}/refresh`, {
-        method: "POST",
-        credentials: "include",
-      });
-
-      user.value = response.data.user;
-
-      return response;
-    } catch (error) {
-      console.error("Refresh token error:", error);
-
-      const err = new Error(
-        error.data?.message || "Terjadi kesalahan pada server"
-      );
-      err.status = error.data?.statusCode;
-      err.validationErrors = error.data?.data.errors || {};
-
-      throw err;
+    } finally {
+      isLoading.value = false;
     }
   };
 
   const loginWithGoogle = async () => {
     try {
-      window.location.href = `${apiBaseUrl}/auth/google`;
+      window.location.href = `/api/auth/auth/google`;
       return true;
     } catch (error) {
       const err = new Error(
         error.data?.message || "Terjadi kesalahan pada server"
       );
       err.status = error.data?.statusCode;
-      err.validationErrors = error.data?.data.errors || {};
-
       throw err;
     }
   };
@@ -231,12 +121,15 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       const response = await $fetch(`/api/auth/google/callback`, {
         method: "GET",
-        params: { code },
+        query: { code }, // Gunakan query instead of params
       });
 
       await fetchUser();
+      await nextTick();
 
-      user.value?.role == "admin" ? navigateTo("/dashboard") : navigateTo("/");
+      user.value?.role === "admin"
+        ? await navigateTo("/dashboard")
+        : await navigateTo("/");
 
       return response;
     } catch (error) {
@@ -245,22 +138,19 @@ export const useAuthStore = defineStore("auth", () => {
         error.data?.message || "Terjadi kesalahan pada server"
       );
       err.status = error.data?.statusCode;
-      err.validationErrors = error.data?.data.errors || {};
-
       throw err;
     }
   };
 
   return {
-    user: readonly(user),
+    user,
     isLoggedIn,
-    token,
+    isLoading,
     register,
     login,
     logout,
     fetchUser,
     loginWithGoogle,
     handleGoogleCallback,
-    refreshToken,
   };
 });
