@@ -6,6 +6,15 @@ export const useAuthStore = defineStore("auth", () => {
   const isLoggedIn = computed(() => !!user.value);
   const isLoading = useState("auth-loading", () => false);
 
+  const handleApiError = (error) => {
+    const err = new Error(
+      error.data?.message || "Terjadi kesalahan pada server"
+    );
+    err.status = error.status || error.data?.statusCode || 500;
+    err.validationErrors = error.data?.data?.errors || error.data?.errors || {};
+    return err;
+  };
+
   const register = async (userData) => {
     isLoading.value = true;
     try {
@@ -21,12 +30,7 @@ export const useAuthStore = defineStore("auth", () => {
 
       return response;
     } catch (error) {
-      const err = new Error(
-        error.data?.message || "Terjadi kesalahan pada server"
-      );
-      err.status = error.data?.statusCode;
-      err.validationErrors = error.data?.data?.errors || {};
-      throw err;
+      throw handleApiError(error);
     } finally {
       isLoading.value = false;
     }
@@ -34,7 +38,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   const login = async (credentials) => {
     isLoading.value = true;
-    
+
     try {
       const response = await $fetch(`/api/auth/login`, {
         method: "POST",
@@ -52,12 +56,7 @@ export const useAuthStore = defineStore("auth", () => {
 
       return response;
     } catch (error) {
-      const err = new Error(
-        error.data?.message || "Terjadi kesalahan pada server"
-      );
-      err.status = error.data?.statusCode;
-      err.validationErrors = error.data?.data?.errors || {};
-      throw err;
+      throw handleApiError(error);
     } finally {
       isLoading.value = false;
     }
@@ -71,9 +70,7 @@ export const useAuthStore = defineStore("auth", () => {
         method: "POST",
       });
     } catch (error) {
-      console.error("Logout failed:", error);
-
-      throw error;
+      throw handleApiError(error);
     } finally {
       user.value = null;
       isLoading.value = false;
@@ -82,6 +79,8 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const fetchUser = async () => {
+    if (isLoading.value) return user.value;
+
     isLoading.value = true;
 
     try {
@@ -92,11 +91,7 @@ export const useAuthStore = defineStore("auth", () => {
       user.value = response;
       return response;
     } catch (error) {
-      user.value = null;
-      const err = new Error(error.data?.message || "Unauthorized");
-      err.status = error.data?.statusCode || 401;
-
-      throw err;
+      throw handleApiError(error);
     } finally {
       isLoading.value = false;
     }
@@ -107,11 +102,7 @@ export const useAuthStore = defineStore("auth", () => {
       window.location.href = `/api/auth/auth/google`;
       return true;
     } catch (error) {
-      const err = new Error(
-        error.data?.message || "Terjadi kesalahan pada server"
-      );
-      err.status = error.data?.statusCode;
-      throw err;
+      throw handleApiError(error);
     }
   };
 
@@ -131,12 +122,7 @@ export const useAuthStore = defineStore("auth", () => {
 
       return response;
     } catch (error) {
-      console.error("Google callback error:", error);
-      const err = new Error(
-        error.data?.message || "Terjadi kesalahan pada server"
-      );
-      err.status = error.data?.statusCode;
-      throw err;
+      throw handleApiError(error);
     }
   };
 

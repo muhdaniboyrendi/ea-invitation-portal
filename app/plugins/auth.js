@@ -1,3 +1,4 @@
+// plugins/auth.js
 export default defineNuxtPlugin(async (nuxtApp) => {
   const { fetchUser } = useAuthStore();
 

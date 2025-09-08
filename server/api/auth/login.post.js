@@ -1,3 +1,4 @@
+// server/api/auth/login.post.js
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   const apiBaseUrl = config.public.apiBaseUrl;
@@ -19,6 +20,7 @@ export default defineEventHandler(async (event) => {
         httpOnly: true,
         path: "/",
         secure: process.env.NODE_ENV !== "development",
+        sameSite: "lax",
         maxAge: 60 * 60 * 24 * 7, // 1 week
       });
     }
