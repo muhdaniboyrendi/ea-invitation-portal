@@ -27,8 +27,10 @@ const submitOrder = async () => {
 
     const orderData = await createPayment(props.package.id);
 
-    if (orderData?.snap_token) {
-      $midtrans.openSnapPayment(orderData.snap_token, {
+    console.log(orderData);
+
+    if (orderData.data?.snap_token) {
+      $midtrans.openSnapPayment(orderData.data.snap_token, {
         onSuccess: (result) => handlePaymentSuccess(result),
         // onPending: (result) => handlePaymentPending(result),
         // onError: (result) => handlePaymentError(result),

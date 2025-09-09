@@ -1,3 +1,22 @@
+<script setup>
+const props = defineProps(["order"]);
+
+const formatDate = (date) => {
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+};
+
+const formatTime = (date) => {
+  return new Intl.DateTimeFormat("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+};
+</script>
+
 <template>
   <div
     class="relative group cursor-pointer transform transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1"
@@ -27,10 +46,10 @@
                 <h3
                   class="text-lg font-bold text-gray-800 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 truncate"
                 >
-                  Paket Premium
+                  Paket {{ props.order?.package_name }}
                 </h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  Tema Instagram
+                  {{ props.order?.payment_method }}
                 </p>
               </div>
             </div>
@@ -40,7 +59,7 @@
           <p
             class="text-lg text-blue-600 dark:text-blue-400 font-bold transition-colors duration-300"
           >
-            Rp {{ formatRupiah(150000) }}
+            Rp {{ formatRupiah(props.order?.amount) }}
           </p>
           <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">IDR</p>
         </div>
@@ -57,11 +76,8 @@
               ></i>
             </div>
             <span class="text-xs text-gray-600 dark:text-gray-400">
-              30 Agustus 2025
+              {{ formatRelativeDate(props.order.created_at) }}
             </span>
-            <!-- <span class="text-xs text-gray-600 dark:text-gray-400">
-                        {{ formatDate(transaction.date) }}
-                      </span> -->
           </div>
 
           <!-- Time -->
@@ -73,11 +89,8 @@
                 class="bi bi-clock text-xs text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"
               ></i>
             </div>
-            <!-- <span class="text-xs text-gray-600 dark:text-gray-400">
-                        {{ formatTime(transaction.date) }}
-                      </span> -->
             <span class="text-xs text-gray-600 dark:text-gray-400">
-              14.30
+              {{ formatTimeToIndonesian(props.order.created_at) }}
             </span>
           </div>
         </div>
@@ -85,9 +98,10 @@
       <div class="flex justify-between items-end mt-4">
         <!-- Status Badge -->
         <div
-          class="px-3 py-1 rounded-xl text-xs font-semibold backdrop-blur-sm transition-all duration-300 bg-green-100/80 text-green-700 dark:bg-green-900/40 dark:text-green-300"
+          class="px-3 py-1 rounded-xl text-xs font-semibold backdrop-blur-sm transition-all duration-300"
+          :class="props.order?.payment_status == 'pending' ? 'bg-amber-100/80 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' : 'bg-green-100/80 text-green-700 dark:bg-green-900/40 dark:text-green-300'"
         >
-          Selesai
+          {{ props.order?.payment_status }}
         </div>
         <button
           class="px-6 py-3 bg-linear-to-r from-blue-500 to-purple-600 text-white rounded-2xl font-medium shadow-lg shadow-blue-500/30 hover:shadow-blue-500/60 hover:scale-105 transition-all duration-300"
@@ -99,20 +113,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-const formatDate = (date) => {
-  return new Intl.DateTimeFormat("id-ID", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(date);
-};
-
-const formatTime = (date) => {
-  return new Intl.DateTimeFormat("id-ID", {
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-};
-</script>
