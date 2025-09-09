@@ -4,7 +4,6 @@ export const useAuthStore = defineStore("auth", () => {
 
   const user = useState("user", () => null);
   const isLoggedIn = computed(() => !!user.value);
-  const isLoading = useState("auth-loading", () => false);
 
   const handleApiError = (error) => {
     const err = new Error(
@@ -16,73 +15,70 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const register = async (userData) => {
-    isLoading.value = true;
     try {
       const response = await $fetch(`/api/auth/register`, {
         method: "POST",
         body: userData,
       });
 
-      if (response) {
-        user.value = response.data.user;
-        await navigateTo("/");
-      }
+      user.value = response.data.user;
+      await navigateTo("/");
 
       return response;
     } catch (error) {
       throw handleApiError(error);
-    } finally {
-      isLoading.value = false;
     }
   };
 
   const login = async (credentials) => {
-    isLoading.value = true;
-
     try {
       const response = await $fetch(`/api/auth/login`, {
         method: "POST",
         body: credentials,
       });
 
-      if (response) {
-        user.value = response.data;
-        // Gunakan nextTick untuk memastikan state update
-        await nextTick();
-        user.value.role === "admin"
-          ? await navigateTo("/dashboard")
-          : await navigateTo("/");
-      }
+      user.value = response.data.user;
+      // Gunakan nextTick untuk memastikan state update
+      await nextTick();
+      user.value.role === "admin"
+        ? await navigateTo("/dashboard")
+        : await navigateTo("/");
 
       return response;
     } catch (error) {
       throw handleApiError(error);
-    } finally {
-      isLoading.value = false;
     }
   };
 
   const logout = async () => {
-    isLoading.value = true;
-
     try {
       await $fetch(`/api/auth/logout`, {
         method: "POST",
       });
+
+      navigateTo("/login");
     } catch (error) {
       throw handleApiError(error);
     } finally {
       user.value = null;
-      isLoading.value = false;
-      await navigateTo("/login");
+    }
+  };
+
+  const initializeUser = async () => {
+    try {
+      const { data } = await useFetch(`/api/auth/user`, {
+        method: "GET",
+      });
+
+      user.value = data.value;
+      return data.value;
+    } catch (error) {
+      user.value = null;
+      throw handleApiError(error);
     }
   };
 
   const fetchUser = async () => {
-    if (isLoading.value) return user.value;
-
-    isLoading.value = true;
-
     try {
       const response = await $fetch(`/api/auth/user`, {
         method: "GET",
@@ -91,26 +87,20 @@ export const useAuthStore = defineStore("auth", () => {
       user.value = response;
       return response;
     } catch (error) {
+      user.value = null;
       throw handleApiError(error);
-    } finally {
-      isLoading.value = false;
     }
   };
 
   const loginWithGoogle = async () => {
-    try {
-      window.location.href = `/api/auth/auth/google`;
-      return true;
-    } catch (error) {
-      throw handleApiError(error);
-    }
+    window.location.href = `${apiBaseUrl}/auth/google`;
   };
 
   const handleGoogleCallback = async (code) => {
     try {
       const response = await $fetch(`/api/auth/google/callback`, {
         method: "GET",
-        query: { code }, // Gunakan query instead of params
+        query: { code },
       });
 
       await fetchUser();
@@ -129,10 +119,10 @@ export const useAuthStore = defineStore("auth", () => {
   return {
     user,
     isLoggedIn,
-    isLoading,
     register,
     login,
     logout,
+    initializeUser,
     fetchUser,
     loginWithGoogle,
     handleGoogleCallback,

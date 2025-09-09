@@ -1,26 +1,32 @@
 <script setup>
 const { user } = storeToRefs(useAuthStore());
-const { fetchUser } = useAuthStore();
+const { logout } = useAuthStore();
+const colorMode = useColorMode();
 
 const isMenuOpen = ref(false);
 const isThemeMenuOpen = ref(false);
+const isLoading = ref(false);
 
 const currentTheme = ref("light");
 
 const themeOptions = [
   {
     value: "light",
-    icon: "bi-sun",
+    icon: "bi bi-sun",
   },
   {
     value: "dark",
-    icon: "bi-moon-stars-fill",
+    icon: "bi bi-moon",
   },
   {
     value: "system",
-    icon: "bi-display",
+    icon: "bi bi-display",
   },
 ];
+
+const setTheme = (theme) => {
+  colorMode.preference = theme;
+};
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
@@ -34,33 +40,34 @@ const navigateToProfile = () => {
   isMenuOpen.value = false;
 };
 
-const setTheme = (theme) => {
-  currentTheme.value = theme;
-  if (theme === "dark") {
-    document.documentElement.classList.add("dark");
-  } else if (theme === "light") {
-    document.documentElement.classList.remove("dark");
-  } else {
-    // System theme
-    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    document.documentElement.classList.toggle("dark", isDark);
+// const setTheme = (theme) => {
+//   currentTheme.value = theme;
+//   if (theme === "dark") {
+//     document.documentElement.classList.add("dark");
+//   } else if (theme === "light") {
+//     document.documentElement.classList.remove("dark");
+//   } else {
+//     // System theme
+//     const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+//     document.documentElement.classList.toggle("dark", isDark);
+//   }
+
+//   localStorage.setItem("theme", theme);
+//   isThemeMenuOpen.value = false;
+// };
+
+const handleLogout = async () => {
+  isLoading.value = true;
+
+  try {
+    await logout();
+  } catch (error) {
+    console.error("Logout failed:", error);
+  } finally {
+    isLoading.value = false;
+    isMenuOpen.value = false;
   }
-
-  localStorage.setItem("theme", theme);
-  isThemeMenuOpen.value = false;
 };
-
-const handleLogout = () => {
-  console.log("Logging out...");
-  navigateTo("/login");
-  isMenuOpen.value = false;
-};
-
-onMounted(async () => {
-  // Initialize theme from localStorage
-  const savedTheme = localStorage.getItem("theme") || "system";
-  setTheme(savedTheme);
-});
 </script>
 
 <template>
@@ -125,20 +132,14 @@ onMounted(async () => {
                     : 'ring-transparent group-hover:ring-blue-400/30 dark:group-hover:ring-blue-500/30',
                 ]"
               >
-                <!-- <img
-                  v-if="user.avatar"
-                  :src="user.avatar"
-                  :alt="user.name"
+                <img
+                  v-if="user?.avatar"
+                  :src="user?.avatar"
+                  :alt="user?.name"
                   class="w-full h-full object-cover"
-                /> -->
-                <!-- <i
-                  v-else
-                  :class="[
-                    'bi bi-person text-xl',
-                    isMenuOpen ? 'text-white' : 'text-white',
-                  ]"
-                ></i> -->
+                />
                 <i
+                  v-else
                   :class="[
                     'bi bi-person text-xl',
                     isMenuOpen ? 'text-white' : 'text-white',
@@ -164,7 +165,7 @@ onMounted(async () => {
                   : 'text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400',
               ]"
             >
-              {{ user.name }}
+              {{ user?.name }}
             </span>
 
             <!-- Enhanced Dropdown Arrow -->
@@ -227,13 +228,13 @@ onMounted(async () => {
                     <div
                       class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center overflow-hidden shadow-lg shadow-blue-500/25"
                     >
-                      <!-- <img
+                      <img
                         v-if="user?.avatar"
                         :src="user?.avatar"
                         :alt="user?.name"
                         class="w-full h-full object-cover"
                       />
-                      <i v-else class="bi bi-person text-white text-3xl"></i> -->
+                      <i v-else class="bi bi-person text-white text-3xl"></i>
                     </div>
                     <!-- Floating glow -->
                     <div
@@ -298,31 +299,33 @@ onMounted(async () => {
                   </p>
 
                   <div class="flex justify-center gap-3">
-                    <button
-                      v-for="theme in themeOptions"
-                      :key="theme.value"
-                      @click="setTheme(theme.value)"
-                      :class="[
-                        'h-9 w-9 flex justify-center items-center rounded-xl transition-all duration-300 relative overflow-hidden group',
-                        currentTheme === theme.value
-                          ? 'bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25'
-                          : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200',
-                      ]"
-                    >
-                      <!-- Active background glow -->
-                      <div
-                        v-if="currentTheme === theme.value"
-                        class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-20 blur-lg"
-                      ></div>
+                    <ClientOnly>
+                      <button
+                        v-for="theme in themeOptions"
+                        :key="theme.value"
+                        @click="setTheme(theme.value)"
+                        :class="[
+                          'h-9 w-9 flex justify-center items-center rounded-xl transition-all duration-300 relative overflow-hidden group',
+                          colorMode.preference === theme.value
+                            ? 'bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25'
+                            : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200',
+                        ]"
+                      >
+                        <!-- Active background glow -->
+                        <div
+                          v-if="colorMode.preference === theme.value"
+                          class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-20 blur-lg"
+                        ></div>
 
-                      <i class="bi relative z-10" :class="theme.icon"></i>
+                        <i class="bi relative z-10" :class="theme.icon"></i>
 
-                      <!-- Hover effect -->
-                      <div
-                        v-if="currentTheme !== theme.value"
-                        class="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all duration-300 opacity-0 group-hover:opacity-100"
-                      ></div>
-                    </button>
+                        <!-- Hover effect -->
+                        <div
+                          v-if="colorMode.preference !== theme.value"
+                          class="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all duration-300 opacity-0 group-hover:opacity-100"
+                        ></div>
+                      </button>
+                    </ClientOnly>
                   </div>
                 </div>
 
@@ -357,6 +360,7 @@ onMounted(async () => {
                       Logout dari akun
                     </p>
                   </div>
+                  <Spinner v-if="isLoading" class="mr-2" />
                 </button>
               </div>
             </div>

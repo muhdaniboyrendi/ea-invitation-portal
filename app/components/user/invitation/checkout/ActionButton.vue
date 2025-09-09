@@ -1,8 +1,11 @@
 <script setup>
+const { createPayment } = usePaymentStore();
+const { $midtrans } = useNuxtApp();
+const router = useRouter();
+
 const props = defineProps(["package"]);
 
 const isProcessing = ref(false);
-
 const promoCode = ref("");
 
 const applyPromo = () => {
@@ -19,27 +22,75 @@ const applyPromo = () => {
 };
 
 const submitOrder = async () => {
-  isProcessing.value = true;
-
-  // Simulate API call
   try {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    isProcessing.value = true;
 
-    // Show success modal
-    showSuccessModal.value = true;
-    isProcessing.value = false;
+    const orderData = await createPayment(props.package.id);
 
-    console.log("Order submitted:", {
-      customer: customerInfo.value,
-      cart: cart.value,
-      paymentMethod: selectedPayment.value,
-    });
+    if (orderData?.snap_token) {
+      $midtrans.openSnapPayment(orderData.snap_token, {
+        onSuccess: (result) => handlePaymentSuccess(result),
+        // onPending: (result) => handlePaymentPending(result),
+        // onError: (result) => handlePaymentError(result),
+        onClose: () => handlePaymentClosed(),
+      });
+    } else {
+      console.error("No snap token received");
+    }
   } catch (error) {
-    console.error("Order submission failed:", error);
+    console.error("Error processing payment:", error);
+    toast.error({
+      title: "Error",
+      description:
+        error.message || "Terjadi kesalahan saat memproses pembayaran",
+    });
+  } finally {
     isProcessing.value = false;
-    alert("Terjadi kesalahan. Silakan coba lagi.");
   }
 };
+
+const handlePaymentSuccess = async (result) => {
+  // toast.success({
+  //   title: "Pembayaran Berhasil",
+  //   description: `Order ID: ${result.order_id}`,
+  // });
+
+  // paymentStore.updatePaymentStatus(result.order_id, 'success');
+
+  router.push(`/dashboard/invitation/create/${result.order_id}`);
+};
+
+// const handlePaymentPending = (result) => {
+//   toast.info({
+//     title: "Pembayaran Pending",
+//     description: `Silakan selesaikan pembayaran Anda. Order ID: ${result.order_id}`,
+//   });
+
+//   // Anda bisa memperbarui status order di store jika diperlukan
+//   paymentStore.updatePaymentStatus(result.order_id, 'pending');
+// };
+
+// const handlePaymentError = (result) => {
+//   toast.error({
+//     title: "Pembayaran Gagal",
+//     description: result.status_message || "Terjadi kesalahan saat memproses pembayaran",
+//   });
+
+//   // Anda bisa memperbarui status order di store jika diperlukan
+//   paymentStore.updatePaymentStatus(result.order_id, 'error');
+// };
+
+// const handlePaymentClosed = () => {
+//   toast.info({
+//     title: "Pembayaran Ditutup",
+//     description:
+//       "Anda menutup halaman pembayaran tanpa menyelesaikan transaksi",
+//   });
+// };
+
+onUnmounted(() => {
+  paymentStore.resetPaymentState();
+});
 </script>
 
 <template>

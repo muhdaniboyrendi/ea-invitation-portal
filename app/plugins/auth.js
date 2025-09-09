@@ -1,10 +1,13 @@
 // plugins/auth.js
 export default defineNuxtPlugin(async (nuxtApp) => {
-  const { fetchUser } = useAuthStore();
+  const { initializeUser } = useAuthStore();
+  const { isLoggedIn } = storeToRefs(useAuthStore());
 
-  try {
-    await fetchUser();
-  } catch (error) {
-    console.error("User unauthenticated:", error);
+  if (!isLoggedIn.value) {
+    try {
+      await initializeUser();
+    } catch (error) {
+      //
+    }
   }
 });
