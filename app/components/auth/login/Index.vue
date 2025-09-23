@@ -1,6 +1,6 @@
 <script setup>
 const { login } = useAuthStore();
-const { loginWithGoogle } = useAuthStore();
+const { loginWithGoogleRedirect } = useAuthStore();
 
 const form = reactive({
   email: "",
@@ -31,17 +31,21 @@ const handleLogin = async () => {
   }
 };
 
-const handleGoogleLogin = async () => {
-  isLoadingGoogle.value = true;
-
+const handleGoogleRedirect = async () => {
   try {
-    await loginWithGoogle();
-  } catch (error) {
-    console.error("Google login error:", error);
+    isLoading.value = true
+    
+    await loginWithGoogleRedirect()
+  } catch (err) {
+    console.error("Google Login error:", err)
+    isLoginFailed.value = true
+    setTimeout(() => {
+      isLoginFailed.value = false
+    }, 5000)
   } finally {
-    isLoadingGoogle.value = false;
+    isLoading.value = false
   }
-};
+}
 </script>
 
 <template>
@@ -234,7 +238,8 @@ const handleGoogleLogin = async () => {
             <!-- Social Login -->
             <div class="space-y-3">
               <button
-                @click="handleGoogleLogin"
+                @click="handleGoogleRedirect"
+                :disabled="isLoading"
                 type="button"
                 class="w-full px-4 py-3 backdrop-blur-md bg-white/5 hover:bg-white/10 border border-white/20 hover:border-white/30 text-white font-medium rounded-xl flex items-center justify-center space-x-2 transition-all duration-300 hover:scale-105"
               >

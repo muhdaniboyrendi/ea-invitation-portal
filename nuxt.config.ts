@@ -11,10 +11,15 @@ export default defineNuxtConfig({
   modules: ["@nuxtjs/color-mode", "@pinia/nuxt", "@nuxt/image"],
   runtimeConfig: {
     public: {
+      appUrl: process.env.APP_URL || 'http://localhost:3000',
+      
       // API
       apiBaseUrl: process.env.API_BASE_URL || "http://127.0.0.1:8000/api",
       storageBaseUrl:
         process.env.STORAGE_BASE_URL || "http://127.0.0.1:8000/storage",
+      
+      // Google OAuth
+      googleClientId: process.env.GOOGLE_CLIENT_ID || '',
 
       // Midtrans
       midtransClientKey: process.env.MIDTRANS_CLIENT_KEY || "",

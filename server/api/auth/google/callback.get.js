@@ -1,3 +1,4 @@
+// server/api/auth/google/callback.get.js
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   const apiBaseUrl = config.public.apiBaseUrl;
@@ -6,36 +7,25 @@ export default defineEventHandler(async (event) => {
   try {
     const response = await $fetch(`${apiBaseUrl}/auth/google/callback`, {
       method: "GET",
-      params: query,
+      query: query, 
     });
 
-    if (response && response.status && response.data.token) {
+    if (response?.data?.token) {
       setCookie(event, "auth_token", response.data.token, {
         httpOnly: true,
         path: "/",
         secure: process.env.NODE_ENV !== "development",
-        maxAge: 60 * 60 * 24 * 7,
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 7, // 1 week
       });
-
-      setCookie(event, "user_data", JSON.stringify(response.data.user), {
-        path: "/",
-        secure: process.env.NODE_ENV !== "development",
-        maxAge: 60 * 60 * 24 * 7,
-      });
-
-      return sendRedirect(event, "/");
     }
 
-    return sendRedirect(
-      event,
-      `/login?error=${encodeURIComponent("Authentication failed")}`
-    );
+    return response;
   } catch (error) {
-    return sendRedirect(
-      event,
-      `/login?error=${encodeURIComponent(
-        error.message || "Authentication failed"
-      )}`
-    );
+    throw createError({
+      statusCode: error.status || 500,
+      statusMessage: error.message || "Authentication failed",
+      data: { errors: error.data?.errors || error.data?.error || {} },
+    });
   }
 });

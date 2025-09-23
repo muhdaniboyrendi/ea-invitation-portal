@@ -38,7 +38,7 @@ export const useAuthStore = defineStore("auth", () => {
       });
 
       user.value = response.data.user;
-      // Gunakan nextTick untuk memastikan state update
+
       await nextTick();
       user.value.role === "admin"
         ? await navigateTo("/dashboard")
@@ -92,23 +92,38 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  const loginWithGoogle = async () => {
-    window.location.href = `${apiBaseUrl}/auth/google`;
-  };
-
-  const handleGoogleCallback = async (code) => {
+  const loginWithGoogleRedirect = async () => {
     try {
-      const response = await $fetch(`/api/auth/google/callback`, {
+      const response = await $fetch(`${apiBaseUrl}/auth/google/redirect`, {
         method: "GET",
-        query: { code },
       });
 
-      await fetchUser();
-      await nextTick();
+      window.location.href = response.data.auth_url;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
 
-      user.value?.role === "admin"
-        ? await navigateTo("/dashboard")
-        : await navigateTo("/");
+  const handleGoogleCallback = async (code, state = null) => {
+    try {
+      const query = { code };
+      if (state) query.state = state;
+
+      const response = await $fetch(`/api/auth/google/callback`, {
+        method: "GET",
+        query,
+      });
+
+      if (response?.data?.user) {
+        user.value = response.data.user;
+        await nextTick();
+
+        response.data.user?.role === "admin"
+          ? await navigateTo("/dashboard")
+          : await navigateTo("/");
+      } else {
+        throw new Error("No user data returned");
+      }
 
       return response;
     } catch (error) {
@@ -117,14 +132,19 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   return {
+    // State
     user,
     isLoggedIn,
+
+    // Regular Auth
     register,
     login,
     logout,
     initializeUser,
     fetchUser,
-    loginWithGoogle,
+
+    // Google OAuth Methods
+    loginWithGoogleRedirect,
     handleGoogleCallback,
   };
 });

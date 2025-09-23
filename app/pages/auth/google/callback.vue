@@ -1,3 +1,4 @@
+<!-- pages/auth/google/callback.vue -->
 <script setup>
 const { handleGoogleCallback } = useAuthStore();
 const route = useRoute();
@@ -5,16 +6,17 @@ const route = useRoute();
 onMounted(async () => {
   if (route.query.code) {
     try {
-      handleGoogleCallback(route.query.code);
+      await handleGoogleCallback(route.query.code, route.query.state);
     } catch (error) {
       console.error("Failed to process authentication callback:", error);
-      navigateTo(
+      console.error(error.validationErrors);
+      await navigateTo(
         "/login?error=" +
           encodeURIComponent(error.message || "Authentication failed")
       );
     }
   } else {
-    navigateTo(
+    await navigateTo(
       "/login?error=" + encodeURIComponent("Authentication data missing")
     );
   }
