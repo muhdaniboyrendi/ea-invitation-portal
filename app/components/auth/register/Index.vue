@@ -1,5 +1,6 @@
 <script setup>
 const { register } = useAuthStore();
+const { loginWithGoogleRedirect } = useAuthStore();
 
 const form = reactive({
   name: "",
@@ -13,6 +14,7 @@ const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 const agreeToTerms = ref(false);
 const isLoading = ref(false);
+const isLoadingGoogle = ref(false);
 const error = ref(false);
 const errorMessage = ref("");
 
@@ -232,7 +234,22 @@ const handleRegister = async () => {
   }
 };
 
-// Format phone number as user types
+const handleGoogleRedirect = async () => {
+  try {
+    isLoadingGoogle.value = true;
+
+    await loginWithGoogleRedirect();
+  } catch (err) {
+    console.error("Google Login error:", err);
+    isLoginFailed.value = true;
+    setTimeout(() => {
+      isLoginFailed.value = false;
+    }, 5000);
+  } finally {
+    isLoadingGoogle.value = false;
+  }
+};
+
 const formatPhoneNumber = (value) => {
   // Remove all non-digits
   let cleaned = value.replace(/\D/g, "");
@@ -247,7 +264,6 @@ const formatPhoneNumber = (value) => {
   return cleaned;
 };
 
-// Handle phone input
 const handlePhoneInput = (event) => {
   const value = event.target.value;
   form.phone = formatPhoneNumber(value);
@@ -697,10 +713,16 @@ const handlePhoneInput = (event) => {
             <!-- Social Register -->
             <div class="space-y-3">
               <button
+                @click="handleGoogleRedirect"
+                :disabled="isLoading"
                 type="button"
                 class="w-full px-4 py-3 backdrop-blur-md bg-white/5 hover:bg-white/10 border border-white/20 hover:border-white/30 text-white font-medium rounded-xl flex items-center justify-center space-x-2 transition-all duration-300 hover:scale-105"
               >
-                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                <svg
+                  v-if="!isLoadingGoogle"
+                  class="w-5 h-5"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     fill="#4285F4"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -718,6 +740,10 @@ const handlePhoneInput = (event) => {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
+                <div
+                  v-else
+                  class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"
+                ></div>
                 <span>Daftar dengan Google</span>
               </button>
             </div>
@@ -739,28 +765,6 @@ const handlePhoneInput = (event) => {
             <div
               class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 rounded-b-3xl"
             ></div>
-          </div>
-        </div>
-
-        <!-- Additional Features -->
-        <div class="mt-8 grid grid-cols-3 gap-4 text-center">
-          <div class="group">
-            <div class="flex items-center justify-center mb-2">
-              <div class="w-2 h-2 bg-cyan-400 rounded-full mr-2"></div>
-              <span class="text-white/60 text-sm">Secure</span>
-            </div>
-          </div>
-          <div class="group">
-            <div class="flex items-center justify-center mb-2">
-              <div class="w-2 h-2 bg-purple-400 rounded-full mr-2"></div>
-              <span class="text-white/60 text-sm">Fast</span>
-            </div>
-          </div>
-          <div class="group">
-            <div class="flex items-center justify-center mb-2">
-              <div class="w-2 h-2 bg-pink-400 rounded-full mr-2"></div>
-              <span class="text-white/60 text-sm">Reliable</span>
-            </div>
           </div>
         </div>
 

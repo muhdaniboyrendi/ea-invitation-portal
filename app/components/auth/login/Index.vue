@@ -33,19 +33,19 @@ const handleLogin = async () => {
 
 const handleGoogleRedirect = async () => {
   try {
-    isLoading.value = true
-    
-    await loginWithGoogleRedirect()
+    isLoadingGoogle.value = true;
+
+    await loginWithGoogleRedirect();
   } catch (err) {
-    console.error("Google Login error:", err)
-    isLoginFailed.value = true
+    console.error("Google Login error:", err);
+    isLoginFailed.value = true;
     setTimeout(() => {
-      isLoginFailed.value = false
-    }, 5000)
+      isLoginFailed.value = false;
+    }, 5000);
   } finally {
-    isLoading.value = false
+    isLoadingGoogle.value = false;
   }
-}
+};
 </script>
 
 <template>
