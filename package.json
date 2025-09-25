@@ -16,6 +16,7 @@
     "@tailwindcss/vite": "^4.1.12",
     "bootstrap-icons": "^1.13.1",
     "nuxt": "^4.0.3",
+    "nuxt-charts": "^0.2.4",
     "pinia": "^3.0.3",
     "tailwindcss": "^4.1.12",
     "vue": "^3.5.20",

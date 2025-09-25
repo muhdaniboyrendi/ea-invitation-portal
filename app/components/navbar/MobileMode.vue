@@ -1,26 +1,67 @@
 <script setup>
+const { user } = useAuthStore();
 const route = useRoute();
 
 const routelist = ref([
-  { name: "beranda", label: "Beranda", path: "/", icon: "bi-house-door" },
+  {
+    name: "beranda",
+    label: "Beranda",
+    path: "/",
+    role: "user",
+    icon: "bi-house-door",
+  },
+  {
+    name: "dashboard",
+    label: "Dashboard",
+    path: "/dashboard",
+    role: "admin",
+    icon: "bi-graph-up-arrow",
+  },
+  {
+    name: "paket",
+    label: "Paket",
+    path: "/packages",
+    role: "admin",
+    icon: "bi-box-seam",
+  },
+  {
+    name: "tema",
+    label: "Tema",
+    path: "/themes",
+    role: "admin",
+    icon: "bi-palette2",
+  },
+  {
+    name: "musik",
+    label: "Musik",
+    path: "/musics",
+    role: "admin",
+    icon: "bi-music-note-list",
+  },
   {
     name: "undangan",
     label: "Undangan",
     path: "/invitation",
+    role: "user",
     icon: "bi-envelope",
   },
   {
     name: "transaksi",
     label: "Transaksi",
     path: "/transaction",
+    role: "user",
     icon: "bi-wallet2",
   },
-  { name: "menu", label: "Menu", path: "/menu", icon: "bi-list" },
+  { name: "menu", label: "Menu", path: "/menu", role: "user", icon: "bi-list" },
 ]);
+
+const filteredRoutes = computed(() => {
+  return routelist.value.filter((routeItem) => routeItem.role === user.role);
+});
 
 const activeTab = computed(() => {
   const path = route.path;
-  const activeRoute = routelist.value.find((route) => route.path === path);
+  const activeRoute = filteredRoutes.value.find((route) => route.path === path);
   return activeRoute ? activeRoute.name : "beranda";
 });
 </script>
@@ -41,7 +82,7 @@ const activeTab = computed(() => {
     <nav class="relative px-6 py-2">
       <div class="flex justify-around items-center max-w-sm mx-auto">
         <NuxtLink
-          v-for="(route, index) in routelist"
+          v-for="(route, index) in filteredRoutes"
           :key="index"
           :to="route.path"
           class="group relative flex flex-col items-center justify-center transition-all duration-300 ease-out"

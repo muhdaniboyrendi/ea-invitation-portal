@@ -4,7 +4,9 @@
     <div
       class="relative p-6 bg-off-white dark:bg-gray-900 rounded-3xl border border-dark/10 dark:border-white/10 shadow-xl"
     >
-      <div class="flex items-center justify-between">
+      <div
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-8"
+      >
         <!-- Title Section -->
         <div class="flex items-center space-x-4">
           <div class="relative">
@@ -27,6 +29,12 @@
             </h2>
           </div>
         </div>
+
+        <button
+          class="py-3 px-4 font-semibold rounded-xl bg-linear-to-r from-blue-500 to-purple-600 text-white hover:scale-105 active:scale-95 transition-all duration-300"
+        >
+          Tambah Tema
+        </button>
       </div>
     </div>
   </div>

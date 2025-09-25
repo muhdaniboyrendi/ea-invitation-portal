@@ -131,7 +131,7 @@ const getCurrentCategoryName = computed(() => {
 
 <template>
   <div class="grid gap-6">
-    <UserThemesHeader />
+    <ThemesHeader />
 
     <div
       class="relative p-6 bg-off-white dark:bg-gray-900 rounded-3xl border border-dark/10 dark:border-white/10 shadow-xl"
@@ -192,7 +192,7 @@ const getCurrentCategoryName = computed(() => {
         v-if="filteredThemes && filteredThemes.length > 0"
         class="flex flex-wrap justify-center gap-8"
       >
-        <UserThemesCard
+        <ThemesCard
           v-for="theme in filteredThemes"
           :key="theme.id"
           :theme="theme"

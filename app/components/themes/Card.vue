@@ -46,7 +46,9 @@ const props = defineProps(["theme"]);
               {{ props.theme?.name || "Untitled Theme" }}
             </h3>
           </div>
-          <span class="py-1 px-2 rounded-lg bg-black/15 dark:bg-white/10 text-sm text-black/80 dark:text-white/80">
+          <span
+            class="py-1 px-2 rounded-lg bg-black/15 dark:bg-white/10 text-sm text-black/80 dark:text-white/80"
+          >
             {{ props.theme?.theme_category?.name || "Uncategorized" }}
           </span>
         </div>

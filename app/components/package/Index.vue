@@ -66,16 +66,18 @@ const packagesList = [
   <div
     class="relative bg-off-white dark:bg-gray-900 rounded-3xl p-4 sm:pt-8 md:p-8 md:pt-12 shadow-2xl border border-white/30 dark:border-gray-700/30 overflow-hidden"
   >
-    <div v-if="packages" class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-x-6 gap-y-8">
-      <UserPackageCard v-for="pkg in packages" :key="pkg.id" :package="pkg" />
+    <div
+      v-if="packages"
+      class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-x-6 gap-y-8"
+    >
+      <PackageCard v-for="pkg in packages" :key="pkg.id" :package="pkg" />
     </div>
 
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-x-6 gap-y-8">
-      <UserPackageCard
-        v-for="pkg in packagesList"
-        :key="pkg.id"
-        :package="pkg"
-      />
+    <div
+      v-else
+      class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-x-6 gap-y-8"
+    >
+      <PackageCard v-for="pkg in packagesList" :key="pkg.id" :package="pkg" />
     </div>
   </div>
 </template>
