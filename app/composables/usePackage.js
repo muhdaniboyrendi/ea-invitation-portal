@@ -17,6 +17,15 @@ export const usePackageStore = defineStore("package", () => {
     },
   });
 
+  const handleApiError = (error) => {
+    const err = new Error(
+      error.data?.message || "Terjadi kesalahan pada server"
+    );
+    err.status = error.status || error.data?.statusCode || 500;
+    err.validationErrors = error.data?.data?.errors || error.data?.errors || {};
+    return err;
+  };
+
   const fetchPackage = async (id) => {
     try {
       const response = await $fetch(`${apiBaseUrl}/packages/${id}`, {
@@ -29,8 +38,32 @@ export const usePackageStore = defineStore("package", () => {
 
       return response.data;
     } catch (error) {
-      console.error("Error fetching theme:", error);
-      throw new Error("Failed to load theme details. Please try again.");
+      throw handleApiError(error);
+    }
+  };
+
+  const createPackage = async (packageData) => {
+    try {
+      const response = await $fetch(`/api/packages/create`, {
+        method: "POST",
+        body: packageData,
+      });
+
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
+  const deletePackage = async (packageId) => {
+    try {
+      const response = await $fetch(`/api/packages/${packageId}`, {
+        method: "DELETE",
+      });
+
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
     }
   };
 
@@ -40,5 +73,7 @@ export const usePackageStore = defineStore("package", () => {
     pending,
     refresh,
     fetchPackage,
+    createPackage,
+    deletePackage,
   };
 });

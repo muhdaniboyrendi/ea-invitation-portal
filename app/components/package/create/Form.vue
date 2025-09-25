@@ -1,5 +1,6 @@
 <script setup>
-// Form data
+const { createPackage, refresh } = usePackageStore();
+
 const formData = reactive({
   name: "",
   price: "",
@@ -7,11 +8,13 @@ const formData = reactive({
   features: [""],
 });
 
-// Form validation
 const errors = ref({});
 const isSubmitting = ref(false);
+const isSuccess = ref(false);
+const isError = ref(false);
+const errorMessage = ref("");
+const isFormTouched = ref(false); // Flag untuk mengetahui apakah form sudah pernah diinteraksi
 
-// Feature management
 const addFeature = () => {
   formData.features.push("");
 };
@@ -22,8 +25,10 @@ const removeFeature = (index) => {
   }
 };
 
-// Real-time validation functions
 const validateName = () => {
+  // Jangan validasi jika form belum pernah disentuh
+  if (!isFormTouched.value) return true;
+
   if (!formData.name.trim()) {
     errors.value.name = "Nama paket wajib diisi";
     return false;
@@ -37,6 +42,9 @@ const validateName = () => {
 };
 
 const validatePrice = () => {
+  // Jangan validasi jika form belum pernah disentuh
+  if (!isFormTouched.value) return true;
+
   if (!formData.price || formData.price === "") {
     errors.value.price = "Harga wajib diisi";
     return false;
@@ -66,6 +74,9 @@ const validateDiscount = () => {
 };
 
 const validateFeatures = () => {
+  // Jangan validasi jika form belum pernah disentuh
+  if (!isFormTouched.value) return true;
+
   const validFeatures = formData.features.filter((f) => f.trim());
   if (validFeatures.length === 0) {
     errors.value.features = "Minimal harus ada 1 fitur";
@@ -82,12 +93,15 @@ watch(() => formData.price, validatePrice);
 watch(() => formData.discount, validateDiscount);
 watch(() => formData.features, validateFeatures, { deep: true });
 
-// Complete form validation
+// Complete form validation untuk submit
 const validateForm = () => {
-  const nameValid = validateName();
-  const priceValid = validatePrice();
-  const discountValid = validateDiscount();
-  const featuresValid = validateFeatures();
+  const nameValid = formData.name.trim() && formData.name.trim().length >= 3;
+  const priceValid =
+    formData.price && formData.price > 0 && formData.price <= 1000000000;
+  const discountValid =
+    formData.discount === "" ||
+    (formData.discount >= 0 && formData.discount <= 100);
+  const featuresValid = formData.features.filter((f) => f.trim()).length > 0;
 
   return nameValid && priceValid && discountValid && featuresValid;
 };
@@ -102,11 +116,22 @@ const isFormValid = computed(() => {
   );
 });
 
-// Submit formData
 const submitForm = async () => {
+  // Set form sebagai sudah disentuh untuk mengaktifkan validasi
+  isFormTouched.value = true;
+
+  // Panggil validasi sekali lagi sebelum submit
+  validateName();
+  validatePrice();
+  validateDiscount();
+  validateFeatures();
+
   if (!validateForm()) return;
 
   isSubmitting.value = true;
+  // Reset alerts sebelum submit
+  isSuccess.value = false;
+  isError.value = false;
 
   try {
     const cleanFeatures = formData.features.filter((f) => f.trim());
@@ -118,24 +143,35 @@ const submitForm = async () => {
       features: cleanFeatures,
     };
 
-    console.log("Package data:", packageData);
+    await createPackage(packageData);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    alert("Paket berhasil ditambahkan!");
-
+    isSuccess.value = true;
     resetForm();
+    refresh();
+
+    setTimeout(() => {
+      isSuccess.value = false;
+    }, 5000);
   } catch (error) {
     console.error("Error creating package:", error);
-    alert("Gagal menambahkan paket. Silakan coba lagi.");
+    isError.value = true;
+    errorMessage.value =
+      error?.response?.data?.message ||
+      "Gagal menambahkan paket. Silakan coba lagi.";
+
+    setTimeout(() => {
+      isError.value = false;
+      errorMessage.value = "";
+    }, 5000);
   } finally {
     isSubmitting.value = false;
   }
 };
 
 const resetForm = () => {
-  // Reset reactive object properly
+  // Reset flag form touched agar validasi tidak langsung muncul
+  isFormTouched.value = false;
+
   Object.assign(formData, {
     name: "",
     price: "",
@@ -143,6 +179,14 @@ const resetForm = () => {
     features: [""],
   });
   errors.value = {};
+  errorMessage.value = "";
+};
+
+// Function untuk menandai form sudah disentuh saat user mulai mengetik
+const markFormAsTouched = () => {
+  if (!isFormTouched.value) {
+    isFormTouched.value = true;
+  }
 };
 
 // Calculate discounted price
@@ -156,7 +200,7 @@ const discountedPrice = computed(() => {
 
 <template>
   <!-- Form Section -->
-  <div class="bg-white dark:bg-gray-900 rounded-3xl shadow-xl p-8">
+  <div class="bg-off-white dark:bg-gray-900 rounded-3xl shadow-xl p-8">
     <h2
       class="text-2xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center gap-3"
     >
@@ -168,6 +212,28 @@ const discountedPrice = computed(() => {
       Detail Paket
     </h2>
 
+    <!-- Success Alert -->
+    <Transition name="fade">
+      <div
+        v-if="isSuccess"
+        class="w-full rounded-2xl p-6 bg-green-100 dark:bg-green-950 border border-green-600 dark:border-green-500 text-green-600 dark:text-green-500 font-medium mb-6 flex items-center gap-3"
+      >
+        <i class="bi bi-check-circle-fill text-lg"></i>
+        <p>Paket berhasil ditambahkan!</p>
+      </div>
+    </Transition>
+
+    <!-- Error Alert -->
+    <Transition name="fade">
+      <div
+        v-if="isError"
+        class="w-full rounded-2xl p-6 bg-red-100 dark:bg-red-950 border border-red-600 dark:border-red-500 text-red-600 dark:text-red-500 font-medium mb-6 flex items-center gap-3"
+      >
+        <i class="bi bi-exclamation-triangle-fill text-lg"></i>
+        <p>{{ errorMessage }}</p>
+      </div>
+    </Transition>
+
     <form @submit.prevent="submitForm" class="space-y-6">
       <!-- Package Name -->
       <div>
@@ -178,9 +244,10 @@ const discountedPrice = computed(() => {
         </label>
         <input
           v-model="formData.name"
+          @input="markFormAsTouched"
           type="text"
           placeholder="Contoh: Basic Wedding"
-          class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 dark:text-slate-300 border-2 rounded-xl focus:outline-none transition-colors"
+          class="w-full px-4 py-3 bg-white dark:bg-gray-800 dark:text-slate-300 border-2 rounded-xl focus:outline-none transition-colors"
           :class="
             errors.name
               ? 'border-red-500 focus:border-red-500'
@@ -208,10 +275,11 @@ const discountedPrice = computed(() => {
           </label>
           <input
             v-model="formData.price"
+            @input="markFormAsTouched"
             type="number"
             min="1"
             placeholder="Masukan harga dalam Rupiah"
-            class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 dark:text-slate-300 border-2 rounded-xl focus:outline-none transition-colors"
+            class="w-full px-4 py-3 bg-white dark:bg-gray-800 dark:text-slate-300 border-2 rounded-xl focus:outline-none transition-colors"
             :class="
               errors.price
                 ? 'border-red-500 focus:border-red-500'
@@ -244,11 +312,12 @@ const discountedPrice = computed(() => {
           </label>
           <input
             v-model="formData.discount"
+            @input="markFormAsTouched"
             type="number"
             min="0"
             max="100"
             placeholder="Masukan diskon jika ada"
-            class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 dark:text-slate-300 border-2 rounded-xl focus:outline-none transition-colors"
+            class="w-full px-4 py-3 bg-white dark:bg-gray-800 dark:text-slate-300 border-2 rounded-xl focus:outline-none transition-colors"
             :class="
               errors.discount
                 ? 'border-red-500 focus:border-red-500'
@@ -300,9 +369,10 @@ const discountedPrice = computed(() => {
             <div class="flex-1">
               <input
                 v-model="formData.features[index]"
+                @input="markFormAsTouched"
                 type="text"
                 :placeholder="`Fitur ${index + 1}`"
-                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 dark:text-slate-300 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors"
+                class="w-full px-4 py-3 bg-white dark:bg-gray-800 dark:text-slate-300 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors"
               />
             </div>
             <button
@@ -332,7 +402,7 @@ const discountedPrice = computed(() => {
           type="button"
           @click="resetForm"
           :disabled="isSubmitting"
-          class="flex-1 px-6 py-3 bg-gray-100 dark:bg-gray-800 dark:text-slate-300 text-gray-700 font-medium rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          class="flex-1 px-6 py-3 bg-gray-300 dark:bg-gray-800 dark:text-slate-300 text-gray-700 font-medium rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Reset
         </button>
@@ -343,7 +413,7 @@ const discountedPrice = computed(() => {
         >
           <span v-if="!isSubmitting">Simpan Paket</span>
           <span v-else class="flex items-center justify-center gap-2">
-            <i class="bi bi-arrow-repeat animate-spin"></i>
+            <Spinner />
             Menyimpan...
           </span>
         </button>

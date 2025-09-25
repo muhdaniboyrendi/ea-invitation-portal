@@ -1,11 +1,14 @@
 <script setup>
 const { user } = storeToRefs(useAuthStore());
+const { deletePackage, refresh } = usePackageStore();
 
 const props = defineProps(["package"]);
-const emit = defineEmits(["delete"]);
+const emit = defineEmits(["deleted"]);
 
 const showAllFeatures = ref(false);
 const showDeleteModal = ref(false);
+const isDeleting = ref(false);
+
 const maxFeatures = 3;
 
 const displayedFeatures = computed(() => {
@@ -31,9 +34,22 @@ const closeDeleteModal = () => {
   showDeleteModal.value = false;
 };
 
-const confirmDelete = () => {
-  emit("delete", props.package.id);
-  closeDeleteModal();
+const confirmDelete = async () => {
+  isDeleting.value = true;
+
+  try {
+    await deletePackage(props.package.id);
+
+    emit("deleted");
+
+    await refresh();
+  } catch (error) {
+    console.error("Error deleting package:", error);
+    // Optionally, show a user-friendly error message here
+  } finally {
+    closeDeleteModal();
+    isDeleting.value = false;
+  }
 };
 </script>
 
@@ -75,9 +91,10 @@ const confirmDelete = () => {
         <!-- Price -->
         <div class="relative">
           <div
+            v-if="props.package?.discount"
             class="absolute -top-4 right-0 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-full"
           >
-            20% OFF
+            {{ props.package.discount }}% OFF
           </div>
           <div class="flex items-baseline justify-center mb-2">
             <span
@@ -89,11 +106,16 @@ const confirmDelete = () => {
               "
             >
               <span class="text-base">Rp</span>
-              {{ formatRupiah(props.package.price) }}
+              {{ formatRupiah(props.package.final_price) }}
             </span>
           </div>
-          <div class="text-sm text-black/50 dark:text-white/50">
-            <span class="line-through">Rp 120.000</span>
+          <div
+            v-if="props.package?.discount"
+            class="text-sm text-black/50 dark:text-white/50"
+          >
+            <span class="line-through"
+              >Rp {{ formatRupiah(props.package.price) }}</span
+            >
           </div>
         </div>
       </div>
@@ -145,7 +167,7 @@ const confirmDelete = () => {
         >
           <div class="flex items-center gap-3">
             <div
-              class="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center"
+              class="h-12 aspect-square bg-red-100 dark:bg-red-900/30 rounded-2xl flex items-center justify-center"
             >
               <i
                 class="bi bi-exclamation-triangle-fill text-red-600 dark:text-red-400 text-xl"
@@ -176,7 +198,7 @@ const confirmDelete = () => {
         </div>
 
         <!-- Modal Footer -->
-        <div class="flex gap-6">
+        <div class="flex gap-3">
           <button
             @click="closeDeleteModal"
             class="flex-1 px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
@@ -187,7 +209,10 @@ const confirmDelete = () => {
             @click="confirmDelete"
             class="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white font-medium rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
           >
-            Hapus
+            <span v-if="isDeleting" class="flex gap-1 items-center"
+              ><Spinner /> Menghapus...</span
+            >
+            <span v-else>Hapus</span>
           </button>
         </div>
       </div>
