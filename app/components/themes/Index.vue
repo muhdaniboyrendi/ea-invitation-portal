@@ -131,7 +131,12 @@ const getCurrentCategoryName = computed(() => {
 
 <template>
   <div class="grid gap-6">
-    <ThemesHeader />
+    <Header
+      title="Tema Undangan"
+      subtitle="Daftar tema undangan yang tersedia untuk undangan anda."
+      button-text="Tambah Tema"
+      button-link="/themes/create"
+    />
 
     <div
       class="relative p-6 bg-off-white dark:bg-gray-900 rounded-3xl border border-dark/10 dark:border-white/10 shadow-xl"

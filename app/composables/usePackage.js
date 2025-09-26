@@ -55,6 +55,19 @@ export const usePackageStore = defineStore("package", () => {
     }
   };
 
+  const updatePackage = async (packageId, packageData) => {
+    try {
+      const response = await $fetch(`/api/packages/${packageId}`, {
+        method: "PUT",
+        body: packageData,
+      });
+
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
   const deletePackage = async (packageId) => {
     try {
       const response = await $fetch(`/api/packages/${packageId}`, {
@@ -74,6 +87,7 @@ export const usePackageStore = defineStore("package", () => {
     refresh,
     fetchPackage,
     createPackage,
+    updatePackage,
     deletePackage,
   };
 });
