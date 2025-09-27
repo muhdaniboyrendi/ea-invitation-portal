@@ -58,10 +58,7 @@ export const useThemeStore = defineStore("theme", () => {
   };
 
   const createTheme = async (themeData) => {
-    console.log(themeData)
-    
     const formData = new FormData();
-
     formData.append("name", themeData.name);
     formData.append("theme_category_id", themeData.theme_category_id);
     formData.append("link", themeData.link);
@@ -77,8 +74,13 @@ export const useThemeStore = defineStore("theme", () => {
         body: formData,
       });
 
-      return response.data;
+      if (response && response.data) {
+        return response.data;
+      }
+
+      throw new Error("No data returned from API");
     } catch (error) {
+      console.error("Error creating theme:", error);
       throw handleApiError(error);
     }
   };

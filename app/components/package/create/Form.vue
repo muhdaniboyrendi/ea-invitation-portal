@@ -1,6 +1,4 @@
 <script setup>
-import { z } from "zod";
-
 // Props
 const props = defineProps({
   packageId: {
@@ -14,23 +12,43 @@ const props = defineProps({
 const { createPackage, updatePackage, fetchPackage, refresh } =
   usePackageStore();
 
-// Validation schema
-const packageSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Nama paket wajib diisi")
-    .min(3, "Nama paket minimal 3 karakter"),
-  price: z
-    .number()
-    .min(1, "Harga harus lebih dari 0")
-    .max(1000000000, "Harga terlalu besar"),
-  discount: z
-    .number()
-    .min(0, "Diskon tidak boleh kurang dari 0")
-    .max(100, "Diskon tidak boleh lebih dari 100")
-    .optional(),
-  features: z.array(z.string().min(1)).min(1, "Minimal harus ada 1 fitur"),
-});
+// Regex patterns for validation
+const validationPatterns = {
+  name: {
+    required: /^.+$/,
+    minLength: /^.{3,}$/,
+    message: {
+      required: "Nama paket wajib diisi",
+      minLength: "Nama paket minimal 3 karakter",
+    },
+  },
+  price: {
+    number: /^\d+(\.\d+)?$/,
+    min: /^[1-9]\d*(\.\d+)?$/,
+    max: /^(?:[1-9]\d{0,8}|1000000000)(\.\d+)?$/,
+    message: {
+      required: "Harga wajib diisi",
+      number: "Harga harus berupa angka",
+      min: "Harga harus lebih dari 0",
+      max: "Harga terlalu besar",
+    },
+  },
+  discount: {
+    number: /^\d+(\.\d+)?$/,
+    range: /^(100(\.0+)?|\d{1,2}(\.\d+)?)$/,
+    message: {
+      number: "Diskon harus berupa angka",
+      range: "Diskon harus antara 0-100",
+    },
+  },
+  features: {
+    minArray: /^.+$/,
+    message: {
+      required: "Minimal harus ada 1 fitur",
+      empty: "Fitur tidak boleh kosong",
+    },
+  },
+};
 
 // Initial form state
 const initialFormState = {
@@ -42,7 +60,8 @@ const initialFormState = {
 
 // Reactive state
 const formData = reactive({ ...initialFormState });
-const validationErrors = ref({});
+const frontendErrors = ref({});
+const backendErrors = ref({});
 const ui = reactive({
   isSubmitting: false,
   isLoading: false,
@@ -55,14 +74,23 @@ const ui = reactive({
 // Computed
 const isEditMode = computed(() => props.packageId !== null);
 const isFormValid = computed(() => {
-  try {
-    const cleanData = getCleanFormData();
-    packageSchema.parse(cleanData);
-    return Object.keys(validationErrors.value).length === 0;
-  } catch {
-    return false;
-  }
+  // Check if no validation errors exist
+  const hasErrors = Object.keys(validationErrors.value).length > 0;
+
+  if (hasErrors) return false;
+
+  // Check if required fields are filled
+  const cleanData = getCleanFormData();
+  const hasValidFeatures =
+    cleanData.features.length > 0 && cleanData.features.every((f) => f.trim());
+
+  return !!(cleanData.name && cleanData.price && hasValidFeatures);
 });
+
+const validationErrors = computed(() => ({
+  ...frontendErrors.value,
+  ...backendErrors.value,
+}));
 
 const discountedPrice = computed(() => {
   if (!formData.price || !formData.discount) return null;
@@ -97,38 +125,151 @@ const showNotification = (type, message, duration = 5000) => {
 
 const resetForm = () => {
   Object.assign(formData, { ...initialFormState });
-  validationErrors.value = {};
+  frontendErrors.value = {};
+  backendErrors.value = {};
   ui.isFormTouched = false;
   ui.errorMessage = "";
 };
 
-// Validation
-const validateField = (field, value) => {
-  try {
-    const testData = { ...getCleanFormData(), [field]: value };
-    packageSchema.pick({ [field]: true }).parse({ [field]: testData[field] });
-    delete validationErrors.value[field];
-  } catch (error) {
-    if (error.errors?.length > 0) {
-      validationErrors.value[field] = error.errors[0].message;
-    }
+// Clear backend validation errors when user starts typing
+const clearBackendError = (field) => {
+  if (backendErrors.value[field]) {
+    delete backendErrors.value[field];
   }
 };
 
-const validateForm = () => {
-  try {
-    const cleanData = getCleanFormData();
-    packageSchema.parse(cleanData);
-    validationErrors.value = {};
-    return true;
-  } catch (error) {
-    const errors = {};
-    error.errors?.forEach((err) => {
-      errors[err.path[0]] = err.message;
-    });
-    validationErrors.value = errors;
+// Set backend validation errors
+const setBackendValidationErrors = (errors) => {
+  if (!errors || typeof errors !== "object") return;
+
+  backendErrors.value = {};
+
+  Object.keys(errors).forEach((field) => {
+    if (errors[field]) {
+      if (Array.isArray(errors[field])) {
+        backendErrors.value[field] = errors[field][0];
+      } else {
+        backendErrors.value[field] = errors[field];
+      }
+    }
+  });
+};
+
+// Regex-based validation functions
+const validateField = (field, value) => {
+  // Clear previous frontend error
+  if (frontendErrors.value[field]) {
+    delete frontendErrors.value[field];
+  }
+
+  switch (field) {
+    case "name":
+      return validateName(value);
+    case "price":
+      return validatePrice(value);
+    case "discount":
+      return validateDiscount(value);
+    case "features":
+      return validateFeatures(value);
+    default:
+      return true;
+  }
+};
+
+const validateName = (value) => {
+  const trimmedValue = value ? value.trim() : "";
+
+  if (!validationPatterns.name.required.test(trimmedValue)) {
+    frontendErrors.value.name = validationPatterns.name.message.required;
     return false;
   }
+
+  if (!validationPatterns.name.minLength.test(trimmedValue)) {
+    frontendErrors.value.name = validationPatterns.name.message.minLength;
+    return false;
+  }
+
+  return true;
+};
+
+const validatePrice = (value) => {
+  const stringValue = value ? value.toString().trim() : "";
+
+  if (!stringValue) {
+    frontendErrors.value.price = validationPatterns.price.message.required;
+    return false;
+  }
+
+  if (!validationPatterns.price.number.test(stringValue)) {
+    frontendErrors.value.price = validationPatterns.price.message.number;
+    return false;
+  }
+
+  const numValue = Number(stringValue);
+
+  if (numValue <= 0) {
+    frontendErrors.value.price = validationPatterns.price.message.min;
+    return false;
+  }
+
+  if (numValue > 1000000000) {
+    frontendErrors.value.price = validationPatterns.price.message.max;
+    return false;
+  }
+
+  return true;
+};
+
+const validateDiscount = (value) => {
+  const stringValue = value ? value.toString().trim() : "";
+
+  // Discount is optional
+  if (!stringValue) return true;
+
+  if (!validationPatterns.discount.number.test(stringValue)) {
+    frontendErrors.value.discount = validationPatterns.discount.message.number;
+    return false;
+  }
+
+  const numValue = Number(stringValue);
+
+  if (numValue < 0 || numValue > 100) {
+    frontendErrors.value.discount = validationPatterns.discount.message.range;
+    return false;
+  }
+
+  return true;
+};
+
+const validateFeatures = (featuresArray) => {
+  if (!Array.isArray(featuresArray)) {
+    frontendErrors.value.features =
+      validationPatterns.features.message.required;
+    return false;
+  }
+
+  const validFeatures = featuresArray.filter((f) => f && f.trim());
+
+  if (validFeatures.length === 0) {
+    frontendErrors.value.features =
+      validationPatterns.features.message.required;
+    return false;
+  }
+
+  return true;
+};
+
+const validateForm = () => {
+  const cleanData = getCleanFormData();
+  let isValid = true;
+
+  // Validate all fields
+  if (!validateName(cleanData.name)) isValid = false;
+  if (!validatePrice(cleanData.price)) isValid = false;
+  if (!validateDiscount(formData.discount)) isValid = false;
+  if (!validateFeatures(formData.features)) isValid = false;
+
+  return isValid;
 };
 
 // Feature management
@@ -139,6 +280,10 @@ const addFeature = () => {
 const removeFeature = (index) => {
   if (formData.features.length > 1) {
     formData.features.splice(index, 1);
+    // Re-validate features after removal
+    if (ui.isFormTouched) {
+      validateField("features", formData.features);
+    }
   }
 };
 
@@ -188,12 +333,31 @@ const submitForm = async () => {
       `Error ${isEditMode.value ? "updating" : "creating"} package:`,
       error
     );
-    const message =
-      error?.response?.data?.message ||
-      `Gagal ${
-        isEditMode.value ? "memperbarui" : "menambahkan"
-      } paket. Silakan coba lagi.`;
-    showNotification("error", message);
+
+    // Handle backend validation errors
+    if (error?.validationErrors || error?.response?.data?.validationErrors) {
+      const backendErrors =
+        error.validationErrors || error.response.data.validationErrors;
+      setBackendValidationErrors(backendErrors);
+
+      // Show general error message
+      const generalMessage =
+        error?.message ||
+        error?.response?.data?.message ||
+        `Gagal ${
+          isEditMode.value ? "memperbarui" : "menambahkan"
+        } paket. Periksa form dan coba lagi.`;
+      showNotification("error", generalMessage);
+    } else {
+      // Handle other errors
+      const message =
+        error?.message ||
+        error?.response?.data?.message ||
+        `Gagal ${
+          isEditMode.value ? "memperbarui" : "menambahkan"
+        } paket. Silakan coba lagi.`;
+      showNotification("error", message);
+    }
   } finally {
     ui.isSubmitting = false;
   }
@@ -203,37 +367,93 @@ const markFormAsTouched = () => {
   ui.isFormTouched = true;
 };
 
-// Watchers
+// Enhanced input handlers with real-time validation
+const handleNameInput = () => {
+  ui.isFormTouched = true;
+  clearBackendError("name");
+  // Real-time validation with debounce
+  clearTimeout(window.nameValidationTimeout);
+  window.nameValidationTimeout = setTimeout(() => {
+    validateField("name", formData.name);
+  }, 300);
+};
+
+const handlePriceInput = () => {
+  ui.isFormTouched = true;
+  clearBackendError("price");
+  // Real-time validation with debounce
+  clearTimeout(window.priceValidationTimeout);
+  window.priceValidationTimeout = setTimeout(() => {
+    validateField("price", formData.price);
+  }, 300);
+};
+
+const handleDiscountInput = () => {
+  ui.isFormTouched = true;
+  clearBackendError("discount");
+  // Real-time validation with debounce
+  clearTimeout(window.discountValidationTimeout);
+  window.discountValidationTimeout = setTimeout(() => {
+    validateField("discount", formData.discount);
+  }, 300);
+};
+
+const handleFeatureInput = (index) => {
+  ui.isFormTouched = true;
+  clearBackendError("features");
+  // Real-time validation with debounce
+  clearTimeout(window.featuresValidationTimeout);
+  window.featuresValidationTimeout = setTimeout(() => {
+    validateField("features", formData.features);
+  }, 300);
+};
+
+// Watchers for real-time validation
 watch(
   () => formData.name,
   (newVal) => {
-    if (ui.isFormTouched) validateField("name", newVal.trim());
+    if (ui.isFormTouched) {
+      clearTimeout(window.nameValidationTimeout);
+      window.nameValidationTimeout = setTimeout(() => {
+        validateField("name", newVal);
+      }, 300);
+    }
   }
 );
 
 watch(
   () => formData.price,
   (newVal) => {
-    if (ui.isFormTouched && newVal) validateField("price", Number(newVal));
+    if (ui.isFormTouched && newVal) {
+      clearTimeout(window.priceValidationTimeout);
+      window.priceValidationTimeout = setTimeout(() => {
+        validateField("price", newVal);
+      }, 300);
+    }
   }
 );
 
 watch(
   () => formData.discount,
   (newVal) => {
-    if (ui.isFormTouched)
-      validateField("discount", newVal ? Number(newVal) : 0);
+    if (ui.isFormTouched) {
+      clearTimeout(window.discountValidationTimeout);
+      window.discountValidationTimeout = setTimeout(() => {
+        validateField("discount", newVal);
+      }, 300);
+    }
   }
 );
 
 watch(
   () => formData.features,
   (newVal) => {
-    if (ui.isFormTouched)
-      validateField(
-        "features",
-        newVal.filter((f) => f.trim())
-      );
+    if (ui.isFormTouched) {
+      clearTimeout(window.featuresValidationTimeout);
+      window.featuresValidationTimeout = setTimeout(() => {
+        validateField("features", newVal);
+      }, 300);
+    }
   },
   { deep: true }
 );
@@ -327,7 +547,7 @@ onMounted(() => {
           </label>
           <input
             v-model="formData.name"
-            @input="markFormAsTouched"
+            @input="handleNameInput"
             type="text"
             placeholder="Contoh: Basic Wedding"
             class="w-full px-4 py-3 bg-white dark:bg-gray-800 dark:text-slate-300 border-2 rounded-xl focus:outline-none transition-colors"
@@ -359,7 +579,7 @@ onMounted(() => {
             </label>
             <input
               v-model="formData.price"
-              @input="markFormAsTouched"
+              @input="handlePriceInput"
               type="number"
               min="1"
               placeholder="Masukan harga dalam Rupiah"
@@ -398,7 +618,7 @@ onMounted(() => {
             </label>
             <input
               v-model="formData.discount"
-              @input="markFormAsTouched"
+              @input="handleDiscountInput"
               type="number"
               min="0"
               max="100"
@@ -459,7 +679,7 @@ onMounted(() => {
               <div class="flex-1">
                 <input
                   v-model="formData.features[index]"
-                  @input="markFormAsTouched"
+                  @input="handleFeatureInput(index)"
                   type="text"
                   :placeholder="`Fitur ${index + 1}`"
                   class="w-full px-4 py-3 bg-white dark:bg-gray-800 dark:text-slate-300 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors"

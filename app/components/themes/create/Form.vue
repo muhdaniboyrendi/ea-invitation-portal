@@ -1,6 +1,4 @@
 <script setup>
-import { z } from "zod";
-
 // Props
 const props = defineProps({
   themeId: {
@@ -11,28 +9,34 @@ const props = defineProps({
 });
 
 // Composables
-const { createTheme, updateTheme, fetchTheme, refresh } = useThemeStore();
+const { createTheme, updateTheme, fetchTheme, themesRefresh } = useThemeStore();
 const { categories } = storeToRefs(useThemeCategoryStore());
 
-// Validation schema
-const themeSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Nama tema wajib diisi")
-    .min(3, "Nama tema minimal 3 karakter"),
-  theme_category_id: z.string().min(1, "Kategori tema wajib dipilih"),
-  link: z
-    .string()
-    .url("Link harus berupa URL yang valid")
-    .min(1, "Link tema wajib diisi"),
-  thumbnail: z
-    .any()
-    .refine(
-      (file) => file instanceof File || typeof file === "string",
-      "Thumbnail wajib diupload"
-    ),
-  is_premium: z.boolean(),
-});
+// Regex patterns for validation
+const validationPatterns = {
+  name: {
+    required: /^.+$/,
+    minLength: /^.{3,}$/,
+    message: {
+      required: "Nama tema wajib diisi",
+      minLength: "Nama tema minimal 3 karakter",
+    },
+  },
+  link: {
+    url: /^https?:\/\/(?:[-\w.])+(?:\.[a-zA-Z]{2,})+(?:\/[^?\s]*)?(?:\?[^#\s]*)?(?:#[^\s]*)?$/,
+    required: /^.+$/,
+    message: {
+      required: "Link tema wajib diisi",
+      url: "Link harus berupa URL yang valid",
+    },
+  },
+  category: {
+    required: /^.+$/,
+    message: {
+      required: "Kategori tema wajib dipilih",
+    },
+  },
+};
 
 // Initial form state
 const initialFormState = {
@@ -45,7 +49,8 @@ const initialFormState = {
 
 // Reactive state
 const formData = reactive({ ...initialFormState });
-const validationErrors = ref({});
+const frontendErrors = ref({});
+const backendErrors = ref({});
 const ui = reactive({
   isSubmitting: false,
   isLoading: false,
@@ -62,24 +67,26 @@ const thumbnailPreview = ref(null);
 // Computed
 const isEditMode = computed(() => props.themeId !== null);
 const isFormValid = computed(() => {
-  try {
-    const cleanData = getCleanFormData();
-    themeSchema.parse(cleanData);
-    return Object.keys(validationErrors.value).length === 0;
-  } catch {
-    return false;
-  }
+  // Check if no validation errors exist
+  const hasErrors = Object.keys(validationErrors.value).length > 0;
+
+  if (hasErrors) return false;
+
+  // Check if required fields are filled (using trimmed values for strings)
+  return !!(
+    formData.name.trim() &&
+    formData.theme_category_id &&
+    formData.link.trim() &&
+    formData.thumbnail
+  );
 });
+
+const validationErrors = computed(() => ({
+  ...frontendErrors.value,
+  ...backendErrors.value,
+}));
 
 // Utility functions
-const getCleanFormData = () => ({
-  name: formData.name.trim(),
-  theme_category_id: formData.theme_category_id,
-  link: formData.link.trim(),
-  thumbnail: formData.thumbnail,
-  is_premium: formData.is_premium,
-});
-
 const showNotification = (type, message, duration = 5000) => {
   if (type === "success") {
     ui.showSuccess = true;
@@ -98,7 +105,8 @@ const showNotification = (type, message, duration = 5000) => {
 
 const resetForm = () => {
   Object.assign(formData, { ...initialFormState });
-  validationErrors.value = {};
+  frontendErrors.value = {};
+  backendErrors.value = {};
   ui.isFormTouched = false;
   ui.errorMessage = "";
   thumbnailPreview.value = null;
@@ -109,83 +117,110 @@ const resetForm = () => {
 
 // Clear backend validation errors when user starts typing
 const clearBackendError = (field) => {
-  if (validationErrors.value[field] && ui.isFormTouched) {
-    delete validationErrors.value[field];
+  if (backendErrors.value[field]) {
+    delete backendErrors.value[field];
   }
 };
 
 // Set backend validation errors
-const setBackendValidationErrors = (backendErrors) => {
-  if (!backendErrors || typeof backendErrors !== "object") return;
+const setBackendValidationErrors = (errors) => {
+  if (!errors || typeof errors !== "object") return;
 
-  // Clear existing validation errors first
-  validationErrors.value = {};
+  backendErrors.value = {};
 
-  // Set backend validation errors
-  Object.keys(backendErrors).forEach((field) => {
-    if (backendErrors[field]) {
-      // Handle array of errors or single error
-      if (Array.isArray(backendErrors[field])) {
-        validationErrors.value[field] = backendErrors[field][0];
+  Object.keys(errors).forEach((field) => {
+    if (errors[field]) {
+      if (Array.isArray(errors[field])) {
+        backendErrors.value[field] = errors[field][0];
       } else {
-        validationErrors.value[field] = backendErrors[field];
+        backendErrors.value[field] = errors[field];
       }
     }
   });
 };
 
-// Validation
+// Regex-based validation functions
 const validateField = (field, value) => {
-  // Skip frontend validation if there's a backend error for this field
-  // Backend errors should only be cleared when user interacts with the field
-  if (validationErrors.value[field]) {
-    return;
+  // Clear previous frontend error
+  if (frontendErrors.value[field]) {
+    delete frontendErrors.value[field];
   }
 
-  try {
-    const testData = { ...getCleanFormData(), [field]: value };
-    themeSchema.pick({ [field]: true }).parse({ [field]: testData[field] });
-    delete validationErrors.value[field];
-  } catch (error) {
-    if (error.errors?.length > 0) {
-      validationErrors.value[field] = error.errors[0].message;
-    }
+  switch (field) {
+    case "name":
+      return validateName(value);
+    case "theme_category_id":
+      return validateCategory(value);
+    case "link":
+      return validateLink(value);
+    case "thumbnail":
+      return validateThumbnail(value);
+    default:
+      return true;
   }
 };
 
-const validateForm = () => {
-  try {
-    const cleanData = getCleanFormData();
-    themeSchema.parse(cleanData);
-    // Only clear frontend validation errors, keep backend errors
-    const backendErrors = {};
-    Object.keys(validationErrors.value).forEach((field) => {
-      // Keep errors that don't match our frontend validation messages
-      const frontendMessages = [
-        "Nama tema wajib diisi",
-        "Nama tema minimal 3 karakter",
-        "Kategori tema wajib dipilih",
-        "Link harus berupa URL yang valid",
-        "Link tema wajib diisi",
-        "Thumbnail wajib diupload",
-      ];
+const validateName = (value) => {
+  const trimmedValue = value ? value.trim() : "";
 
-      if (!frontendMessages.includes(validationErrors.value[field])) {
-        backendErrors[field] = validationErrors.value[field];
-      }
-    });
-    validationErrors.value = backendErrors;
-    return true;
-  } catch (error) {
-    const frontendErrors = {};
-    error.errors?.forEach((err) => {
-      frontendErrors[err.path[0]] = err.message;
-    });
-
-    // Merge with existing backend errors
-    validationErrors.value = { ...validationErrors.value, ...frontendErrors };
+  if (!validationPatterns.name.required.test(trimmedValue)) {
+    frontendErrors.value.name = validationPatterns.name.message.required;
     return false;
   }
+
+  if (!validationPatterns.name.minLength.test(trimmedValue)) {
+    frontendErrors.value.name = validationPatterns.name.message.minLength;
+    return false;
+  }
+
+  return true;
+};
+
+const validateCategory = (value) => {
+  if (!validationPatterns.category.required.test(value || "")) {
+    frontendErrors.value.theme_category_id =
+      validationPatterns.category.message.required;
+    return false;
+  }
+
+  return true;
+};
+
+const validateLink = (value) => {
+  const trimmedValue = value ? value.trim() : "";
+
+  if (!validationPatterns.link.required.test(trimmedValue)) {
+    frontendErrors.value.link = validationPatterns.link.message.required;
+    return false;
+  }
+
+  if (!validationPatterns.link.url.test(trimmedValue)) {
+    frontendErrors.value.link = validationPatterns.link.message.url;
+    return false;
+  }
+
+  return true;
+};
+
+const validateThumbnail = (value) => {
+  if (!value || (!(value instanceof File) && typeof value !== "string")) {
+    frontendErrors.value.thumbnail = "Thumbnail wajib diupload";
+    return false;
+  }
+
+  return true;
+};
+
+const validateForm = () => {
+  let isValid = true;
+
+  // Validate all fields using current form data
+  if (!validateName(formData.name)) isValid = false;
+  if (!validateCategory(formData.theme_category_id)) isValid = false;
+  if (!validateLink(formData.link)) isValid = false;
+  if (!validateThumbnail(formData.thumbnail)) isValid = false;
+
+  return isValid;
 };
 
 // File handling
@@ -196,9 +231,9 @@ const handleFileChange = (event) => {
   // Clear backend error for thumbnail field
   clearBackendError("thumbnail");
 
-  // Validate file type
-  const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-  if (!allowedTypes.includes(file.type)) {
+  // Validate file type using regex
+  const allowedTypesRegex = /^image\/(jpeg|jpg|png|webp)$/i;
+  if (!allowedTypesRegex.test(file.type)) {
     showNotification("error", "Format file harus JPG, PNG, atau WebP");
     return;
   }
@@ -265,7 +300,7 @@ const fetchThemeData = async () => {
   }
 };
 
-// Form submission
+// Form submission - SIMPLIFIED VERSION
 const submitForm = async () => {
   ui.isFormTouched = true;
 
@@ -273,30 +308,17 @@ const submitForm = async () => {
 
   ui.isSubmitting = true;
   try {
-    const themeData = getCleanFormData();
-
-    // Convert to FormData for file upload
-    const formDataToSend = new FormData();
-    Object.keys(themeData).forEach((key) => {
-      if (key === "thumbnail" && themeData[key] instanceof File) {
-        formDataToSend.append(key, themeData[key]);
-      } else if (key === "is_premium") {
-        formDataToSend.append(key, themeData[key] ? "1" : "0");
-      } else if (themeData[key] !== null) {
-        formDataToSend.append(key, themeData[key]);
-      }
-    });
-
+    // Send raw form data directly to the API functions
     if (isEditMode.value) {
-      await updateTheme(props.themeId, formDataToSend);
+      await updateTheme(props.themeId, formData);
       showNotification("success", "Tema berhasil diperbarui!");
     } else {
-      await createTheme(formDataToSend);
+      await createTheme(formData);
       showNotification("success", "Tema berhasil ditambahkan!");
       resetForm();
     }
 
-    refresh();
+    themesRefresh();
   } catch (error) {
     console.error(
       `Error ${isEditMode.value ? "updating" : "creating"} theme:`,
@@ -336,20 +358,32 @@ const markFormAsTouched = () => {
   ui.isFormTouched = true;
 };
 
-// Enhanced input handlers that clear backend errors
+// Enhanced input handlers that clear backend errors and trigger real-time validation
 const handleNameInput = () => {
-  markFormAsTouched();
+  ui.isFormTouched = true;
   clearBackendError("name");
+  // Real-time validation with debounce
+  clearTimeout(window.nameValidationTimeout);
+  window.nameValidationTimeout = setTimeout(() => {
+    validateField("name", formData.name);
+  }, 300);
 };
 
 const handleCategoryChange = () => {
-  markFormAsTouched();
+  ui.isFormTouched = true;
   clearBackendError("theme_category_id");
+  // Immediate validation for select
+  validateField("theme_category_id", formData.theme_category_id);
 };
 
 const handleLinkInput = () => {
-  markFormAsTouched();
+  ui.isFormTouched = true;
   clearBackendError("link");
+  // Real-time validation with debounce
+  clearTimeout(window.linkValidationTimeout);
+  window.linkValidationTimeout = setTimeout(() => {
+    validateField("link", formData.link);
+  }, 300);
 };
 
 const handlePremiumChange = () => {
@@ -357,32 +391,47 @@ const handlePremiumChange = () => {
   clearBackendError("is_premium");
 };
 
-// Watchers
+// Watchers for real-time validation
 watch(
   () => formData.name,
   (newVal) => {
-    if (ui.isFormTouched) validateField("name", newVal.trim());
+    if (ui.isFormTouched) {
+      clearTimeout(window.nameValidationTimeout);
+      window.nameValidationTimeout = setTimeout(() => {
+        validateField("name", newVal);
+      }, 300);
+    }
   }
 );
 
 watch(
   () => formData.theme_category_id,
   (newVal) => {
-    if (ui.isFormTouched) validateField("theme_category_id", newVal);
+    if (ui.isFormTouched) {
+      validateField("theme_category_id", newVal);
+    }
   }
 );
 
 watch(
   () => formData.link,
   (newVal) => {
-    if (ui.isFormTouched) validateField("link", newVal.trim());
+    if (ui.isFormTouched) {
+      clearTimeout(window.linkValidationTimeout);
+      window.linkValidationTimeout = setTimeout(() => {
+        validateField("link", newVal);
+      }, 300);
+    }
   }
 );
 
 watch(
   () => formData.is_premium,
   (newVal) => {
-    if (ui.isFormTouched) validateField("is_premium", newVal);
+    if (ui.isFormTouched) {
+      // Premium field doesn't need validation, but we keep consistency
+      clearBackendError("is_premium");
+    }
   }
 );
 

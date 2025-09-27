@@ -1,3 +1,4 @@
+// server/api/themes/create.post.js
 export default defineEventHandler(async (event) => {
   const token = getCookie(event, "auth_token");
 
@@ -43,8 +44,12 @@ export default defineEventHandler(async (event) => {
       body: body,
     });
 
+    console.log("Laravel API response:", response);
+
     return response;
   } catch (error) {
+    console.error("Laravel API error:", error);
+    
     throw createError({
       statusCode: error.status || 500,
       message: error.data?.message || "Internal Server Error",
