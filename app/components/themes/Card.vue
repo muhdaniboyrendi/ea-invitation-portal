@@ -1,4 +1,5 @@
 <script setup>
+const { user } = storeToRefs(useAuthStore());
 const props = defineProps(["theme"]);
 </script>
 
@@ -62,6 +63,22 @@ const props = defineProps(["theme"]);
           <span class="relative z-10">Lihat Tema</span>
           <i class="bi bi-arrow-right ml-2"></i>
         </a>
+
+        <div class="flex items-center gap-3 mt-4">
+          <NuxtLink
+            :to="`/themes/${props.theme.id}`"
+            class="group/btn relative w-full inline-flex justify-center items-center px-4 py-2 backdrop-blur-md bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+            >Edit
+            <i class="bi bi-pencil-square ml-2"></i>
+          </NuxtLink>
+          <button
+            type="button"
+            class="group/btn relative w-full inline-flex justify-center items-center px-4 py-2 backdrop-blur-md bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-400 hover:to-rose-400 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+          >
+            Hapus
+            <i class="bi bi-trash3 ml-2"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>

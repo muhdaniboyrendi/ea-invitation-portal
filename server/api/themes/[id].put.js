@@ -1,4 +1,3 @@
-// server/api/themes/create.post.js
 export default defineEventHandler(async (event) => {
   const token = getCookie(event, "auth_token");
 
@@ -11,7 +10,7 @@ export default defineEventHandler(async (event) => {
 
   const config = useRuntimeConfig();
   const apiBaseUrl = config.public.apiBaseUrl;
-
+  
   const formData = await readMultipartFormData(event);
 
   if (!formData) {
@@ -34,9 +33,11 @@ export default defineEventHandler(async (event) => {
     }
   });
 
+  const id = getRouterParam(event, "id");
+
   try {
-    const response = await $fetch(`${apiBaseUrl}/themes`, {
-      method: "POST",
+    const response = await $fetch(`${apiBaseUrl}/themes/${id}`, {
+      method: "PUT",
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${token}`,

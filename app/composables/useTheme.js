@@ -74,22 +74,27 @@ export const useThemeStore = defineStore("theme", () => {
         body: formData,
       });
 
-      if (response && response.data) {
-        return response.data;
-      }
-
-      throw new Error("No data returned from API");
+      return response.data;
     } catch (error) {
-      console.error("Error creating theme:", error);
       throw handleApiError(error);
     }
   };
 
   const updateTheme = async (packageId, themeData) => {
+    const formData = new FormData();
+    formData.append("name", themeData.name);
+    formData.append("theme_category_id", themeData.theme_category_id);
+    formData.append("link", themeData.link);
+    formData.append("is_premium", themeData.is_premium ? "1" : "0");
+
+    if (themeData.thumbnail) {
+      formData.append("thumbnail", themeData.thumbnail);
+    }
+
     try {
       const response = await $fetch(`/api/themes/${packageId}`, {
         method: "PUT",
-        body: themeData,
+        body: formData,
       });
 
       return response.data;

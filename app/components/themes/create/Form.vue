@@ -290,7 +290,7 @@ const fetchThemeData = async () => {
 
     // Set preview for existing thumbnail
     if (themeData.thumbnail && typeof themeData.thumbnail === "string") {
-      thumbnailPreview.value = themeData.thumbnail;
+      thumbnailPreview.value = themeData.thumbnail_url;
     }
   } catch (error) {
     console.error("Error fetching theme:", error);
