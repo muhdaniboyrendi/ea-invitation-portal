@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
 
   const config = useRuntimeConfig();
   const apiBaseUrl = config.public.apiBaseUrl;
-  
+
   const formData = await readMultipartFormData(event);
 
   if (!formData) {
@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const response = await $fetch(`${apiBaseUrl}/themes/${id}`, {
-      method: "PUT",
+      method: "POST",
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${token}`,

@@ -80,8 +80,9 @@ export const useThemeStore = defineStore("theme", () => {
     }
   };
 
-  const updateTheme = async (packageId, themeData) => {
+  const updateTheme = async (themeId, themeData) => {
     const formData = new FormData();
+    formData.append("_method", "PUT");
     formData.append("name", themeData.name);
     formData.append("theme_category_id", themeData.theme_category_id);
     formData.append("link", themeData.link);
@@ -92,8 +93,8 @@ export const useThemeStore = defineStore("theme", () => {
     }
 
     try {
-      const response = await $fetch(`/api/themes/${packageId}`, {
-        method: "PUT",
+      const response = await $fetch(`/api/themes/${themeId}`, {
+        method: "POST",
         body: formData,
       });
 
