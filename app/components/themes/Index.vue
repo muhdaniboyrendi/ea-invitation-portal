@@ -1,5 +1,7 @@
 <script setup>
-const { categories, themes } = storeToRefs(useThemeStore());
+const { user } = storeToRefs(useAuthStore());
+const { themes } = storeToRefs(useThemeStore());
+const { categories } = storeToRefs(useThemeCategoryStore());
 
 const activeCategory = ref("all");
 
@@ -135,6 +137,7 @@ const getCurrentCategoryName = computed(() => {
       title="Tema Undangan"
       subtitle="Daftar tema undangan yang tersedia untuk undangan anda."
       button-text="Tambah Tema"
+      :has-button="user.role == 'admin' ? true : false"
       button-link="/themes/create"
     />
 

@@ -17,21 +17,6 @@ export const useThemeStore = defineStore("theme", () => {
     },
   });
 
-  const {
-    data: categories,
-    error: categoryError,
-    pending: categoriesPending,
-    refresh: categoriesRefresh,
-  } = useFetch(`${apiBaseUrl}/categories`, {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-    },
-    transform: (response) => {
-      return response.data;
-    },
-  });
-
   const handleApiError = (error) => {
     const err = new Error(
       error.data?.message || "Terjadi kesalahan pada server"
@@ -121,10 +106,6 @@ export const useThemeStore = defineStore("theme", () => {
     themesError,
     themesPending,
     themesRefresh,
-    categories,
-    categoryError,
-    categoriesPending,
-    categoriesRefresh,
     fetchTheme,
     createTheme,
     updateTheme,
