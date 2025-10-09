@@ -3,11 +3,27 @@ const { user } = storeToRefs(useAuthStore());
 const { deletePackage, refresh } = usePackageStore();
 
 const props = defineProps(["package"]);
-const emit = defineEmits(["deleted"]);
 
 const showAllFeatures = ref(false);
 const showDeleteModal = ref(false);
 const isDeleting = ref(false);
+
+// Notification state
+const notification = reactive({
+  show: false,
+  type: "info",
+  message: "",
+});
+
+const showNotification = (type, message) => {
+  notification.type = type;
+  notification.message = message;
+  notification.show = true;
+};
+
+const closeNotification = () => {
+  notification.show = false;
+};
 
 const maxFeatures = 3;
 
@@ -40,14 +56,20 @@ const confirmDelete = async () => {
   try {
     await deletePackage(props.package.id);
 
-    emit("deleted");
+    closeDeleteModal();
+    showNotification("success", "Paket berhasil dihapus! 🎉");
 
-    await refresh();
+    setTimeout(() => {
+      refresh();
+    }, 3000);
   } catch (error) {
     console.error("Error deleting package:", error);
-    // Optionally, show a user-friendly error message here
-  } finally {
     closeDeleteModal();
+    showNotification(
+      "error",
+      `Gagal menghapus paket. ${error.message || "Silakan coba lagi."}`
+    );
+  } finally {
     isDeleting.value = false;
   }
 };
@@ -55,6 +77,35 @@ const confirmDelete = async () => {
 
 <template>
   <div class="group relative bg-gradient-to-b rounded-3xl w-full h-fit">
+    <!-- Popup Alert Notification -->
+    <FormAlertNotification
+      :type="notification.type"
+      :message="notification.message"
+      :show="notification.show"
+      position="top-center"
+      :duration="3000"
+      @close="closeNotification"
+    />
+
+    <!-- Confirm Delete Modal -->
+    <ConfirmDeleteModal
+      :show="showDeleteModal"
+      title="Hapus Paket?"
+      message="Apakah Anda yakin ingin menghapus paket"
+      :item-name="props.package?.name"
+      :is-deleting="isDeleting"
+      type="danger"
+      @close="closeDeleteModal"
+      @confirm="confirmDelete"
+    >
+      <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-3">
+        <p class="text-sm text-center text-red-800 dark:text-red-200">
+          <i class="bi bi-exclamation-circle-fill mr-1"></i>
+          Data yang sudah dihapus tidak dapat dikembalikan.
+        </p>
+      </div>
+    </ConfirmDeleteModal>
+
     <!-- Best Seller Badge -->
     <div
       v-if="props.package.id === 2"
@@ -160,103 +211,10 @@ const confirmDelete = async () => {
         </button>
       </div>
 
-      <div v-if="showDeleteModal" class="mt-6">
-        <!-- Modal Header -->
-        <div
-          class="flex items-center justify-between py-4 border-b border-gray-200 dark:border-gray-700"
-        >
-          <div class="flex items-center gap-3">
-            <div
-              class="h-12 aspect-square bg-red-100 dark:bg-red-900/30 rounded-2xl flex items-center justify-center"
-            >
-              <i
-                class="bi bi-exclamation-triangle-fill text-red-600 dark:text-red-400 text-xl"
-              ></i>
-            </div>
-            <div>
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Konfirmasi Hapus
-              </h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">
-                Tindakan ini tidak dapat dibatalkan
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Modal Body -->
-        <div class="py-6">
-          <p class="text-gray-700 dark:text-gray-300 mb-4">
-            Apakah Anda yakin ingin menghapus paket
-            <span class="font-semibold text-purple-600 dark:text-purple-400">
-              "{{ props.package.name }}" </span
-            >?
-          </p>
-          <p class="text-sm text-gray-500 dark:text-gray-400">
-            Data yang sudah dihapus tidak dapat dikembalikan.
-          </p>
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="flex gap-3">
-          <button
-            @click="closeDeleteModal"
-            class="flex-1 px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-          >
-            Batal
-          </button>
-          <button
-            @click="confirmDelete"
-            class="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white font-medium rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
-          >
-            <span v-if="isDeleting" class="flex gap-1 items-center"
-              ><Spinner /> Menghapus...</span
-            >
-            <span v-else>Hapus</span>
-          </button>
-        </div>
-      </div>
-
-      <div v-else>
-        <!-- CTA Button -->
-        <div v-if="user.role === 'admin'" class="flex gap-6">
-          <NuxtLink
-            :to="`/packages/${props.package.id}`"
-            class="w-full group/btn relative inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r text-white font-semibold rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300"
-            :class="
-              props.package.id === 2
-                ? 'from-purple-500/80 to-pink-500/80 hover:from-purple-500 hover:to-pink-500'
-                : 'from-blue-500/80 to-cyan-500/80 hover:from-blue-500 hover:to-cyan-500'
-            "
-          >
-            <span class="relative z-10">Edit</span>
-            <div
-              class="absolute inset-0 bg-gradient-to-r blur-xl group-hover/btn:blur-2xl transition-all duration-300 rounded-xl"
-              :class="
-                props.package.id === 2
-                  ? 'from-purple-500/20 to-pink-500/20'
-                  : 'from-blue-500/20 to-cyan-500/20'
-              "
-            ></div>
-          </NuxtLink>
-          <button
-            v-if="
-              props.package.id !== 1 &&
-              props.package.id !== 2 &&
-              props.package.id !== 3
-            "
-            @click="openDeleteModal"
-            class="w-full group/btn relative inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-rose-500 to-red-500 hover:from-rose-600 hover:to-red-600 text-white font-semibold rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300"
-          >
-            <span class="relative z-10">Hapus</span>
-            <div
-              class="absolute inset-0 bg-gradient-to-r from-rose-500/20 to-red-500/20 blur-xl group-hover/btn:blur-2xl transition-all duration-300 rounded-xl"
-            ></div>
-          </button>
-        </div>
+      <!-- CTA Buttons -->
+      <div v-if="user.role === 'admin'" class="flex gap-6">
         <NuxtLink
-          v-else
-          :to="`/invitation/create/checkout/${props.package.id}`"
+          :to="`/packages/${props.package.id}`"
           class="w-full group/btn relative inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r text-white font-semibold rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300"
           :class="
             props.package.id === 2
@@ -264,8 +222,7 @@ const confirmDelete = async () => {
               : 'from-blue-500/80 to-cyan-500/80 hover:from-blue-500 hover:to-cyan-500'
           "
         >
-          <span class="relative z-10">Pilih Paket</span>
-          <i class="bi bi-arrow-right ml-2"></i>
+          <span class="relative z-10">Edit</span>
           <div
             class="absolute inset-0 bg-gradient-to-r blur-xl group-hover/btn:blur-2xl transition-all duration-300 rounded-xl"
             :class="
@@ -275,7 +232,42 @@ const confirmDelete = async () => {
             "
           ></div>
         </NuxtLink>
+        <button
+          v-if="
+            props.package.id !== 1 &&
+            props.package.id !== 2 &&
+            props.package.id !== 3
+          "
+          @click="openDeleteModal"
+          class="w-full group/btn relative inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-rose-500 to-red-500 hover:from-rose-600 hover:to-red-600 text-white font-semibold rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300"
+        >
+          <span class="relative z-10">Hapus</span>
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-rose-500/20 to-red-500/20 blur-xl group-hover/btn:blur-2xl transition-all duration-300 rounded-xl"
+          ></div>
+        </button>
       </div>
+      <NuxtLink
+        v-else
+        :to="`/invitation/create/checkout/${props.package.id}`"
+        class="w-full group/btn relative inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r text-white font-semibold rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300"
+        :class="
+          props.package.id === 2
+            ? 'from-purple-500/80 to-pink-500/80 hover:from-purple-500 hover:to-pink-500'
+            : 'from-blue-500/80 to-cyan-500/80 hover:from-blue-500 hover:to-cyan-500'
+        "
+      >
+        <span class="relative z-10">Pilih Paket</span>
+        <i class="bi bi-arrow-right ml-2"></i>
+        <div
+          class="absolute inset-0 bg-gradient-to-r blur-xl group-hover/btn:blur-2xl transition-all duration-300 rounded-xl"
+          :class="
+            props.package.id === 2
+              ? 'from-purple-500/20 to-pink-500/20'
+              : 'from-blue-500/20 to-cyan-500/20'
+          "
+        ></div>
+      </NuxtLink>
     </div>
   </div>
 </template>
@@ -299,30 +291,5 @@ const confirmDelete = async () => {
 
 .features-move {
   transition: transform 0.3s ease;
-}
-
-/* Transisi untuk modal */
-.modal-enter-active {
-  transition: all 0.3s ease;
-}
-
-.modal-leave-active {
-  transition: all 0.2s ease;
-}
-
-.modal-enter-from {
-  opacity: 0;
-}
-
-.modal-enter-from .relative {
-  transform: scale(0.9) translateY(-10px);
-}
-
-.modal-leave-to {
-  opacity: 0;
-}
-
-.modal-leave-to .relative {
-  transform: scale(0.95) translateY(10px);
 }
 </style>

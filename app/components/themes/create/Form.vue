@@ -1,5 +1,4 @@
 <script setup>
-// Props
 const props = defineProps({
   themeId: {
     type: String,
@@ -8,11 +7,9 @@ const props = defineProps({
   },
 });
 
-// Composables
 const { createTheme, updateTheme, fetchTheme, themesRefresh } = useThemeStore();
 const { categories } = storeToRefs(useThemeCategoryStore());
 
-// Validation patterns
 const validationPatterns = {
   name: {
     required: /^.+$/,
@@ -53,7 +50,22 @@ const {
   resetErrors,
 } = useFormValidation(validationPatterns);
 
-const { notification, showNotification } = useFormNotification();
+// Notification state - Updated for popup
+const notification = reactive({
+  show: false,
+  type: "info",
+  message: "",
+});
+
+const showNotification = (type, message) => {
+  notification.type = type;
+  notification.message = message;
+  notification.show = true;
+};
+
+const closeNotification = () => {
+  notification.show = false;
+};
 
 const {
   fileInput,
@@ -99,6 +111,7 @@ const ui = reactive({
 const isEditMode = computed(() => props.themeId !== null);
 const isFormValid = computed(() => {
   const hasErrors = Object.keys(validationErrors.value).length > 0;
+  
   if (hasErrors) return false;
 
   return !!(
@@ -202,7 +215,7 @@ const fetchThemeData = async () => {
       theme_category_id: themeData.theme_category_id?.toString() || "",
       link: themeData.link || "",
       thumbnail: themeData.thumbnail || null,
-      is_premium: themeData.is_premium || false,
+      is_premium: Boolean(themeData.is_premium),
     });
 
     if (themeData.thumbnail && typeof themeData.thumbnail === "string") {
@@ -220,7 +233,10 @@ const fetchThemeData = async () => {
 const submitForm = async () => {
   ui.isFormTouched = true;
 
-  if (!validateForm()) return;
+  if (!validateForm()) {
+    showNotification("warning", "Mohon lengkapi semua field yang wajib diisi.");
+    return;
+  }
 
   ui.isSubmitting = true;
   try {
@@ -294,17 +310,27 @@ onMounted(() => {
 
 <template>
   <div class="bg-off-white dark:bg-gray-900 rounded-3xl shadow-xl p-8">
+    <!-- Popup Alert Notification -->
+    <FormAlertNotification
+      :type="notification.type"
+      :message="notification.message"
+      :show="notification.show"
+      position="top-center"
+      :duration="5000"
+      @close="closeNotification"
+    />
+
     <!-- Header -->
     <header class="mb-6">
       <h2
         class="text-2xl font-semibold text-gray-900 dark:text-white flex items-center gap-3"
       >
         <div
-          class="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center"
+          class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center"
         >
           <i
             :class="isEditMode ? 'bi bi-pencil-square' : 'bi bi-plus-lg'"
-            class="text-purple-600 dark:text-purple-400"
+            class="text-blue-600 dark:text-blue-400"
           />
         </div>
         {{ isEditMode ? "Edit Tema" : "Tambah Tema" }}
@@ -323,24 +349,6 @@ onMounted(() => {
 
     <!-- Form Content -->
     <div v-else>
-      <!-- Success Alert -->
-      <FormAlertNotification
-        type="success"
-        :message="
-          isEditMode
-            ? 'Tema berhasil diperbarui!'
-            : 'Tema berhasil ditambahkan!'
-        "
-        :show="notification.showSuccess"
-      />
-
-      <!-- Error Alert -->
-      <FormAlertNotification
-        type="error"
-        :message="notification.errorMessage"
-        :show="notification.showError"
-      />
-
       <!-- Form -->
       <form @submit.prevent="submitForm" class="space-y-6">
         <!-- Theme Name -->
@@ -408,7 +416,7 @@ onMounted(() => {
           <button
             type="submit"
             :disabled="ui.isSubmitting || !isFormValid"
-            class="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             <span v-if="!ui.isSubmitting">
               {{ isEditMode ? "Perbarui Tema" : "Simpan Tema" }}

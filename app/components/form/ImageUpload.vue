@@ -104,9 +104,10 @@ defineExpose({
       <button
         type="button"
         @click="handleRemove"
-        class="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors"
+        class="absolute top-3 right-3 py-2 px-4 bg-amber-500 hover:bg-amber-600 text-white text-sm rounded-xl flex items-center justify-center gap-2 transition-colors"
       >
-        <i class="bi bi-x text-lg" />
+        Ubah Gambar
+        <i class="bi bi-arrow-repeat"></i>
       </button>
       <div
         class="mt-2 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"

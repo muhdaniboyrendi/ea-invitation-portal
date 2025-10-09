@@ -1,6 +1,6 @@
 <script setup>
 const { user } = storeToRefs(useAuthStore());
-const { themes } = storeToRefs(useThemeStore());
+const { themes, themesPending } = storeToRefs(useThemeStore());
 const { categories } = storeToRefs(useThemeCategoryStore());
 
 const activeCategory = ref("all");
@@ -139,6 +139,7 @@ const getCurrentCategoryName = computed(() => {
       button-text="Tambah Tema"
       :has-button="user.role == 'admin' ? true : false"
       button-link="/themes/create"
+      icon="bi-palette2"
     />
 
     <div
@@ -153,7 +154,8 @@ const getCurrentCategoryName = computed(() => {
               ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
               : ' bg-white dark:bg-dark text-dark/70 dark:text-white/70 hover:text-dark dark:hover:text-white shadow-lg'
           "
-          class="group relative px-4 py-1.5 border border-white/10 hover:border-white/20 rounded-xl font-medium cursor-pointer hover:-translate-y-0.5 transition-all duration-300 hover:scale-105"
+          :disabled="themesPending"
+          class="group relative px-4 py-1.5 border border-white/10 hover:border-white/20 rounded-xl font-medium cursor-pointer hover:-translate-y-0.5 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0"
         >
           <!-- Active Glow Effect -->
           <div
@@ -178,7 +180,8 @@ const getCurrentCategoryName = computed(() => {
               ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
               : ' bg-white dark:bg-dark text-dark/70 dark:text-white/70 hover:text-dark dark:hover:text-white shadow-lg'
           "
-          class="group relative px-4 py-1.5 border border-white/10 hover:border-white/20 rounded-xl font-medium cursor-pointer hover:-translate-y-0.5 transition-all duration-300 hover:scale-105"
+          :disabled="themesPending"
+          class="group relative px-4 py-1.5 border border-white/10 hover:border-white/20 rounded-xl font-medium cursor-pointer hover:-translate-y-0.5 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0"
         >
           <!-- Active Glow Effect -->
           <div
@@ -195,9 +198,32 @@ const getCurrentCategoryName = computed(() => {
         </button>
       </div>
 
+      <!-- Loading State -->
+      <div
+        v-if="themesPending"
+        class="flex flex-col items-center justify-center py-16 px-4"
+      >
+        <!-- Loading Spinner -->
+        <div class="relative mb-6">
+          <div
+            class="w-16 h-16 border-4 border-blue-200 dark:border-blue-900/30 border-t-blue-500 dark:border-t-blue-400 rounded-full animate-spin"
+          ></div>
+        </div>
+
+        <!-- Loading Text -->
+        <h3 class="text-xl font-semibold text-dark dark:text-white mb-3">
+          Memuat Tema...
+        </h3>
+
+        <p class="text-dark/60 dark:text-white/60 text-center max-w-md">
+          Mohon tunggu sebentar, kami sedang memuat daftar tema undangan untuk
+          Anda.
+        </p>
+      </div>
+
       <!-- Themes Grid -->
       <div
-        v-if="filteredThemes && filteredThemes.length > 0"
+        v-else-if="filteredThemes && filteredThemes.length > 0"
         class="flex flex-wrap justify-center gap-8"
       >
         <ThemesCard
@@ -214,19 +240,9 @@ const getCurrentCategoryName = computed(() => {
           <div
             class="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 rounded-4xl flex items-center justify-center"
           >
-            <svg
-              class="w-12 h-12 text-blue-500 dark:text-blue-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.5"
-                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-              ></path>
-            </svg>
+            <i
+              class="bi bi-palette2 text-4xl text-blue-500 dark:text-blue-400"
+            ></i>
           </div>
         </div>
 

@@ -1,5 +1,4 @@
 <script setup>
-// Props
 const props = defineProps({
   packageId: {
     type: String,
@@ -8,11 +7,9 @@ const props = defineProps({
   },
 });
 
-// Composables
 const { createPackage, updatePackage, fetchPackage, refresh } =
   usePackageStore();
 
-// Regex patterns for validation
 const validationPatterns = {
   name: {
     required: /^.+$/,
