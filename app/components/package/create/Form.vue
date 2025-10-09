@@ -62,21 +62,22 @@ const backendErrors = ref({});
 const ui = reactive({
   isSubmitting: false,
   isLoading: false,
-  showSuccess: false,
-  showError: false,
-  errorMessage: "",
   isFormTouched: false,
+});
+
+// Alert notification state
+const notification = reactive({
+  show: false,
+  type: "info",
+  message: "",
 });
 
 // Computed
 const isEditMode = computed(() => props.packageId !== null);
 const isFormValid = computed(() => {
-  // Check if no validation errors exist
   const hasErrors = Object.keys(validationErrors.value).length > 0;
-
   if (hasErrors) return false;
 
-  // Check if required fields are filled
   const cleanData = getCleanFormData();
   const hasValidFeatures =
     cleanData.features.length > 0 && cleanData.features.every((f) => f.trim());
@@ -104,20 +105,14 @@ const getCleanFormData = () => ({
   features: formData.features.filter((f) => f.trim()),
 });
 
-const showNotification = (type, message, duration = 5000) => {
-  if (type === "success") {
-    ui.showSuccess = true;
-    setTimeout(() => {
-      ui.showSuccess = false;
-    }, duration);
-  } else {
-    ui.showError = true;
-    ui.errorMessage = message;
-    setTimeout(() => {
-      ui.showError = false;
-      ui.errorMessage = "";
-    }, duration);
-  }
+const showNotification = (type, message) => {
+  notification.type = type;
+  notification.message = message;
+  notification.show = true;
+};
+
+const closeNotification = () => {
+  notification.show = false;
 };
 
 const resetForm = () => {
@@ -125,17 +120,14 @@ const resetForm = () => {
   frontendErrors.value = {};
   backendErrors.value = {};
   ui.isFormTouched = false;
-  ui.errorMessage = "";
 };
 
-// Clear backend validation errors when user starts typing
 const clearBackendError = (field) => {
   if (backendErrors.value[field]) {
     delete backendErrors.value[field];
   }
 };
 
-// Set backend validation errors
 const setBackendValidationErrors = (errors) => {
   if (!errors || typeof errors !== "object") return;
 
@@ -152,9 +144,8 @@ const setBackendValidationErrors = (errors) => {
   });
 };
 
-// Regex-based validation functions
+// Validation functions
 const validateField = (field, value) => {
-  // Clear previous frontend error
   if (frontendErrors.value[field]) {
     delete frontendErrors.value[field];
   }
@@ -220,7 +211,6 @@ const validatePrice = (value) => {
 const validateDiscount = (value) => {
   const stringValue = value ? value.toString().trim() : "";
 
-  // Discount is optional
   if (!stringValue) return true;
 
   if (!validationPatterns.discount.number.test(stringValue)) {
@@ -260,7 +250,6 @@ const validateForm = () => {
   const cleanData = getCleanFormData();
   let isValid = true;
 
-  // Validate all fields
   if (!validateName(cleanData.name)) isValid = false;
   if (!validatePrice(cleanData.price)) isValid = false;
   if (!validateDiscount(formData.discount)) isValid = false;
@@ -277,7 +266,6 @@ const addFeature = () => {
 const removeFeature = (index) => {
   if (formData.features.length > 1) {
     formData.features.splice(index, 1);
-    // Re-validate features after removal
     if (ui.isFormTouched) {
       validateField("features", formData.features);
     }
@@ -331,13 +319,11 @@ const submitForm = async () => {
       error
     );
 
-    // Handle backend validation errors
     if (error?.validationErrors || error?.response?.data?.validationErrors) {
       const backendErrors =
         error.validationErrors || error.response.data.validationErrors;
       setBackendValidationErrors(backendErrors);
 
-      // Show general error message
       const generalMessage =
         error?.message ||
         error?.response?.data?.message ||
@@ -346,7 +332,6 @@ const submitForm = async () => {
         } paket. Periksa form dan coba lagi.`;
       showNotification("error", generalMessage);
     } else {
-      // Handle other errors
       const message =
         error?.message ||
         error?.response?.data?.message ||
@@ -360,15 +345,10 @@ const submitForm = async () => {
   }
 };
 
-const markFormAsTouched = () => {
-  ui.isFormTouched = true;
-};
-
-// Enhanced input handlers with real-time validation
+// Input handlers with real-time validation
 const handleNameInput = () => {
   ui.isFormTouched = true;
   clearBackendError("name");
-  // Real-time validation with debounce
   clearTimeout(window.nameValidationTimeout);
   window.nameValidationTimeout = setTimeout(() => {
     validateField("name", formData.name);
@@ -378,7 +358,6 @@ const handleNameInput = () => {
 const handlePriceInput = () => {
   ui.isFormTouched = true;
   clearBackendError("price");
-  // Real-time validation with debounce
   clearTimeout(window.priceValidationTimeout);
   window.priceValidationTimeout = setTimeout(() => {
     validateField("price", formData.price);
@@ -388,7 +367,6 @@ const handlePriceInput = () => {
 const handleDiscountInput = () => {
   ui.isFormTouched = true;
   clearBackendError("discount");
-  // Real-time validation with debounce
   clearTimeout(window.discountValidationTimeout);
   window.discountValidationTimeout = setTimeout(() => {
     validateField("discount", formData.discount);
@@ -398,63 +376,13 @@ const handleDiscountInput = () => {
 const handleFeatureInput = (index) => {
   ui.isFormTouched = true;
   clearBackendError("features");
-  // Real-time validation with debounce
   clearTimeout(window.featuresValidationTimeout);
   window.featuresValidationTimeout = setTimeout(() => {
     validateField("features", formData.features);
   }, 300);
 };
 
-// Watchers for real-time validation
-watch(
-  () => formData.name,
-  (newVal) => {
-    if (ui.isFormTouched) {
-      clearTimeout(window.nameValidationTimeout);
-      window.nameValidationTimeout = setTimeout(() => {
-        validateField("name", newVal);
-      }, 300);
-    }
-  }
-);
-
-watch(
-  () => formData.price,
-  (newVal) => {
-    if (ui.isFormTouched && newVal) {
-      clearTimeout(window.priceValidationTimeout);
-      window.priceValidationTimeout = setTimeout(() => {
-        validateField("price", newVal);
-      }, 300);
-    }
-  }
-);
-
-watch(
-  () => formData.discount,
-  (newVal) => {
-    if (ui.isFormTouched) {
-      clearTimeout(window.discountValidationTimeout);
-      window.discountValidationTimeout = setTimeout(() => {
-        validateField("discount", newVal);
-      }, 300);
-    }
-  }
-);
-
-watch(
-  () => formData.features,
-  (newVal) => {
-    if (ui.isFormTouched) {
-      clearTimeout(window.featuresValidationTimeout);
-      window.featuresValidationTimeout = setTimeout(() => {
-        validateField("features", newVal);
-      }, 300);
-    }
-  },
-  { deep: true }
-);
-
+// Watchers
 watch(
   () => props.packageId,
   (newId) => {
@@ -476,8 +404,18 @@ onMounted(() => {
 
 <template>
   <div class="bg-off-white dark:bg-gray-900 rounded-3xl shadow-xl p-8">
+    <!-- Alert Notification -->
+    <FormAlertNotification
+      :show="notification.show"
+      :type="notification.type"
+      :message="notification.message"
+      position="top-center"
+      :duration="5000"
+      @close="closeNotification"
+    />
+
     <!-- Header -->
-    <header class="mb-6">
+    <div class="mb-6">
       <h2
         class="text-2xl font-semibold text-gray-900 dark:text-white flex items-center gap-3"
       >
@@ -491,7 +429,7 @@ onMounted(() => {
         </div>
         {{ isEditMode ? "Edit Paket" : "Detail Paket" }}
       </h2>
-    </header>
+    </div>
 
     <!-- Loading State -->
     <div v-if="ui.isLoading" class="text-center py-8">
@@ -505,97 +443,33 @@ onMounted(() => {
 
     <!-- Form Content -->
     <div v-else>
-      <!-- Success Alert -->
-      <Transition name="fade">
-        <div
-          v-if="ui.showSuccess"
-          class="w-full rounded-2xl p-6 bg-green-100 dark:bg-green-950 border border-green-600 dark:border-green-500 text-green-600 dark:text-green-500 font-medium mb-6 flex items-center gap-3"
-        >
-          <i class="bi bi-check-circle-fill text-lg" />
-          <p>
-            {{
-              isEditMode
-                ? "Paket berhasil diperbarui!"
-                : "Paket berhasil ditambahkan!"
-            }}
-          </p>
-        </div>
-      </Transition>
-
-      <!-- Error Alert -->
-      <Transition name="fade">
-        <div
-          v-if="ui.showError"
-          class="w-full rounded-2xl p-6 bg-red-100 dark:bg-red-950 border border-red-600 dark:border-red-500 text-red-600 dark:text-red-500 font-medium mb-6 flex items-center gap-3"
-        >
-          <i class="bi bi-exclamation-triangle-fill text-lg" />
-          <p>{{ ui.errorMessage }}</p>
-        </div>
-      </Transition>
-
       <!-- Form -->
       <form @submit.prevent="submitForm" class="space-y-6">
         <!-- Package Name -->
-        <div>
-          <label
-            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-          >
-            Nama Paket <span class="text-red-500">*</span>
-          </label>
-          <input
-            v-model="formData.name"
-            @input="handleNameInput"
-            type="text"
-            placeholder="Contoh: Basic Wedding"
-            class="w-full px-4 py-3 bg-white dark:bg-gray-800 dark:text-slate-300 border-2 rounded-xl focus:outline-none transition-colors"
-            :class="
-              validationErrors.name
-                ? 'border-red-500 focus:border-red-500'
-                : 'border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400'
-            "
-          />
-          <Transition name="fade">
-            <p
-              v-if="validationErrors.name"
-              class="text-red-500 text-sm mt-1 flex items-center gap-1"
-            >
-              <i class="bi bi-exclamation-circle" />
-              {{ validationErrors.name }}
-            </p>
-          </Transition>
-        </div>
+        <FormBaseInput
+          v-model="formData.name"
+          label="Nama Paket"
+          placeholder="Contoh: Basic Wedding"
+          required
+          :error="validationErrors.name"
+          :disabled="ui.isSubmitting"
+          @input="handleNameInput"
+        />
 
         <!-- Pricing Section -->
         <div class="grid md:grid-cols-2 gap-4">
           <!-- Price -->
           <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-            >
-              Harga <span class="text-red-500">*</span>
-            </label>
-            <input
+            <FormBaseInput
               v-model="formData.price"
-              @input="handlePriceInput"
               type="number"
-              min="1"
+              label="Harga"
               placeholder="Masukan harga dalam Rupiah"
-              class="w-full px-4 py-3 bg-white dark:bg-gray-800 dark:text-slate-300 border-2 rounded-xl focus:outline-none transition-colors"
-              :class="
-                validationErrors.price
-                  ? 'border-red-500 focus:border-red-500'
-                  : 'border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400'
-              "
+              required
+              :error="validationErrors.price"
+              :disabled="ui.isSubmitting"
+              @input="handlePriceInput"
             />
-            <Transition name="fade">
-              <p
-                v-if="validationErrors.price"
-                class="text-red-500 text-sm mt-1 flex items-center gap-1"
-              >
-                <i class="bi bi-exclamation-circle" />
-                {{ validationErrors.price }}
-              </p>
-            </Transition>
             <Transition name="fade">
               <p
                 v-if="formData.price && !validationErrors.price"
@@ -608,34 +482,15 @@ onMounted(() => {
 
           <!-- Discount -->
           <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-            >
-              Diskon (%)
-            </label>
-            <input
+            <FormBaseInput
               v-model="formData.discount"
-              @input="handleDiscountInput"
               type="number"
-              min="0"
-              max="100"
+              label="Diskon (%)"
               placeholder="Masukan diskon jika ada"
-              class="w-full px-4 py-3 bg-white dark:bg-gray-800 dark:text-slate-300 border-2 rounded-xl focus:outline-none transition-colors"
-              :class="
-                validationErrors.discount
-                  ? 'border-red-500 focus:border-red-500'
-                  : 'border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400'
-              "
+              :error="validationErrors.discount"
+              :disabled="ui.isSubmitting"
+              @input="handleDiscountInput"
             />
-            <Transition name="fade">
-              <p
-                v-if="validationErrors.discount"
-                class="text-red-500 text-sm mt-1 flex items-center gap-1"
-              >
-                <i class="bi bi-exclamation-circle" />
-                {{ validationErrors.discount }}
-              </p>
-            </Transition>
             <Transition name="fade">
               <p
                 v-if="
@@ -671,7 +526,7 @@ onMounted(() => {
             <div
               v-for="(feature, index) in formData.features"
               :key="index"
-              class="flex gap-3 items-center"
+              class="flex gap-3 items-start"
             >
               <div class="flex-1">
                 <input
@@ -679,14 +534,16 @@ onMounted(() => {
                   @input="handleFeatureInput(index)"
                   type="text"
                   :placeholder="`Fitur ${index + 1}`"
-                  class="w-full px-4 py-3 bg-white dark:bg-gray-800 dark:text-slate-300 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors"
+                  :disabled="ui.isSubmitting"
+                  class="w-full px-4 py-3 bg-white dark:bg-gray-800 dark:text-slate-300 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
               <button
                 v-if="formData.features.length > 1"
                 type="button"
                 @click="removeFeature(index)"
-                class="flex items-center justify-center w-12 h-12 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+                :disabled="ui.isSubmitting"
+                class="flex items-center justify-center w-12 h-12 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <i class="bi bi-trash text-sm" />
               </button>
@@ -731,3 +588,14 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

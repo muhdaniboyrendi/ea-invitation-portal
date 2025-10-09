@@ -5,7 +5,7 @@ const props = defineProps({
     default: "Title",
   },
   subtitle: {
-    type: String || Boolean,
+    type: [Boolean, String],
     default: false,
   },
   icon: {
