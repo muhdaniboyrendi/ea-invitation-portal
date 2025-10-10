@@ -3,49 +3,6 @@ const { user } = storeToRefs(useAuthStore());
 const { musics, musicsPending } = storeToRefs(useMusicStore());
 const { deleteMusic, musicsRefresh } = useMusicStore();
 
-// Sample music data - replace with your actual API call
-const musicList = ref([
-  {
-    id: 1,
-    title: "Summer Vibes",
-    artist: "The Sunset Band",
-    thumbnail_url:
-      "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400",
-    audio_url: "/music/sample1.mp3",
-    duration: "3:45",
-    is_premium: true,
-  },
-  {
-    id: 2,
-    title: "Midnight Dreams",
-    artist: "Luna Eclipse",
-    thumbnail_url:
-      "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400",
-    audio_url: "/music/sample2.mp3",
-    duration: "4:20",
-    is_premium: false,
-  },
-  {
-    id: 3,
-    title: "Ocean Waves",
-    artist: "Coastal Harmony",
-    thumbnail_url: null,
-    audio_url: "/music/sample3.mp3",
-    duration: "5:10",
-    is_premium: false,
-  },
-  {
-    id: 4,
-    title: "City Lights",
-    artist: "Urban Echo",
-    thumbnail_url:
-      "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400",
-    audio_url: "/music/sample4.mp3",
-    duration: "3:30",
-    is_premium: true,
-  },
-]);
-
 // Audio player state
 const currentPlayingId = ref(null);
 const audioPlayer = ref(null);
@@ -203,8 +160,30 @@ onUnmounted(() => {
     <div
       class="relative p-6 md:p-8 bg-off-white dark:bg-gray-900 rounded-3xl border border-dark/10 dark:border-white/10 shadow-xl"
     >
+      <!-- Loading State -->
+      <div
+        v-if="musicsPending"
+        class="flex flex-col items-center justify-center py-16 px-4"
+      >
+        <!-- Loading Spinner -->
+        <div class="relative mb-6">
+          <div
+            class="w-16 h-16 border-4 border-blue-200 dark:border-blue-900/30 border-t-blue-500 dark:border-t-blue-400 rounded-full animate-spin"
+          ></div>
+        </div>
+
+        <!-- Loading Text -->
+        <h3 class="text-xl font-semibold text-dark dark:text-white mb-3">
+          Memuat Musik...
+        </h3>
+
+        <p class="text-dark/60 dark:text-white/60 text-center max-w-md">
+          Mohon tunggu sebentar, kami sedang memuat daftar musik untuk Anda.
+        </p>
+      </div>
+
       <!-- Music Grid -->
-      <div v-if="musics" class="grid gap-4">
+      <div v-else-if="musics" class="grid gap-4">
         <MusicCard
           v-for="music in musics"
           :key="music.id"

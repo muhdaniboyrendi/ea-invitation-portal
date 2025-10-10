@@ -74,7 +74,7 @@ const handleDeleteTheme = async () => {
 
     <!-- Theme Card -->
     <div
-      class="relative bg-white dark:bg-dark border border-white/10 hover:border-white/20 rounded-3xl overflow-hidden shadow-lg transition-all duration-500 hover:-translate-y-1"
+      class="relative bg-white dark:bg-dark border border-white/10 hover:border-white/20 rounded-3xl overflow-hidden shadow-lg transition-all duration-300 hover:scale-103 hover:shadow-2xl"
     >
       <!-- Theme Preview Image -->
       <div class="relative h-fit overflow-hidden">
