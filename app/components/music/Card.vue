@@ -122,9 +122,9 @@ const handleDelete = () => {
             <div class="flex-1 min-w-0">
               <h3
                 class="text-base md:text-lg font-bold text-gray-900 dark:text-white mb-0.5 line-clamp-1"
-                :title="music.title"
+                :title="music.name"
               >
-                {{ music.title || "Untitled" }}
+                {{ music.name || "Untitled" }}
               </h3>
               <p
                 class="text-sm text-gray-600 dark:text-gray-400 line-clamp-1 flex items-center gap-1"

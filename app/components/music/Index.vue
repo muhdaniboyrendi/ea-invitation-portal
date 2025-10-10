@@ -1,6 +1,7 @@
 <script setup>
 const { user } = storeToRefs(useAuthStore());
 const { musics, musicsPending } = storeToRefs(useMusicStore());
+const { deleteMusic, musicsRefresh } = useMusicStore();
 
 // Sample music data - replace with your actual API call
 const musicList = ref([
@@ -60,12 +61,14 @@ const notification = reactive({
   show: false,
   type: "info",
   message: "",
+  position: "top-center",
 });
 
-const showNotification = (type, message) => {
+const showNotification = (type, message, position) => {
   notification.type = type;
   notification.message = message;
   notification.show = true;
+  notification.position = position;
 };
 
 const closeNotification = () => {
@@ -104,7 +107,11 @@ const playMusic = async (music) => {
     isLoading.value = true;
     await audioPlayer.value.play();
     currentPlayingId.value = music.id;
-    showNotification("success", `Memutar: ${music.title} - ${music.artist}`);
+    showNotification(
+      "info",
+      `Memutar: ${music.name} - ${music.artist}`,
+      "bottom-right"
+    );
   } catch (error) {
     console.error("Error playing music:", error);
     showNotification("error", "Gagal memutar musik. Silakan coba lagi.");
@@ -140,12 +147,7 @@ const handleDeleteMusic = async () => {
 
   isDeleting.value = true;
   try {
-    const index = musicList.value.findIndex(
-      (m) => m.id === musicToDelete.value.id
-    );
-    if (index !== -1) {
-      musicList.value.splice(index, 1);
-    }
+    await deleteMusic(musicToDelete.value.id);
 
     // Stop playing if deleted music is currently playing
     if (currentPlayingId.value === musicToDelete.value.id) {
@@ -153,7 +155,11 @@ const handleDeleteMusic = async () => {
     }
 
     closeDeleteModal();
-    showNotification("success", "Musik berhasil dihapus! 🎉");
+    showNotification("success", "Musik berhasil dihapus! 🎉", "top-center");
+
+    setTimeout(() => {
+      musicsRefresh();
+    }, 3000);
   } catch (error) {
     console.error("Error deleting music:", error);
     closeDeleteModal();
@@ -189,7 +195,7 @@ onUnmounted(() => {
       :type="notification.type"
       :message="notification.message"
       :show="notification.show"
-      position="top-center"
+      :position="notification.position"
       :duration="3000"
       @close="closeNotification"
     />
@@ -198,7 +204,7 @@ onUnmounted(() => {
       class="relative p-6 md:p-8 bg-off-white dark:bg-gray-900 rounded-3xl border border-dark/10 dark:border-white/10 shadow-xl"
     >
       <!-- Music Grid -->
-      <div v-if="musics.length > 0" class="grid gap-4">
+      <div v-if="musics" class="grid gap-4">
         <MusicCard
           v-for="music in musics"
           :key="music.id"
@@ -245,7 +251,7 @@ onUnmounted(() => {
     <ConfirmDeleteModal
       :show="showDeleteModal"
       title="Hapus Musik?"
-      message="Apakah Anda yakin ingin menghapus musik"
+      :message="`Apakah Anda yakin ingin menghapus musik ${musicToDelete?.name}`"
       :item-name="musicToDelete?.title"
       :is-deleting="isDeleting"
       type="danger"
