@@ -8,6 +8,8 @@ const props = defineProps(["package"]);
 const isProcessing = ref(false);
 const promoCode = ref("");
 
+const finalPrice = Number(props.package.final_price) + 2500;
+
 const applyPromo = () => {
   if (promoCode.value.toLowerCase() === "discount10") {
     cart.value.subtotal = cart.value.subtotal * 0.9;
@@ -41,11 +43,12 @@ const submitOrder = async () => {
     }
   } catch (error) {
     console.error("Error processing payment:", error);
-    toast.error({
-      title: "Error",
-      description:
-        error.message || "Terjadi kesalahan saat memproses pembayaran",
-    });
+    console.error("Error validation:", error.validationErrors);
+    // toast.error({
+    //   title: "Error",
+    //   description:
+    //     error.message || "Terjadi kesalahan saat memproses pembayaran",
+    // });
   } finally {
     isProcessing.value = false;
   }
@@ -89,16 +92,12 @@ const handlePaymentSuccess = async (result) => {
 //       "Anda menutup halaman pembayaran tanpa menyelesaikan transaksi",
 //   });
 // };
-
-onUnmounted(() => {
-  paymentStore.resetPaymentState();
-});
 </script>
 
 <template>
   <div class="space-y-4">
     <!-- Promo Code -->
-    <div
+    <!-- <div
       class="bg-white dark:bg-dark rounded-3xl shadow-2xl border border-white/30 dark:border-gray-700/30 overflow-hidden"
     >
       <div class="relative p-4">
@@ -117,7 +116,7 @@ onUnmounted(() => {
           </button>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Order Button -->
     <button
@@ -142,7 +141,7 @@ onUnmounted(() => {
       </div>
       <div v-else class="flex items-center justify-center space-x-3">
         <i class="bi bi-credit-card text-xl"></i>
-        <span>Bayar Sekarang - Rp {{ formatRupiah(props.package.price) }}</span>
+        <span>Bayar Sekarang - Rp {{ formatRupiah(finalPrice) }}</span>
       </div>
 
       <!-- Hover Effect -->

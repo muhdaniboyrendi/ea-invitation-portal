@@ -59,7 +59,7 @@ const props = defineProps(["package", "adminFee"]);
           <span class="text-blue-600 dark:text-blue-400"
             >Rp
             {{
-              formatRupiah(parseInt(props.package.price) + props.adminFee)
+              formatRupiah(parseInt(props.package.final_price))
             }}</span
           >
         </div>
