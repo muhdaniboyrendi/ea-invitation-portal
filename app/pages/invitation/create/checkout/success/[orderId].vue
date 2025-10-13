@@ -2,6 +2,10 @@
 const route = useRoute();
 
 const orderId = route.params.orderId;
+
+onMounted(() => {
+  console.log("pages/", orderId);
+});
 </script>
 
 <template>

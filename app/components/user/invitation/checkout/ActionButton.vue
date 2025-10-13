@@ -1,7 +1,4 @@
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-
 const { createPayment, updatePaymentSuccess } = usePaymentStore();
 const { $midtrans } = useNuxtApp();
 const router = useRouter();
@@ -33,13 +30,10 @@ const submitOrder = async () => {
 
     const orderData = await createPayment(props.package.id);
 
-    console.log(orderData);
-
-    router.push(`/invitation/create/checkout/success/${orderData.order_id}`);
-
     if (orderData.data?.snap_token) {
       $midtrans.openSnapPayment(orderData.data.snap_token, {
         onSuccess: (result) => handlePaymentSuccess(result),
+        onPending: (result) => handlePaymentPending(result),
         onClose: () => handlePaymentClosed(),
       });
     } else {
@@ -69,6 +63,10 @@ const handlePaymentSuccess = async (result) => {
   }
 };
 
+const handlePaymentPending = async (result) => {
+  router.push(`/invitation/create/checkout/success/${result.order_id}`);
+};
+
 const handlePaymentClosed = () => {
   console.log("Pembayaran ditutup tanpa menyelesaikan transaksi");
 };
@@ -77,66 +75,7 @@ const handlePaymentClosed = () => {
 <template>
   <div class="space-y-4">
     <!-- Success Alert Modal -->
-    <Transition name="fade">
-      <div
-        v-if="showSuccessAlert"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-      >
-        <div
-          class="bg-off-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-md w-full animate-scale-in"
-        >
-          <!-- Success Icon -->
-          <div class="flex justify-center mb-6">
-            <div
-              class="relative w-20 h-20 bg-gradient-to-r from-green-400 to-emerald-600 rounded-full flex items-center justify-center animate-pulse"
-            >
-              <svg
-                class="w-10 h-10 text-white animate-bounce"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="3"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </div>
-          </div>
-
-          <!-- Success Title -->
-          <h2
-            class="text-2xl font-bold text-center text-gray-900 dark:text-white mb-2"
-          >
-            Pembayaran Berhasil!
-          </h2>
-
-          <!-- Success Message -->
-          <p class="text-center text-gray-600 dark:text-gray-300 mb-6">
-            Terima kasih telah melakukan pembayaran. Anda akan dialihkan dalam
-            beberapa detik...
-          </p>
-
-          <!-- Loading Bar -->
-          <div
-            class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1 overflow-hidden"
-          >
-            <div
-              class="bg-gradient-to-r from-green-400 to-emerald-600 h-full animate-progress"
-            />
-          </div>
-
-          <!-- Countdown Timer -->
-          <div class="text-center mt-4">
-            <p class="text-sm text-gray-500 dark:text-gray-400">
-              Mengalihkan dalam beberapa detik...
-            </p>
-          </div>
-        </div>
-      </div>
-    </Transition>
+    <UserInvitationCheckoutPaymentSuccessModal v-if="showSuccessAlert" />
 
     <!-- Order Button -->
     <button

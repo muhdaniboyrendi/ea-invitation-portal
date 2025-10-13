@@ -4,6 +4,15 @@ export const useOrderStore = defineStore("order", () => {
   const config = useRuntimeConfig();
   const apiBaseUrl = config.public.apiBaseUrl;
 
+  const handleApiError = (error) => {
+    const err = new Error(
+      error.data?.message || "Terjadi kesalahan pada server"
+    );
+    err.status = error.status || error.data?.statusCode || 500;
+    err.validationErrors = error.data?.data?.errors || error.data?.errors || {};
+    return err;
+  };
+
   const fetchOrders = async () => {
     try {
       const response = await $fetch(`/api/orders/orders`, {
@@ -60,13 +69,7 @@ export const useOrderStore = defineStore("order", () => {
 
       return response.data;
     } catch (error) {
-      const err = new Error(
-        error.data?.message || "Terjadi kesalahan pada server"
-      );
-      err.status = error.data?.statusCode;
-      err.validationErrors = error.data?.data.errors || {};
-
-      throw err;
+      throw handleApiError(error);
     }
   };
 

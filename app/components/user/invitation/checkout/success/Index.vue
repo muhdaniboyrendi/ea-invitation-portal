@@ -1,16 +1,18 @@
 <script setup>
+const { fetchOrder } = useOrderStore();
 const route = useRoute();
 const router = useRouter();
-const orderStore = useOrderStore();
 
 const props = defineProps(["orderId"]);
 
-const orderId = route.params.id;
-const orderData = computed(() => orderStore.currentOrder);
+const orderId = route.params.orderId;
+
+const orderData = ref({});
+const pending = ref(false);
 
 const formattedDate = computed(() => {
-  if (!orderData.value?.createdAt) return "-";
-  return new Date(orderData.value.createdAt).toLocaleDateString("id-ID", {
+  if (!orderData.value?.created_at) return "-";
+  return new Date(orderData.value.created_at).toLocaleDateString("id-ID", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -19,9 +21,24 @@ const formattedDate = computed(() => {
   });
 });
 
-const handleNavigate = (path) => {
-  router.push(path);
+const handleFetchOrder = async () => {
+  pending.value = true;
+
+  try {
+    const response = await fetchOrder(orderId);
+
+    orderData.value = response;
+  } catch (error) {
+    console.error(error);
+    console.error(error.validationErrors);
+  } finally {
+    pending.value = false;
+  }
 };
+
+onMounted(() => {
+  handleFetchOrder();
+});
 </script>
 
 <template>
@@ -54,8 +71,8 @@ const handleNavigate = (path) => {
           Pesanan Berhasil!
         </h1>
         <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Terima kasih atas pesanan Anda. Kami telah menerima permintaan Anda
-          dan akan segera memproses pesanan tersebut.
+          Terima kasih telah menggunakan EA Invitation. Segera selesaikan
+          transaksi anda dalam waktu kurang dari 24 jam.
         </p>
       </div>
 
@@ -85,7 +102,7 @@ const handleNavigate = (path) => {
               <p
                 class="text-3xl font-bold text-gray-900 dark:text-white font-mono tracking-wider"
               >
-                {{ orderId || "#ORD-2024-001" }}
+                {{ orderId || "null" }}
               </p>
             </div>
 
@@ -115,14 +132,14 @@ const handleNavigate = (path) => {
 
               <!-- Status -->
               <div
-                class="bg-off-white dark:bg-gray-900 rounded-2xl p-6 border border-green-200/30 dark:border-green-800/30"
+                class="bg-off-white dark:bg-gray-900 rounded-2xl p-6 border border-amber-200/30 dark:border-amber-800/30"
               >
                 <div class="flex items-center mb-3">
                   <div
-                    class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center mr-3"
+                    class="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center mr-3"
                   >
                     <i
-                      class="bi bi-check-circle text-green-600 dark:text-green-400"
+                      class="bi bi-check-circle text-amber-600 dark:text-amber-400"
                     ></i>
                   </div>
                   <span
@@ -130,8 +147,8 @@ const handleNavigate = (path) => {
                     >Status</span
                   >
                 </div>
-                <p class="text-lg font-bold text-green-600 dark:text-green-400">
-                  Terkonfirmasi
+                <p class="text-lg font-bold text-amber-600 dark:text-amber-400">
+                  Mengunggu Pembayaran
                 </p>
               </div>
 
@@ -155,12 +172,7 @@ const handleNavigate = (path) => {
                 <p
                   class="text-lg font-bold text-purple-600 dark:text-purple-400"
                 >
-                  Rp
-                  {{
-                    orderData?.finalPrice
-                      ? formatRupiah(orderData.finalPrice)
-                      : "0"
-                  }}
+                  Rp {{ formatRupiah(orderData.amount) }}
                 </p>
               </div>
             </div>
@@ -198,18 +210,9 @@ const handleNavigate = (path) => {
       <!-- Action Buttons -->
       <div class="grid md:grid-cols-2 gap-4">
         <!-- View Order Button -->
-        <button
-          @click="handleNavigate('/orders')"
-          class="group relative px-8 py-4 rounded-2xl font-semibold text-lg text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center justify-center overflow-hidden"
-        >
-          <div
-            class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          ></div>
-          <span class="relative flex items-center">
-            <i class="bi bi-wallet mr-3"></i>
-            Bayar Sekarang
-          </span>
-        </button>
+        <UserInvitationCheckoutSuccessPayButton
+          :snap-token="orderData.snap_token"
+        />
 
         <!-- Continue Shopping Button -->
         <NuxtLink
