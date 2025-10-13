@@ -34,30 +34,27 @@ export const usePaymentStore = defineStore("payment", () => {
     }
   };
 
-  const updatePayment = async (orderId) => {
+  const updatePaymentSuccess = async (orderId) => {
     try {
-      paymentLoading.value = true;
-      paymentError.value = null;
-      paymentSuccess.value = false;
-
-      const res = await $fetch(`/api/payments/update`, {
+      const response = await $fetch(`/api/payments/${orderId}/success`, {
         method: "PUT",
-        body: {
-          order_id: orderId,
-        },
       });
 
-      if (res.status) {
-        currentOrder.value = res.data;
-        paymentSuccess.value = true;
-        return res.data;
-      }
+      return response.data;
     } catch (error) {
-      paymentError.value =
-        error.message || "Terjadi kesalahan saat membuat pembayaran";
-      return null;
-    } finally {
-      paymentLoading.value = false;
+      throw handleApiError(error);
+    }
+  };
+
+  const updatePaymentCanceled = async (orderId) => {
+    try {
+      const response = await $fetch(`/api/payments/${orderId}/cancel`, {
+        method: "PUT",
+      });
+
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
     }
   };
 
@@ -162,7 +159,8 @@ export const usePaymentStore = defineStore("payment", () => {
     paymentError,
     paymentSuccess,
     createPayment,
-    updatePayment,
+    updatePaymentSuccess,
+    updatePaymentCanceled,
     getUserOrder,
     getOrderStatus,
     cancelOrder,
