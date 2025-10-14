@@ -35,7 +35,7 @@
           <div
             class="h-10 aspect-square rounded-2xl bg-linear-to-r from-blue-500 to-cyan-500 flex justify-center items-center"
           >
-            <i class="bi bi-box-seam text-white text-xl"></i>
+            <i class="bi bi-palette2 text-white text-xl"></i>
           </div>
           <h4 class="text-dark dark:text-white font-semibold">Galeri Tema</h4>
         </div>
@@ -60,9 +60,11 @@
           <div
             class="h-10 aspect-square rounded-2xl bg-linear-to-r from-green-500 to-teal-500 flex justify-center items-center"
           >
-            <i class="bi bi-box-seam text-white text-xl"></i>
+            <i class="bi bi-music-note-list text-white text-xl"></i>
           </div>
-          <h4 class="text-dark dark:text-white font-semibold">Latar Belakang Musik</h4>
+          <h4 class="text-dark dark:text-white font-semibold">
+            Latar Belakang Musik
+          </h4>
         </div>
         <p class="text-gray-600 dark:text-gray-300 text-sm">
           Daftar musik latar belakang undangan yang tersedia.

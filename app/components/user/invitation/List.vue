@@ -1,7 +1,20 @@
+<script setup>
+const { userInvitations, userInvitationsPending } = storeToRefs(
+  useInvitationStore()
+);
+</script>
+
 <template>
-  <div class="grid gap-4">
-    <UserInvitationCard />
-    <UserInvitationCard />
-    <UserInvitationCard />
+  <div>
+    <UserInvitationSkeletonLoading v-if="userInvitationsPending" />
+
+    <UserInvitationEmpty v-else-if="userInvitations.length === 0" />
+
+    <div v-else class="grid gap-4">
+      <UserInvitationCard
+        v-for="invitation in userInvitations"
+        :key="invitation.id"
+      />
+    </div>
   </div>
 </template>

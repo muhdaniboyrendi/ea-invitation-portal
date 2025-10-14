@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative bg-white dark:bg-dark rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+    class="relative bg-off-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden"
   >
     <!-- Card Content -->
     <div class="relative p-6">
@@ -39,7 +39,7 @@
       <!-- Stats -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div
-          class="text-center p-4 bg-off-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700"
+          class="text-center p-4 bg-white dark:bg-dark rounded-2xl shadow-lg border border-gray-100/50 dark:border-gray-700/50"
         >
           <div
             class="w-10 h-10 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/40 dark:to-blue-800/40 flex items-center justify-center"
@@ -51,7 +51,7 @@
         </div>
 
         <div
-          class="text-center p-4 bg-off-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700"
+          class="text-center p-4 bg-white dark:bg-dark rounded-2xl shadow-lg border border-gray-100/50 dark:border-gray-700/50"
         >
           <div
             class="w-10 h-10 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/40 dark:to-green-800/40 flex items-center justify-center"
@@ -65,7 +65,7 @@
         </div>
 
         <div
-          class="text-center p-4 bg-off-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700"
+          class="text-center p-4 bg-white dark:bg-dark rounded-2xl shadow-lg border border-gray-100/50 dark:border-gray-700/50"
         >
           <div
             class="w-10 h-10 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-red-100 to-red-200 dark:from-red-900/40 dark:to-red-800/40 flex items-center justify-center"
@@ -80,7 +80,7 @@
       <!-- Dates Info -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div
-          class="p-3 bg-off-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700"
+          class="p-3 bg-white dark:bg-dark rounded-2xl shadow-lg border border-gray-100/50 dark:border-gray-700/50"
         >
           <div class="flex items-center space-x-3">
             <div
@@ -98,7 +98,7 @@
         </div>
 
         <div
-          class="py-3 px-4 bg-off-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700"
+          class="py-3 px-4 bg-white dark:bg-dark rounded-2xl shadow-lg border border-gray-100/50 dark:border-gray-700/50"
         >
           <div class="flex items-center space-x-3">
             <div

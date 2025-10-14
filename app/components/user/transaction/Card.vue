@@ -59,8 +59,6 @@ const getButtonConfig = (status) => {
 };
 
 const handleButtonAction = () => {
-  console.log(props.order?.payment_status);
-
   if (props.order?.payment_status == "pending") {
     $midtrans.openSnapPayment(props.order?.snap_token, {
       onSuccess: (result) => handlePaymentSuccess(result),
@@ -88,7 +86,7 @@ const handlePaymentSuccess = async (result) => {
   }
 };
 
-const handlePaymentPending = async (result) => {
+const handlePaymentPending = (result) => {
   router.push(`/invitation/create/checkout/success/${result.order_id}`);
 };
 
@@ -130,7 +128,7 @@ const handlePaymentClosed = () => {
                   <h3
                     class="text-lg font-bold text-gray-800 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 truncate"
                   >
-                    Paket {{ props.order?.package_name }}
+                    Paket {{ props.order?.package?.name }}
                   </h3>
                   <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
                     {{ props.order?.payment_method }}

@@ -29,15 +29,8 @@ const { packages, pending, error } = storeToRefs(usePackageStore());
       </p>
     </div>
 
-    <div
-      v-else-if="packages"
-      class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-x-6 gap-y-8 mt-6"
-    >
-      <PackageCard v-for="pkg in packages" :key="pkg.id" :package="pkg" />
-    </div>
-
     <!-- Empty State -->
-    <div v-else class="text-center py-20">
+    <div v-else-if="packages.length === 0" class="text-center py-20">
       <div
         class="w-20 h-20 mx-auto mb-6 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center"
       >
@@ -62,6 +55,13 @@ const { packages, pending, error } = storeToRefs(usePackageStore());
         <i class="bi bi-plus-lg"></i>
         Tambah Paket
       </NuxtLink>
+    </div>
+
+    <div
+      v-else
+      class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-x-6 gap-y-8 mt-6"
+    >
+      <PackageCard v-for="pkg in packages" :key="pkg.id" :package="pkg" />
     </div>
   </div>
 </template>

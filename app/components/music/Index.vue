@@ -182,23 +182,8 @@ onUnmounted(() => {
         </p>
       </div>
 
-      <!-- Music Grid -->
-      <div v-else-if="musics" class="grid gap-4">
-        <MusicCard
-          v-for="music in musics"
-          :key="music.id"
-          :music="music"
-          :is-playing="isPlaying(music.id)"
-          :is-loading="isLoading"
-          @play="playMusic"
-          @pause="pauseMusic"
-          @edit="handleEditMusic"
-          @delete="openDeleteModal"
-        />
-      </div>
-
       <!-- Empty State -->
-      <div v-else class="text-center py-20">
+      <div v-else-if="musics.length === 0" class="text-center py-20">
         <div
           class="w-20 h-20 mx-auto mb-6 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center"
         >
@@ -223,6 +208,21 @@ onUnmounted(() => {
           <i class="bi bi-plus-lg"></i>
           Tambah Musik
         </NuxtLink>
+      </div>
+
+      <!-- Music Grid -->
+      <div v-else class="grid gap-4">
+        <MusicCard
+          v-for="music in musics"
+          :key="music.id"
+          :music="music"
+          :is-playing="isPlaying(music.id)"
+          :is-loading="isLoading"
+          @play="playMusic"
+          @pause="pauseMusic"
+          @edit="handleEditMusic"
+          @delete="openDeleteModal"
+        />
       </div>
     </div>
 
