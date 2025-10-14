@@ -1,7 +1,7 @@
 <script setup>
 const { user } = storeToRefs(useAuthStore());
 const { themes, themesPending } = storeToRefs(useThemeStore());
-const { categories } = storeToRefs(useThemeCategoryStore());
+const { categories, categoriesPending } = storeToRefs(useThemeCategoryStore());
 
 const activeCategory = ref("all");
 
@@ -62,9 +62,12 @@ const getCurrentCategoryName = computed(() => {
     <div
       class="relative p-6 bg-off-white dark:bg-gray-900 rounded-3xl border border-dark/10 dark:border-white/10 shadow-xl"
     >
-      <div v-if="user.role == 'admin'" class="flex flex-col-reverse sm:flex-row justify-between gap-4 mb-8 text-center">
+      <div
+        v-if="user.role == 'admin'"
+        class="flex flex-col-reverse sm:flex-row justify-between gap-4 mb-8 text-center"
+      >
         <NuxtLink
-          to="/"
+          to="/themes/categories"
           class="px-6 py-3 rounded-2xl bg-linear-to-r from-blue-500 to-purple-500 font-medium text-white hover:scale-105 active:scale-95 transition duration-300"
         >
           Kelola Kategori
@@ -72,7 +75,8 @@ const getCurrentCategoryName = computed(() => {
 
         <span
           class="py-2 px-4 h-fit rounded-full bg-blue-50 dark:bg-blue-950 border border-blue-500 text-sm text-blue-600 dark:text-blue-500 font-medium"
-          >Jumlah Kategori : 10</span
+          >Jumlah Kategori :
+          {{ categoriesPending ? "-" : categories.length }}</span
         >
       </div>
 
