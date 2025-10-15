@@ -20,9 +20,7 @@ export const usePaymentStore = defineStore("payment", () => {
         body: { package_id: packageId },
       });
 
-      currentOrder.value = response.data;
-
-      return response;
+      return response.data;
     } catch (error) {
       throw handleApiError(error);
     }

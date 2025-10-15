@@ -178,7 +178,6 @@ onUnmounted(() => {
                 :class="modalConfig.buttonBg"
               >
                 <span v-if="!isDeleting" class="flex items-center">
-                  <i class="bi bi-trash3 mr-2"></i>
                   {{ confirmText }}
                 </span>
                 <span v-else class="flex items-center gap-2">

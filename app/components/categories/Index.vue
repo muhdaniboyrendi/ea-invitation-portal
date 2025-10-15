@@ -1,13 +1,18 @@
 <script setup>
 const { categories, categoriesPending } = storeToRefs(useThemeCategoryStore());
 const { user } = storeToRefs(useAuthStore());
-const { createThemeCategory, updateThemeCategory } = useThemeCategoryStore();
+const { categoriesRefresh } = useThemeCategoryStore();
 
 // Form state
 const showForm = ref(false);
 const editingCategoryId = ref(null);
 const editingCategoryData = ref(null);
-const isSubmitting = ref(false);
+
+// Delete modal state
+const showDeleteModal = ref(false);
+const deletingCategoryId = ref(null);
+const deletingCategoryName = ref("");
+const isDeleting = ref(false);
 
 // Notification state
 const notification = reactive({
@@ -40,6 +45,14 @@ const handleEditCategory = (category) => {
   showForm.value = true;
   editingCategoryId.value = category.id;
   editingCategoryData.value = { ...category };
+
+  // Scroll to form
+  nextTick(() => {
+    const formElement = document.querySelector('[data-scroll-target="form"]');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  });
 };
 
 // Handle form close
@@ -49,125 +62,78 @@ const handleFormClose = () => {
   editingCategoryData.value = null;
 };
 
-// Handle form submit
-const handleFormSubmit = async (submitData) => {
-  isSubmitting.value = true;
+const handleDeleteCategory = (category) => {
+  deletingCategoryId.value = category.id;
+  deletingCategoryName.value = category.name || "Kategori ini";
+  showDeleteModal.value = true;
+};
+
+const handleConfirmDelete = async () => {
+  isDeleting.value = true;
 
   try {
-    if (submitData.mode === "create") {
-      // Create new category
-      await createThemeCategory(submitData.data);
-      showNotification("success", "Kategori berhasil ditambahkan!");
-    } else {
-      // Update existing category
-      await updateThemeCategory(submitData.id, submitData.data);
-      showNotification("success", "Kategori berhasil diperbarui!");
-    }
+    await deleteThemeCategory(deletingCategoryId.value);
 
-    // Close form after success
-    handleFormClose();
+    showNotification("success", "Kategori berhasil dihapus!");
+    showDeleteModal.value = false;
+
+    setTimeout(() => {
+      categoriesRefresh();
+    }, 5000);
   } catch (error) {
-    console.error("Error submitting category:", error);
+    console.error("Error deleting category:", error);
+
     const message =
       error?.message ||
       error?.response?.data?.message ||
-      "Terjadi kesalahan saat menyimpan kategori. Silakan coba lagi.";
+      "Gagal menghapus kategori. Silakan coba lagi.";
     showNotification("error", message);
   } finally {
-    isSubmitting.value = false;
+    isDeleting.value = false;
   }
 };
 
-// Handle delete category
-const handleDeleteCategory = async (categoryId) => {
-  if (confirm("Apakah Anda yakin ingin menghapus kategori ini?")) {
-    try {
-      // Call delete API from store
-      // await deleteThemeCategory(categoryId);
-      showNotification("success", "Kategori berhasil dihapus!");
-    } catch (error) {
-      console.error("Error deleting category:", error);
-      showNotification("error", "Gagal menghapus kategori. Silakan coba lagi.");
-    }
+const handleDeleteModalClose = () => {
+  if (!isDeleting.value) {
+    showDeleteModal.value = false;
+    deletingCategoryId.value = null;
+    deletingCategoryName.value = "";
   }
 };
 </script>
 
 <template>
   <div class="grid gap-6">
-    <!-- Alert Notification -->
-    <Transition
-      enter-active-class="transition duration-300 ease-out"
-      enter-from-class="opacity-0 translate-y-4"
-      enter-to-class="opacity-100 translate-y-0"
-      leave-active-class="transition duration-200 ease-in"
-      leave-from-class="opacity-100 translate-y-0"
-      leave-to-class="opacity-0 translate-y-4"
-    >
-      <div
-        v-if="notification.show"
-        class="fixed top-4 left-4 right-4 sm:left-auto sm:right-4 sm:w-96 z-50 p-4 rounded-xl shadow-lg transition-all duration-300"
-        :class="{
-          'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-700/30':
-            notification.type === 'success',
-          'bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-700/30':
-            notification.type === 'error',
-          'bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-700/30':
-            notification.type === 'warning',
-          'bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-700/30':
-            notification.type === 'info',
-        }"
-      >
-        <div class="flex items-start gap-3">
-          <i
-            class="text-xl mt-0.5"
-            :class="{
-              'bi bi-check-circle text-green-600 dark:text-green-400':
-                notification.type === 'success',
-              'bi bi-exclamation-circle text-red-600 dark:text-red-400':
-                notification.type === 'error',
-              'bi bi-exclamation-triangle text-yellow-600 dark:text-yellow-400':
-                notification.type === 'warning',
-              'bi bi-info-circle text-blue-600 dark:text-blue-400':
-                notification.type === 'info',
-            }"
-          ></i>
-          <div class="flex-1">
-            <p
-              class="text-sm font-semibold"
-              :class="{
-                'text-green-900 dark:text-green-100':
-                  notification.type === 'success',
-                'text-red-900 dark:text-red-100': notification.type === 'error',
-                'text-yellow-900 dark:text-yellow-100':
-                  notification.type === 'warning',
-                'text-blue-900 dark:text-blue-100':
-                  notification.type === 'info',
-              }"
-            >
-              {{ notification.message }}
-            </p>
-          </div>
-          <button
-            @click="closeNotification"
-            class="text-dark/60 dark:text-white/60 hover:text-dark dark:hover:text-white transition-colors"
-          >
-            <i class="bi bi-x-lg"></i>
-          </button>
-        </div>
-      </div>
-    </Transition>
+    <FormAlertNotification
+      :show="notification.show"
+      :type="notification.type"
+      :message="notification.message"
+      position="top-center"
+      :duration="5000"
+      @close="closeNotification"
+    />
 
-    <!-- Header -->
     <CategoriesHeader @add-category="handleAddCategory" />
 
-    <!-- Add/Edit Form -->
     <CategoriesForm
       v-if="showForm"
+      data-scroll-target="form"
       :category-id="editingCategoryId"
       :category-data="editingCategoryData"
       @close="handleFormClose"
-      @submit="handleFormSubmit"
+    />
+
+    <ConfirmDeleteModal
+      :show="showDeleteModal"
+      title="Hapus Kategori?"
+      message="Apakah Anda yakin ingin menghapus kategori"
+      :item-name="deletingCategoryName"
+      :is-deleting="isDeleting"
+      confirm-text="Hapus"
+      cancel-text="Batal"
+      type="danger"
+      @close="handleDeleteModalClose"
+      @confirm="handleConfirmDelete"
     />
 
     <!-- Category Cards Container -->

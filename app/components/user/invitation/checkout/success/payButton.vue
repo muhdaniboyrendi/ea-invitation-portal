@@ -16,14 +16,14 @@ const handlePayNow = () => {
 };
 
 const handlePaymentSuccess = async (result) => {
+  showSuccessAlert.value = true;
+
   try {
     await updatePaymentSuccess(result.order_id);
 
-    showSuccessAlert.value = true;
-
     setTimeout(() => {
       showSuccessAlert.value = false;
-      router.push(`/dashboard/invitation/create/${result.order_id}`);
+      router.push(`/invitation/create/${result.order_id}`);
     }, 3000);
   } catch (error) {
     console.error(error);

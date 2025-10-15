@@ -43,24 +43,6 @@ export const useOrderStore = defineStore("order", () => {
     },
   });
 
-  // const fetchUserOrders = async () => {
-  //   try {
-  //     const response = await $fetch(`/api/orders/user-orders`, {
-  //       method: "GET",
-  //     });
-
-  //     return response.data;
-  //   } catch (error) {
-  //     const err = new Error(
-  //       error.data?.message || "Terjadi kesalahan pada server"
-  //     );
-  //     err.status = error.data?.statusCode;
-  //     err.validationErrors = error.data?.data.errors || {};
-
-  //     throw err;
-  //   }
-  // };
-
   const fetchOrder = async (orderId) => {
     try {
       const response = await $fetch(`/api/orders/${orderId}`, {

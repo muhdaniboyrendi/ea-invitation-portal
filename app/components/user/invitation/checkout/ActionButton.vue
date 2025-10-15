@@ -11,18 +11,18 @@ const showSuccessAlert = ref(false);
 
 const finalPrice = Number(props.package.final_price) + 2500;
 
-const applyPromo = () => {
-  if (promoCode.value.toLowerCase() === "discount10") {
-    cart.value.subtotal = cart.value.subtotal * 0.9;
-    cart.value.tax = cart.value.subtotal * 0.1;
-    cart.value.total =
-      cart.value.subtotal + cart.value.tax + cart.value.adminFee;
-    alert("Promo code applied! 10% discount");
-    promoCode.value = "";
-  } else if (promoCode.value) {
-    alert("Invalid promo code");
-  }
-};
+// const applyPromo = () => {
+//   if (promoCode.value.toLowerCase() === "discount10") {
+//     cart.value.subtotal = cart.value.subtotal * 0.9;
+//     cart.value.tax = cart.value.subtotal * 0.1;
+//     cart.value.total =
+//       cart.value.subtotal + cart.value.tax + cart.value.adminFee;
+//     alert("Promo code applied! 10% discount");
+//     promoCode.value = "";
+//   } else if (promoCode.value) {
+//     alert("Invalid promo code");
+//   }
+// };
 
 const submitOrder = async () => {
   try {
@@ -30,15 +30,11 @@ const submitOrder = async () => {
 
     const orderData = await createPayment(props.package.id);
 
-    if (orderData.data?.snap_token) {
-      $midtrans.openSnapPayment(orderData.data.snap_token, {
-        onSuccess: (result) => handlePaymentSuccess(result),
-        onPending: (result) => handlePaymentPending(result),
-        onClose: () => handlePaymentClosed(),
-      });
-    } else {
-      console.error("No snap token received");
-    }
+    $midtrans.openSnapPayment(orderData.snap_token, {
+      onSuccess: (result) => handlePaymentSuccess(result),
+      onPending: (result) => handlePaymentPending(result),
+      onClose: () => handlePaymentClosed(),
+    });
   } catch (error) {
     console.error("Error processing payment:", error);
     console.error("Error validation:", error.validationErrors);
@@ -48,14 +44,14 @@ const submitOrder = async () => {
 };
 
 const handlePaymentSuccess = async (result) => {
+  showSuccessAlert.value = true;
+
   try {
     await updatePaymentSuccess(result.order_id);
 
-    showSuccessAlert.value = true;
-
     setTimeout(() => {
       showSuccessAlert.value = false;
-      router.push(`/dashboard/invitation/create/${result.order_id}`);
+      router.push(`/invitation/create/${result.order_id}`);
     }, 3000);
   } catch (error) {
     console.error(error);

@@ -6,6 +6,7 @@ const colorMode = useColorMode();
 const isMenuOpen = ref(false);
 const isThemeMenuOpen = ref(false);
 const isLoading = ref(false);
+const showLogoutModal = ref(false);
 
 const currentTheme = ref("light");
 
@@ -40,32 +41,30 @@ const navigateToProfile = () => {
   isMenuOpen.value = false;
 };
 
-// const setTheme = (theme) => {
-//   currentTheme.value = theme;
-//   if (theme === "dark") {
-//     document.documentElement.classList.add("dark");
-//   } else if (theme === "light") {
-//     document.documentElement.classList.remove("dark");
-//   } else {
-//     // System theme
-//     const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-//     document.documentElement.classList.toggle("dark", isDark);
-//   }
+// Handle logout button click - show confirmation modal
+const handleLogoutClick = () => {
+  showLogoutModal.value = true;
+};
 
-//   localStorage.setItem("theme", theme);
-//   isThemeMenuOpen.value = false;
-// };
-
-const handleLogout = async () => {
+// Handle logout confirmation
+const handleConfirmLogout = async () => {
   isLoading.value = true;
 
   try {
     await logout();
+    showLogoutModal.value = false;
   } catch (error) {
     console.error("Logout failed:", error);
   } finally {
     isLoading.value = false;
     isMenuOpen.value = false;
+  }
+};
+
+// Handle logout modal close
+const handleLogoutModalClose = () => {
+  if (!isLoading.value) {
+    showLogoutModal.value = false;
   }
 };
 </script>
@@ -338,7 +337,7 @@ const handleLogout = async () => {
 
                 <!-- Logout -->
                 <button
-                  @click="handleLogout"
+                  @click="handleLogoutClick"
                   class="w-full flex items-center space-x-4 p-4 text-left hover:bg-red-50/50 dark:hover:bg-red-900/20 transition-all duration-300 group relative overflow-hidden"
                 >
                   <div
@@ -360,7 +359,6 @@ const handleLogout = async () => {
                       Logout dari akun
                     </p>
                   </div>
-                  <Spinner v-if="isLoading" class="mr-2" />
                 </button>
               </div>
             </div>
@@ -368,6 +366,26 @@ const handleLogout = async () => {
         </div>
       </div>
     </header>
+
+    <!-- Logout Confirmation Modal -->
+    <ConfirmDeleteModal
+      :show="showLogoutModal"
+      title="Logout Akun?"
+      message="Apakah Anda yakin ingin keluar dari akun"
+      :item-name="user?.name"
+      :is-deleting="isLoading"
+      confirm-text="Logout"
+      cancel-text="Batal"
+      type="danger"
+      @close="handleLogoutModalClose"
+      @confirm="handleConfirmLogout"
+    >
+      <div class="p-2 rounded-lg bg-gray-200/80 dark:bg-gray-900">
+        <p class="text-center text-sm text-gray-600 dark:text-gray-400">
+          Anda harus login lagi untuk masuk ke menu EA Invitation
+        </p>
+      </div>
+    </ConfirmDeleteModal>
   </div>
 </template>
 

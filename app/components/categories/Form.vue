@@ -15,9 +15,8 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["close", "submit"]);
+const emit = defineEmits(["close"]);
 
-// Validation patterns
 const validationPatterns = {
   name: {
     required: /^.+$/,
@@ -62,7 +61,6 @@ const closeNotification = () => {
   notification.show = false;
 };
 
-// Initial form state
 const initialFormState = {
   name: "",
   description: "",
@@ -76,7 +74,6 @@ const ui = reactive({
   isFormTouched: false,
 });
 
-// Computed
 const isEditMode = computed(() => props.categoryId !== null);
 
 const isFormValid = computed(() => {
@@ -87,7 +84,6 @@ const isFormValid = computed(() => {
   return !!(formData.name.trim() && formData.description.trim());
 });
 
-// Validation functions
 const validateField = (field, value) => {
   const pattern = validationPatterns[field];
   if (!pattern) return true;
@@ -104,7 +100,6 @@ const validateForm = () => {
   return isValid;
 };
 
-// Form handlers
 const resetForm = () => {
   Object.assign(formData, { ...initialFormState });
   resetErrors();
@@ -130,13 +125,11 @@ const handleDescriptionInput = () => {
   }, 300);
 };
 
-// Close form
 const closeForm = () => {
   resetForm();
   emit("close");
 };
 
-// Handle submit
 const handleSubmit = async () => {
   ui.isFormTouched = true;
 
@@ -171,7 +164,6 @@ const handleSubmit = async () => {
   }
 };
 
-// Watchers
 watch(
   () => props.categoryData,
   (newData) => {
@@ -192,7 +184,6 @@ watch(
   }
 );
 
-// Lifecycle
 onMounted(() => {
   if (isEditMode.value && props.categoryData) {
     formData.name = props.categoryData.name || "";
@@ -203,7 +194,6 @@ onMounted(() => {
 
 <template>
   <div>
-    <!-- Popup Alert Notification -->
     <FormAlertNotification
       :type="notification.type"
       :message="notification.message"
@@ -254,10 +244,12 @@ onMounted(() => {
           <button
             @click="closeForm"
             :disabled="ui.isSubmitting"
-            class="p-2 hover:bg-dark/10 dark:hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            class="h-8 aspect-square bg-red-100 dark:bg-red-950/70 hover:bg-red-500 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed group"
             aria-label="Close form"
           >
-            <i class="bi bi-x-lg text-dark dark:text-white text-lg"></i>
+            <i
+              class="bi bi-x-lg text-red-600 dark:text-red-500 text-lg group-hover:text-white"
+            ></i>
           </button>
         </header>
 
@@ -321,14 +313,14 @@ onMounted(() => {
               type="button"
               @click="closeForm"
               :disabled="ui.isSubmitting"
-              class="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-dark dark:text-white font-medium rounded-xl transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              class="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-dark dark:text-white font-medium rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               Batal
             </button>
             <button
               type="submit"
               :disabled="!isFormValid || ui.isSubmitting"
-              class="flex-1 px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              class="flex-1 px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               <span
                 v-if="!ui.isSubmitting"
