@@ -41,14 +41,11 @@ export const useInvitationStore = defineStore("invitation", () => {
     return err;
   };
 
-  const fetchInvitation = async (id) => {
+  const createInvitation = async (formData) => {
     try {
-      const response = await $fetch(`${apiBaseUrl}/invitations/${id}`, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
+      const response = await $fetch(`/api/invitations/create`, {
+        method: "POST",
+        body: formData,
       });
 
       return response.data;
@@ -57,24 +54,14 @@ export const useInvitationStore = defineStore("invitation", () => {
     }
   };
 
-  const createInvitation = async (invitationData) => {
-    const formData = new FormData();
-
-    formData.append("name", invitationData.name);
-    formData.append("artist", invitationData.artist);
-
-    if (invitationData.audio) {
-      formData.append("audio", invitationData.audio);
-    }
-
-    if (invitationData.thumbnail) {
-      formData.append("thumbnail", invitationData.thumbnail);
-    }
-
+  const fetchInvitation = async (id) => {
     try {
-      const response = await $fetch(`/api/invitations/create`, {
-        method: "POST",
-        body: formData,
+      const response = await $fetch(`${apiBaseUrl}/invitations/${id}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
       });
 
       return response.data;

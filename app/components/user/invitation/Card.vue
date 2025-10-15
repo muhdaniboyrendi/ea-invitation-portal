@@ -1,3 +1,7 @@
+<script setup>
+const props = defineProps(["invitation"]);
+</script>
+
 <template>
   <div
     class="relative bg-off-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden"
@@ -16,7 +20,7 @@
           </div>
           <div>
             <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">
-              Ahmad & Siti
+              {{ props.invitation.groom }} & {{ props.invitation.bride }}
             </h3>
             <p class="text-sm text-gray-600 dark:text-gray-400">
               Wedding Invitation
@@ -31,7 +35,7 @@
           <span
             class="text-sm font-semibold text-green-700 dark:text-green-300"
           >
-            Aktif
+            {{ props.invitation.status }}
           </span>
         </div>
       </div>
@@ -46,7 +50,9 @@
           >
             <i class="bi bi-people text-blue-600 dark:text-blue-400"></i>
           </div>
-          <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">150</p>
+          <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+            {{ props.invitation.guests.length }}
+          </p>
           <p class="text-xs text-gray-600 dark:text-gray-400">Total Tamu</p>
         </div>
 
@@ -60,7 +66,13 @@
               class="bi bi-check-circle text-green-600 dark:text-green-400"
             ></i>
           </div>
-          <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">87</p>
+          <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+            {{
+              props.invitation.guests.filter((guest) => {
+                guest.attendance_status == "attending";
+              }).length
+            }}
+          </p>
           <p class="text-xs text-gray-600 dark:text-gray-400">Hadir</p>
         </div>
 
@@ -72,7 +84,13 @@
           >
             <i class="bi bi-x-circle text-red-600 dark:text-red-400"></i>
           </div>
-          <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">23</p>
+          <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+            {{
+              props.invitation.guests.filter((guest) => {
+                guest.attendance_status == "not_attending";
+              }).length
+            }}
+          </p>
           <p class="text-xs text-gray-600 dark:text-gray-400">Tidak Hadir</p>
         </div>
       </div>
@@ -91,7 +109,7 @@
             <div class="text-start">
               <p class="text-xs text-gray-600 dark:text-gray-400">Dibuat</p>
               <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                15 Jan 2025
+                {{ formatDateToIndonesian(props.invitation.created_at) }}
               </p>
             </div>
           </div>
@@ -109,7 +127,7 @@
             <div class="text-start">
               <p class="text-xs text-gray-600 dark:text-gray-400">Kadaluarsa</p>
               <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                15 Mar 2025
+                {{ formatDateToIndonesian(props.invitation.expiry_date) }}
               </p>
             </div>
           </div>
@@ -119,7 +137,6 @@
       <!-- Action Buttons -->
       <div class="grid gird-cols-1 sm:grid-cols-3 gap-3">
         <button
-          @click="viewDetail"
           class="p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:scale-105"
         >
           <i class="bi bi-eye text-sm"></i>
@@ -127,7 +144,6 @@
         </button>
 
         <button
-          @click="manageGuests"
           class="p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-105"
         >
           <i class="bi bi-people text-sm"></i>
@@ -135,7 +151,6 @@
         </button>
 
         <button
-          @click="manageInvitation"
           class="p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-green-500/25 hover:shadow-green-500/40 hover:scale-105"
         >
           <i class="bi bi-box-arrow-up-right text-sm"></i>
@@ -145,21 +160,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-// Functions untuk handle button clicks
-const viewDetail = () => {
-  console.log("Viewing invitation details...");
-  // navigateTo('/invitation/detail')
-};
-
-const manageGuests = () => {
-  console.log("Managing guests...");
-  // navigateTo('/invitation/guests')
-};
-
-const manageInvitation = () => {
-  console.log("Managing invitation...");
-  // navigateTo('/invitation/manage')
-};
-</script>

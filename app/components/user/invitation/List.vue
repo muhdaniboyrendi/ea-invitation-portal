@@ -14,6 +14,7 @@ const { userInvitations, userInvitationsPending } = storeToRefs(
       <UserInvitationCard
         v-for="invitation in userInvitations"
         :key="invitation.id"
+        :invitation="invitation"
       />
     </div>
   </div>
