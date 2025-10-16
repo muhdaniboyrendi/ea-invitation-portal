@@ -30,12 +30,34 @@ const props = defineProps(["invitation"]);
 
         <!-- Status Badge -->
         <div
-          class="px-4 py-1 rounded-full bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/40 dark:to-emerald-900/40 border border-green-200 dark:border-green-700"
+          :class="{
+            'bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/40 dark:to-orange-900/40 border border-amber-200 dark:border-amber-700':
+              props.invitation.status === 'draft',
+            'bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/40 dark:to-emerald-900/40 border border-green-200 dark:border-green-700':
+              props.invitation.status === 'published',
+            'bg-gradient-to-r from-red-100 to-rose-100 dark:from-red-900/40 dark:to-rose-900/40 border border-red-200 dark:border-red-700':
+              props.invitation.status === 'expired',
+          }"
+          class="px-4 py-1 rounded-full"
         >
           <span
-            class="text-sm font-semibold text-green-700 dark:text-green-300"
+            :class="{
+              'text-amber-700 dark:text-amber-300':
+                props.invitation.status === 'draft',
+              'text-green-700 dark:text-green-300':
+                props.invitation.status === 'published',
+              'text-red-700 dark:text-red-300':
+                props.invitation.status === 'expired',
+            }"
+            class="text-sm font-semibold"
           >
-            {{ props.invitation.status }}
+            {{
+              props.invitation.status === "draft"
+                ? "Belum Aktif"
+                : props.invitation.status === "published"
+                ? "Aktif"
+                : "Kadaluarsa"
+            }}
           </span>
         </div>
       </div>
@@ -135,27 +157,31 @@ const props = defineProps(["invitation"]);
       </div>
 
       <!-- Action Buttons -->
-      <div class="grid gird-cols-1 sm:grid-cols-3 gap-3">
-        <button
-          class="p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:scale-105"
+      <div class="w-full flex flex-col sm:flex-row gap-x-6 gap-y-4">
+        <NuxtLink
+          :to="`/invitation/detail/${props.invitation.id}`"
+          class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:scale-105"
         >
-          <i class="bi bi-eye text-sm"></i>
+          <i class="bi bi-list text-sm"></i>
           <span class="block">Detail</span>
-        </button>
+        </NuxtLink>
 
         <button
-          class="p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-105"
+          class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-105"
         >
           <i class="bi bi-people text-sm"></i>
           <span class="block">Tamu</span>
         </button>
 
-        <button
-          class="p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-green-500/25 hover:shadow-green-500/40 hover:scale-105"
+        <a
+          v-if="props.invitation.slug"
+          :href="`http://localhost:3000/${props.invitation.slug}`"
+          target="_blank"
+          class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-green-500/25 hover:shadow-green-500/40 hover:scale-105"
         >
           <i class="bi bi-box-arrow-up-right text-sm"></i>
           <span class="block">lihat</span>
-        </button>
+        </a>
       </div>
     </div>
   </div>

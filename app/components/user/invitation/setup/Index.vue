@@ -1,6 +1,5 @@
 <script setup>
-const { fetchOrder } = useOrderStore();
-const { createInvitation } = useInvitationStore();
+const { checkInvitation, createInvitation } = useInvitationStore();
 const route = useRoute();
 const router = useRouter();
 
@@ -37,7 +36,6 @@ const {
   clearBackendError,
   setBackendValidationErrors,
   validateWithPattern,
-  resetErrors,
 } = useFormValidation(validationPatterns);
 
 // Notification state
@@ -57,23 +55,19 @@ const closeNotification = () => {
   notification.show = false;
 };
 
-// Initial form state
-const initialFormState = {
+// Reactive state
+const invitationData = reactive({
   order_id: orderId,
   theme_id: null,
   groom: "",
   bride: "",
-};
-
-// Reactive state
-const invitationData = reactive({ ...initialFormState });
-const ui = reactive({
-  isSubmitting: false,
-  isLoadingOrder: false,
-  isFormTouched: false,
 });
 
-const orderData = ref({});
+const ui = reactive({
+  pending: true,
+  isSubmitting: false,
+  isFormTouched: false,
+});
 
 // Computed
 const isFormValid = computed(() => {
@@ -107,13 +101,6 @@ const validateForm = () => {
 };
 
 // Form handlers
-const resetForm = () => {
-  Object.assign(invitationData, { ...initialFormState });
-  resetErrors();
-  ui.isFormTouched = false;
-};
-
-// Enhanced input handlers
 const handleGroomInput = () => {
   ui.isFormTouched = true;
   clearBackendError("groom");
@@ -141,21 +128,6 @@ const handleThemeSelected = (themeId) => {
   }
 };
 
-// Data fetching
-const loadOrderData = async () => {
-  ui.isLoadingOrder = true;
-
-  try {
-    const response = await fetchOrder(orderId);
-    orderData.value = response;
-  } catch (error) {
-    console.error(error);
-    showNotification("error", "Gagal memuat data pesanan. Silakan coba lagi.");
-  } finally {
-    ui.isLoadingOrder = false;
-  }
-};
-
 // Form submission
 const submitForm = async () => {
   ui.isFormTouched = true;
@@ -176,7 +148,6 @@ const submitForm = async () => {
     }, 1500);
   } catch (error) {
     console.error("Error creating invitation:", error);
-    console.error("Error creating invitation:", validationErrors);
 
     if (error?.validationErrors || error?.response?.data?.validationErrors) {
       const backendErrors =
@@ -200,9 +171,24 @@ const submitForm = async () => {
   }
 };
 
-// Lifecycle
+const loadInvitation = async () => {
+  ui.pending = true;
+
+  try {
+    await checkInvitation(orderId);
+
+    router.push(`/invitation/fill/${orderId}`);
+  } catch (error) {
+    console.error(error);
+    console.error(error.status);
+    console.error(error.validationErrors);
+  } finally {
+    ui.pending = false;
+  }
+};
+
 onMounted(() => {
-  loadOrderData();
+  loadInvitation();
 });
 </script>
 
@@ -218,27 +204,30 @@ onMounted(() => {
       @close="closeNotification"
     />
 
-    <!-- Theme Selection Section -->
-    <UserInvitationSetupThemeSelection
-      :order-id="orderId"
-      @theme-selected="handleThemeSelected"
-    />
+    <UserInvitationSetupLoadingState v-if="ui.pending" />
 
-    <!-- Invitation Details Form Component -->
-    <UserInvitationSetupCoupleForm
-      v-model="invitationData"
-      :validation-errors="validationErrors"
-      @groom-input="handleGroomInput"
-      @bride-input="handleBrideInput"
-    />
+    <div v-else class="space-y-8">
+      <!-- Theme Selection Section -->
+      <UserInvitationSetupThemeSelection
+        :order-id="orderId"
+        @theme-selected="handleThemeSelected"
+      />
 
-    <!-- Summary Card Component -->
-    <UserInvitationSetupSummary
-      :invitation-data="invitationData"
-      :is-submitting="ui.isSubmitting"
-      :is-form-valid="isFormValid"
-      @submit="submitForm"
-      @reset="resetForm"
-    />
+      <!-- Invitation Details Form Component -->
+      <UserInvitationSetupCoupleForm
+        v-model="invitationData"
+        :validation-errors="validationErrors"
+        @groom-input="handleGroomInput"
+        @bride-input="handleBrideInput"
+      />
+
+      <!-- Summary Card Component -->
+      <UserInvitationSetupSummary
+        :invitation-data="invitationData"
+        :is-submitting="ui.isSubmitting"
+        :is-form-valid="isFormValid"
+        @submit="submitForm"
+      />
+    </div>
   </div>
 </template>

@@ -41,6 +41,22 @@ export const useInvitationStore = defineStore("invitation", () => {
     return err;
   };
 
+  const checkInvitation = async (orderId) => {
+    try {
+      const response = await $fetch(`/api/invitations/check/${orderId}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
   const createInvitation = async (formData) => {
     try {
       const response = await $fetch(`/api/invitations/create`, {
@@ -56,7 +72,7 @@ export const useInvitationStore = defineStore("invitation", () => {
 
   const fetchInvitation = async (id) => {
     try {
-      const response = await $fetch(`${apiBaseUrl}/invitations/${id}`, {
+      const response = await $fetch(`/api/invitations/${id}`, {
         method: "GET",
         headers: {
           Accept: "application/json",
@@ -118,8 +134,9 @@ export const useInvitationStore = defineStore("invitation", () => {
     userInvitationsError,
     userInvitationsPending,
     userInvitationsRefresh,
-    fetchInvitation,
+    checkInvitation,
     createInvitation,
+    fetchInvitation,
     updateInvitation,
     deleteInvitation,
   };
