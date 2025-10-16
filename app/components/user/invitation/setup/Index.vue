@@ -175,9 +175,9 @@ const loadInvitation = async () => {
   ui.pending = true;
 
   try {
-    await checkInvitation(orderId);
+    const response = await checkInvitation(orderId);
 
-    router.push(`/invitation/fill/${orderId}`);
+    router.push(`/invitation/fill/${response.id}`);
   } catch (error) {
     console.error(error);
     console.error(error.status);
