@@ -27,19 +27,25 @@ export const useMainInfoStore = defineStore("mainInfo", () => {
     }
   };
 
-  const createMainInfo = async (themeData) => {
+  const createMainInfo = async (mainInfoData) => {
     const formData = new FormData();
-    formData.append("name", themeData.name);
-    formData.append("theme_category_id", themeData.theme_category_id);
-    formData.append("link", themeData.link);
-    formData.append("is_premium", themeData.is_premium ? "1" : "0");
 
-    if (themeData.thumbnail) {
-      formData.append("thumbnail", themeData.thumbnail);
+    formData.append("invitation_id", mainInfoData.invitation_id);
+    formData.append("music_id", mainInfoData.music_id);
+    formData.append("wedding_date", mainInfoData.wedding_date);
+    formData.append("wedding_time", mainInfoData.wedding_time);
+    formData.append("time_zone", mainInfoData.time_zone);
+
+    if (mainInfoData.main_photo) {
+      formData.append("main_photo", mainInfoData.main_photo);
+    }
+
+    if (mainInfoData.custom_backsound) {
+      formData.append("custom_backsound", mainInfoData.custom_backsound);
     }
 
     try {
-      const response = await $fetch(`/api/themes/create`, {
+      const response = await $fetch(`/api/mainInfos/create`, {
         method: "POST",
         body: formData,
       });

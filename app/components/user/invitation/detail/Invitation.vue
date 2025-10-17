@@ -101,12 +101,13 @@ const props = defineProps(["invitationData"]);
 
       <!-- Action Buttons -->
       <div class="w-full flex flex-col sm:flex-row gap-x-6 gap-y-4">
-        <button
+        <NuxtLink
+          :to="`/invitation/fill/${props.invitationData.id}`"
           class="w-full py-3 px-6 flex justify-center items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-2xl font-semibold transition-all duration-300 hover:scale-105 active:scale-95"
         >
           <i class="bi bi-pencil text-sm"></i>
           <span class="block">Edit Data</span>
-        </button>
+        </NuxtLink>
 
         <a
           v-if="props.invitationData.slug"
