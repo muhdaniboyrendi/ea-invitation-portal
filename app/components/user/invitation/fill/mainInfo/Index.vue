@@ -325,6 +325,36 @@ const handleCustomBacksoundRemove = () => {
   clearBackendError("custom_backsound");
 };
 
+const formatDateForInput = (dateString) => {
+  if (!dateString) return "";
+
+  // Jika format datetime (YYYY-MM-DD HH:MM:SS), ambil bagian tanggal saja
+  if (dateString.includes(" ")) {
+    return dateString.split(" ")[0];
+  }
+
+  // Jika sudah dalam format YYYY-MM-DD, return as is
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+    return dateString;
+  }
+
+  // Fallback: parse dengan Date object untuk format lain
+  const date = new Date(dateString);
+
+  // Check if valid date
+  if (isNaN(date.getTime())) {
+    console.error("Invalid date format:", dateString);
+    return "";
+  }
+
+  // Format ke YYYY-MM-DD
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
 // Load initial data
 const fetchMainInfoData = async () => {
   ui.isLoading = true;
@@ -336,7 +366,7 @@ const fetchMainInfoData = async () => {
       id: response.id?.toString() || "",
       music_id: response.music_id?.toString() || "",
       main_photo: response.main_photo || null,
-      wedding_date: response.wedding_date || "",
+      wedding_date: formatDateForInput(response.wedding_date),
       wedding_time: response.wedding_time || "",
       time_zone: response.time_zone || "WIB",
       custom_backsound: response.custom_backsound || null,
@@ -410,7 +440,7 @@ const submitForm = async () => {
     }
 
     if (isEditMode.value) {
-      await updateMainInfo(props.invitationId, dataToSubmit);
+      await updateMainInfo(formData.id, dataToSubmit);
       emit("success", "Data pernikahan berhasil diperbarui!");
     } else {
       await createMainInfo(dataToSubmit);
@@ -528,7 +558,7 @@ onBeforeUnmount(() => {
           class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2"
         >
           <i
-            class="bi bi-music-note-beamed text-purple-600 dark:text-purple-400"
+            class="bi bi-music-note-beamed text-blue-600 dark:text-blue-400"
           ></i>
           Backsound (Opsional)
         </h3>
@@ -544,7 +574,7 @@ onBeforeUnmount(() => {
           <!-- Selected Music Display - MODIFIKASI DI SINI -->
           <div v-if="selectedMusic && !formData.custom_backsound" class="mb-4">
             <div
-              class="p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-300 dark:border-purple-700 rounded-xl"
+              class="p-4 bg-gradient-to-r from-blue-50 to-pink-50 dark:from-blue-900/20 dark:to-pink-900/20 border-2 border-blue-300 dark:border-blue-700 rounded-xl"
             >
               <div class="flex items-center gap-3">
                 <!-- Thumbnail -->
@@ -563,12 +593,12 @@ onBeforeUnmount(() => {
                       format="webp"
                     />
                     <div
-                      class="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20"
+                      class="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20"
                     ></div>
                   </div>
                   <div
                     v-else
-                    class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center"
+                    class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center"
                   >
                     <i class="bi bi-music-note-beamed text-white text-2xl"></i>
                   </div>
@@ -577,12 +607,12 @@ onBeforeUnmount(() => {
                 <!-- Music Info -->
                 <div class="flex-1 min-w-0">
                   <p
-                    class="text-sm font-semibold text-purple-900 dark:text-purple-300"
+                    class="text-sm font-semibold text-blue-900 dark:text-blue-300"
                   >
                     Musik Terpilih
                   </p>
                   <p
-                    class="text-xs text-purple-700 dark:text-purple-400 truncate font-medium"
+                    class="text-xs text-blue-700 dark:text-blue-400 truncate font-medium"
                     :title="`${selectedMusic.name} - ${selectedMusic.artist}`"
                   >
                     {{ selectedMusic.name }} - {{ selectedMusic.artist }}
@@ -594,7 +624,7 @@ onBeforeUnmount(() => {
                   type="button"
                   @click="handleMusicPlay(selectedMusic)"
                   :disabled="ui.isAudioLoading"
-                  class="flex-shrink-0 w-9 h-9 rounded-lg bg-white dark:bg-gray-800 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-gray-700 flex items-center justify-center transition-all duration-200 disabled:opacity-50"
+                  class="flex-shrink-0 w-9 h-9 rounded-lg bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-gray-700 flex items-center justify-center transition-all duration-200 disabled:opacity-50"
                 >
                   <i
                     v-if="!isPlaying(selectedMusic.id)"
@@ -664,7 +694,7 @@ onBeforeUnmount(() => {
                         class="absolute -top-1 -left-1 z-10"
                       >
                         <div
-                          class="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center shadow-lg"
+                          class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center shadow-lg"
                         >
                           <i
                             class="bi bi-check-lg text-white text-xs font-bold"
@@ -838,7 +868,7 @@ onBeforeUnmount(() => {
               ? 'Perbarui data pernikahan'
               : 'Simpan data pernikahan baru'
           "
-          class="flex-1 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         >
           <span v-if="!ui.isSubmitting">
             {{ isEditMode ? "Perbarui Data" : "Simpan Data" }}
