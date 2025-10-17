@@ -1,3 +1,16 @@
+<script setup>
+defineProps({
+  title: {
+    type: String,
+    default: "Loading...",
+  },
+  subtitle: {
+    type: String,
+    default: "Please wait while we prepare your experience",
+  },
+});
+</script>
+
 <template>
   <div
     class="fixed inset-0 bg-white dark:bg-gray-900 z-50 flex items-center justify-center"
@@ -19,16 +32,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-defineProps({
-  title: {
-    type: String,
-    default: "Loading...",
-  },
-  subtitle: {
-    type: String,
-    default: "Please wait while we prepare your experience",
-  },
-});
-</script>
