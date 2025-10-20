@@ -8,11 +8,12 @@ const invitationId = route.params.invitationId;
 
 // --- State untuk Navigasi Form ---
 const currentStep = ref(1);
-const totalSteps = 2; // Total form yang ada (MainInfo dan Groom)
+const totalSteps = 3;
 
 const stepDetails = [
-  { id: 1, title: "Informasi Utama Pernikahan" },
+  { id: 1, title: "Informasi Utama Undangan" },
   { id: 2, title: "Data Mempelai Pria" },
+  { id: 3, title: "Data Mempelai Wanita" },
 ];
 
 const currentTitle = computed(() => {
@@ -60,6 +61,10 @@ const handleFormSuccess = (message) => {
 
 const handleFormError = (message) => {
   showNotification("error", message);
+};
+
+const handleNextStep = () => {
+  nextStep();
 };
 
 const loadInvitationData = async () => {
@@ -137,6 +142,7 @@ onMounted(() => {
           :package-id="invitationData.order.package_id"
           @success="handleFormSuccess"
           @error="handleFormError"
+          @next="handleNextStep"
         />
 
         <UserInvitationFillGroom
@@ -145,6 +151,16 @@ onMounted(() => {
           :package-id="invitationData.order.package_id"
           @success="handleFormSuccess"
           @error="handleFormError"
+          @next="handleNextStep"
+        />
+
+        <UserInvitationFillBride
+          v-if="currentStep === 3"
+          :invitation-id="invitationId"
+          :package-id="invitationData.order.package_id"
+          @success="handleFormSuccess"
+          @error="handleFormError"
+          @next="handleNextStep"
         />
       </div>
     </div>

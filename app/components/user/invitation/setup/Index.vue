@@ -139,12 +139,12 @@ const submitForm = async () => {
 
   ui.isSubmitting = true;
   try {
-    await createInvitation(invitationData);
+    const response = await createInvitation(invitationData);
+
     showNotification("success", "Undangan berhasil dibuat!");
 
-    // Redirect after success
     setTimeout(() => {
-      router.push(`/user/invitations`);
+      router.push(`/invitation/fill/${response.id}`);
     }, 1500);
   } catch (error) {
     console.error("Error creating invitation:", error);

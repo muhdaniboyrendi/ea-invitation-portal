@@ -1,3 +1,4 @@
+<!-- UserInvitationDetailGuest -->
 <script setup>
 const props = defineProps(["invitationData"]);
 </script>

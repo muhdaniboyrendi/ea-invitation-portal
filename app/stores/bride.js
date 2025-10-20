@@ -1,4 +1,4 @@
-export const useGroomStore = defineStore("groom", () => {
+export const useBrideStore = defineStore("bride", () => {
   const config = useRuntimeConfig();
   const apiBaseUrl = config.public.apiBaseUrl;
 
@@ -11,9 +11,9 @@ export const useGroomStore = defineStore("groom", () => {
     return err;
   };
 
-  const fetchGroom = async (id) => {
+  const fetchBride = async (id) => {
     try {
-      const response = await $fetch(`${apiBaseUrl}/grooms/${id}`, {
+      const response = await $fetch(`${apiBaseUrl}/brides/${id}`, {
         method: "GET",
         headers: {
           Accept: "application/json",
@@ -27,21 +27,21 @@ export const useGroomStore = defineStore("groom", () => {
     }
   };
 
-  const createGroom = async (groomData) => {
+  const createBride = async (brideData) => {
     const formData = new FormData();
 
-    formData.append("invitation_id", groomData.invitation_id);
-    formData.append("full_name", groomData.full_name);
-    formData.append("father", groomData.father);
-    formData.append("mother", groomData.mother);
-    formData.append("instagram", groomData.instagram);
+    formData.append("invitation_id", brideData.invitation_id);
+    formData.append("full_name", brideData.full_name);
+    formData.append("father", brideData.father);
+    formData.append("mother", brideData.mother);
+    formData.append("instagram", brideData.instagram);
 
-    if (groomData.photo) {
-      formData.append("photo", groomData.photo);
+    if (brideData.photo) {
+      formData.append("photo", brideData.photo);
     }
 
     try {
-      const response = await $fetch(`/api/grooms/create`, {
+      const response = await $fetch(`/api/brides/create`, {
         method: "POST",
         body: formData,
       });
@@ -52,21 +52,21 @@ export const useGroomStore = defineStore("groom", () => {
     }
   };
 
-  const updateGroom = async (id, groomData) => {
+  const updateBride = async (id, brideData) => {
     const formData = new FormData();
 
     formData.append("_method", "PUT");
-    formData.append("full_name", groomData.full_name);
-    formData.append("father", groomData.father);
-    formData.append("mother", groomData.mother);
-    formData.append("instagram", groomData.instagram);
+    formData.append("full_name", brideData.full_name);
+    formData.append("father", brideData.father);
+    formData.append("mother", brideData.mother);
+    formData.append("instagram", brideData.instagram);
 
-    if (groomData.photo) {
-      formData.append("photo", groomData.photo);
+    if (brideData.photo) {
+      formData.append("photo", brideData.photo);
     }
 
     try {
-      const response = await $fetch(`/api/grooms/${id}`, {
+      const response = await $fetch(`/api/brides/${id}`, {
         method: "POST",
         body: formData,
       });
@@ -77,9 +77,9 @@ export const useGroomStore = defineStore("groom", () => {
     }
   };
 
-  const deleteGroom = async (id) => {
+  const deleteBride = async (id) => {
     try {
-      const response = await $fetch(`/api/grooms/${id}`, {
+      const response = await $fetch(`/api/brides/${id}`, {
         method: "DELETE",
       });
 
@@ -90,9 +90,9 @@ export const useGroomStore = defineStore("groom", () => {
   };
 
   return {
-    fetchGroom,
-    createGroom,
-    updateGroom,
-    deleteGroom,
+    fetchBride,
+    createBride,
+    updateBride,
+    deleteBride,
   };
 });

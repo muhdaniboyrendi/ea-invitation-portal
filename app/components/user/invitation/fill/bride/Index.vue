@@ -6,7 +6,7 @@ const props = defineProps({
 
 const emit = defineEmits(["success", "error", "next"]);
 
-const { fetchGroom, createGroom, updateGroom } = useGroomStore();
+const { fetchBride, createBride, updateBride } = useBrideStore();
 
 const validationPatterns = {
   full_name: {
@@ -46,7 +46,7 @@ const {
   isUpdated: isGroomPhotoUpdated,
   handleFileChange: handleGroomPhotoUpload,
   removeFile: removeGroomPhoto,
-  reset: resetGroomPhotoUpload,
+  reset: resetBridePhotoUpload,
   setPreview: setGroomPhotoPreview,
 } = useFileUpload({
   allowedTypes: /^image\/(jpeg|jpg|png|webp)$/i,
@@ -116,7 +116,7 @@ const handleInput = (field, value) => {
 const fetchData = async () => {
   ui.isLoading = true;
   try {
-    const response = await fetchGroom(props.invitationId);
+    const response = await fetchBride(props.invitationId);
 
     // Assign fetched data to the form
     Object.assign(formData, {
@@ -158,11 +158,11 @@ const submitForm = async () => {
     }
 
     if (isEditMode.value) {
-      await updateGroom(formData.id, dataToSubmit);
-      emit("success", "Data mempelai pria berhasil diperbarui!");
+      await updateBride(formData.id, dataToSubmit);
+      emit("success", "Data mempelai wanita berhasil diperbarui!");
     } else {
-      await createGroom(dataToSubmit);
-      emit("success", "Data mempelai pria berhasil disimpan!");
+      await createBride(dataToSubmit);
+      emit("success", "Data mempelai wanita berhasil disimpan!");
     }
 
     setTimeout(() => {
@@ -195,7 +195,7 @@ const resetForm = () => {
   });
 
   resetErrors();
-  resetGroomPhotoUpload();
+  resetBridePhotoUpload();
 };
 
 // Lifecycle Hook
@@ -212,7 +212,7 @@ onMounted(() => {
       <div
         class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"
       ></div>
-      <p>Memuat data mempelai pria...</p>
+      <p>Memuat data mempelai wanita...</p>
     </div>
   </div>
 
@@ -222,7 +222,9 @@ onMounted(() => {
         class="text-2xl font-semibold text-gray-900 dark:text-white flex items-center gap-3"
       >
         {{
-          isEditMode ? "Edit Data Mempelai Pria" : "Tambah Data Mempelai Pria"
+          isEditMode
+            ? "Edit Data Mempelai Wanita"
+            : "Tambah Data Mempelai Wanita"
         }}
       </h2>
       <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
@@ -236,7 +238,7 @@ onMounted(() => {
       <FormBaseInput
         v-model="formData.full_name"
         type="text"
-        label="Nama Lengkap Mempelai Pria"
+        label="Nama Lengkap Mempelai Wanita"
         :required="true"
         :error="validationErrors.full_name"
         @input="handleInput('full_name', formData.full_name)"
@@ -271,7 +273,7 @@ onMounted(() => {
 
       <FormImageUpload
         ref="groomPhotoInput"
-        label="Foto Mempelai Pria (Opsional)"
+        label="Foto Mempelai Wanita (Opsional)"
         :preview="groomPhotoPreview"
         :error="validationErrors.photo"
         @change="

@@ -30,14 +30,7 @@ onMounted(() => {
 <template>
   <div>
     <!-- Loading State -->
-    <div v-if="pending" class="max-w-6xl mx-auto">
-      <div class="animate-pulse space-y-6">
-        <div class="h-64 bg-white/50 dark:bg-gray-800/50 rounded-2xl"></div>
-        <div class="h-96 bg-white/50 dark:bg-gray-800/50 rounded-2xl"></div>
-        <div class="h-80 bg-white/50 dark:bg-gray-800/50 rounded-2xl"></div>
-        <div class="h-64 bg-white/50 dark:bg-gray-800/50 rounded-2xl"></div>
-      </div>
-    </div>
+    <UserInvitationDetailSkeletonLoading v-if="pending" />
 
     <!-- Main Content -->
     <div v-else class="max-w-6xl mx-auto space-y-6">

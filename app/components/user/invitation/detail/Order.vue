@@ -1,3 +1,4 @@
+<!-- UserInvitationDetailOrder -->
 <script setup>
 const props = defineProps(["invitationData"]);
 </script>

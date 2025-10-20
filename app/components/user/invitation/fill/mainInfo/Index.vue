@@ -5,7 +5,7 @@ const props = defineProps({
   packageId: { type: [Number, String], required: true },
 });
 
-const emit = defineEmits(["success", "error"]);
+const emit = defineEmits(["success", "error", "next"]);
 
 // Store
 const { fetchMainInfo, createMainInfo, updateMainInfo } = useMainInfoStore();
@@ -285,6 +285,10 @@ const submitForm = async () => {
       await createMainInfo(dataToSubmit);
       emit("success", "Data pernikahan berhasil disimpan!");
     }
+
+    setTimeout(() => {
+      emit("next");
+    }, 3000);
   } catch (error) {
     const backendErrors =
       error?.validationErrors || error?.response?.data?.validationErrors;
