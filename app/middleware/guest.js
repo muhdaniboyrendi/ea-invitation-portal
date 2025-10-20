@@ -1,4 +1,4 @@
-// middleware/guest.js
+// app/middleware/guest.js
 export default defineNuxtRouteMiddleware((to, from) => {
   const { isLoggedIn } = storeToRefs(useAuthStore());
 

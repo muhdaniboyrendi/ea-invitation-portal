@@ -1,4 +1,8 @@
 <script setup>
+definePageMeta({
+  middleware: ["auth"],
+});
+
 useHead({
   title: "Tim Profesional Kami - EA Invitation",
   meta: [

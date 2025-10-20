@@ -24,13 +24,14 @@ export default defineEventHandler(async (event) => {
 
     return response;
   } catch (error) {
-    // Hapus cookie hanya jika benar-benar unauthorized (401)
-    // if (error.status === 401) {
-    deleteCookie(event, "auth_token", {
-      path: "/",
-      httpOnly: true,
-    });
-    // }
+    if (error.status === 401 || error.status === 404) {
+      deleteCookie(event, "auth_token", {
+        path: "/",
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+      });
+    }
 
     throw createError({
       statusCode: error.status || 500,

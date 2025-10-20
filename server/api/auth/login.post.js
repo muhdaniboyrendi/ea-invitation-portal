@@ -1,4 +1,3 @@
-// server/api/auth/login.post.js
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   const apiBaseUrl = config.public.apiBaseUrl;

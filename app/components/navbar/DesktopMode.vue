@@ -1,62 +1,21 @@
 <script setup>
-const { user } = useAuthStore();
+const props = defineProps({
+  user: {
+    type: Object,
+    required: true,
+  },
+  routeList: {
+    type: Array,
+    required: true,
+  },
+});
+
 const route = useRoute();
 
-const routelist = ref([
-  {
-    name: "beranda",
-    label: "Beranda",
-    path: "/",
-    role: "user",
-    icon: "bi-house-door",
-  },
-  {
-    name: "dashboard",
-    label: "Dashboard",
-    path: "/dashboard",
-    role: "admin",
-    icon: "bi-graph-up-arrow",
-  },
-  {
-    name: "paket",
-    label: "Paket",
-    path: "/packages",
-    role: "admin",
-    icon: "bi-box-seam",
-  },
-  {
-    name: "tema",
-    label: "Tema",
-    path: "/themes",
-    role: "admin",
-    icon: "bi-palette2",
-  },
-  {
-    name: "musik",
-    label: "Musik",
-    path: "/musics",
-    role: "admin",
-    icon: "bi-music-note-list",
-  },
-  {
-    name: "undangan",
-    label: "Undangan",
-    path: "/invitation",
-    role: "user",
-    icon: "bi-envelope",
-  },
-  {
-    name: "transaksi",
-    label: "Transaksi",
-    path: "/transaction",
-    role: "user",
-    icon: "bi-wallet2",
-  },
-  { name: "menu", label: "Menu", path: "/menu", role: "user", icon: "bi-list" },
-]);
-
 const filteredRoutes = computed(() => {
-  return routelist.value.filter((routeItem) => routeItem.role === user.role);
+  return props.routeList.filter(
+    (routeItem) => routeItem.role === props.user.role
+  );
 });
 
 const activeTab = computed(() => {

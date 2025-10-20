@@ -79,7 +79,7 @@ const {
   setPreview: setCustomBacksoundPreview,
 } = useFileUpload({
   allowedTypes: /^audio\/(mpeg|mp3|wav|ogg)$/i,
-  maxSize: 10 * 1024 * 1024,
+  maxSize: 20 * 1024 * 1024,
   onSuccess: (file) => {
     formData.custom_backsound = file;
     formData.music_id = "";
@@ -418,13 +418,7 @@ onBeforeUnmount(() => {
             clearBackendError('main_photo');
           }
         "
-      >
-        <template #description>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Foto utama akan ditampilkan sebagai banner undangan (Opsional)
-          </p>
-        </template>
-      </FormImageUpload>
+      />
 
       <div class="border-t border-gray-200 dark:border-gray-700 my-6"></div>
 
@@ -438,6 +432,56 @@ onBeforeUnmount(() => {
           ></i>
           Backsound (Opsional)
         </h3>
+
+        <!-- Custom Backsound Preview (when exists) -->
+        <div
+          v-if="formData.custom_backsound || customBacksoundPreview"
+          class="mb-4"
+        >
+          <div
+            class="p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-300 dark:border-purple-700 rounded-xl"
+          >
+            <div class="flex items-center gap-3">
+              <div class="flex-shrink-0">
+                <div
+                  class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center"
+                >
+                  <i class="bi bi-music-note-beamed text-white text-2xl"></i>
+                </div>
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <p
+                  class="text-sm font-semibold text-purple-900 dark:text-purple-300"
+                >
+                  Backsound Kustom Terpilih
+                </p>
+                <p
+                  class="text-xs text-purple-700 dark:text-purple-400 truncate font-medium"
+                >
+                  {{
+                    customBacksoundPreview
+                      ? "File audio kustom"
+                      : "Audio kustom baru"
+                  }}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                @click="
+                  removeCustomBacksound();
+                  formData.custom_backsound = null;
+                  clearBackendError('custom_backsound');
+                "
+                class="flex-shrink-0 px-3 py-1.5 rounded-lg bg-white dark:bg-gray-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-1.5 transition-all duration-200 text-sm font-medium"
+              >
+                <i class="bi bi-trash text-sm"></i>
+                <span>Hapus</span>
+              </button>
+            </div>
+          </div>
+        </div>
 
         <!-- Selected Music Display -->
         <div v-if="selectedMusic && !formData.custom_backsound" class="mb-4">
@@ -673,18 +717,7 @@ onBeforeUnmount(() => {
               clearBackendError('custom_backsound');
             }
           "
-        >
-          <template #description>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Format: MP3, WAV, OGG | Maksimal: 10MB
-              {{
-                formData.music_id
-                  ? " | Kosongkan pilihan library untuk upload kustom"
-                  : ""
-              }}
-            </p>
-          </template>
-        </FormAudioUpload>
+        />
 
         <!-- Backsound Status -->
         <div

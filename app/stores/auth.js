@@ -1,3 +1,4 @@
+// app/stores/auth.js
 export const useAuthStore = defineStore("auth", () => {
   const config = useRuntimeConfig();
   const apiBaseUrl = config.public.apiBaseUrl;
@@ -22,6 +23,8 @@ export const useAuthStore = defineStore("auth", () => {
       });
 
       user.value = response.data.user;
+
+      await nextTick();
       await navigateTo("/");
 
       return response;
@@ -55,26 +58,32 @@ export const useAuthStore = defineStore("auth", () => {
       await $fetch(`/api/auth/logout`, {
         method: "POST",
       });
-
-      navigateTo("/login");
     } catch (error) {
-      throw handleApiError(error);
+      // Tetap lanjutkan logout meskipun ada error
+      console.error("Logout error:", error);
     } finally {
       user.value = null;
+      await navigateTo("/login");
     }
   };
 
   const initializeUser = async () => {
     try {
-      const { data } = await useFetch(`/api/auth/user`, {
+      const { data, error } = await useFetch(`/api/auth/user`, {
         method: "GET",
       });
+
+      // Jika ada error (termasuk 401/404), set user ke null
+      if (error.value) {
+        user.value = null;
+        throw handleApiError(error.value);
+      }
 
       user.value = data.value;
       return data.value;
     } catch (error) {
       user.value = null;
-      throw handleApiError(error);
+      throw error;
     }
   };
 
@@ -88,6 +97,12 @@ export const useAuthStore = defineStore("auth", () => {
       return response;
     } catch (error) {
       user.value = null;
+
+      // Jika error 401 atau 404, redirect ke login
+      if (error.status === 401 || error.status === 404) {
+        await navigateTo("/login");
+      }
+
       throw handleApiError(error);
     }
   };

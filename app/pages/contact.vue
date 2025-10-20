@@ -1,4 +1,8 @@
 <script setup>
+definePageMeta({
+  middleware: ["auth"],
+});
+
 useHead({
   title: "Kontak & Dukungan - EA Invitation",
   meta: [

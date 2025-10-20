@@ -14,11 +14,11 @@ export default defineEventHandler(async (event) => {
     });
 
     if (response) {
-      // Set the token as an HttpOnly cookie
       setCookie(event, "auth_token", response.data.token, {
         httpOnly: true,
         path: "/",
         secure: process.env.NODE_ENV !== "development",
+        sameSite: "lax",
         maxAge: 60 * 60 * 24 * 7, // 1 week
       });
     }
