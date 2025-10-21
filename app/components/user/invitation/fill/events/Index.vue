@@ -205,11 +205,11 @@ const openDeleteModal = (event) => {
 };
 
 const closeDeleteModal = () => {
-  if (!deleteModal.isDeleting) {
-    deleteModal.show = false;
-    deleteModal.eventId = null;
-    deleteModal.eventName = "";
-  }
+  // if (!deleteModal.isDeleting) {
+  deleteModal.show = false;
+  deleteModal.eventId = null;
+  deleteModal.eventName = "";
+  // }
 };
 
 const confirmDelete = async () => {
@@ -351,6 +351,22 @@ onMounted(() => {
           </a>
         </div>
       </div>
+    </div>
+
+    <!-- Empty State -->
+    <div
+      v-else
+      class="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-xl p-8 text-center mb-8 border-2 border-dashed border-blue-200 dark:border-blue-800"
+    >
+      <i
+        class="bi bi-calendar-event text-6xl text-blue-300 dark:text-blue-700"
+      ></i>
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2 mt-4">
+        Belum Ada Acara
+      </h3>
+      <p class="text-gray-600 dark:text-gray-400">
+        Tambahkan acara-acara penting untuk undangan Anda
+      </p>
     </div>
 
     <!-- Add/Edit Form Toggle Button -->

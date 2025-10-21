@@ -6,13 +6,14 @@ const invitationId = route.params.invitationId;
 
 // --- State untuk Navigasi Form ---
 const currentStep = ref(1);
-const totalSteps = 4;
+const totalSteps = 5;
 
 const stepDetails = [
   { id: 1, title: "Informasi Utama Undangan" },
   { id: 2, title: "Data Mempelai Pria" },
   { id: 3, title: "Data Mempelai Wanita" },
   { id: 4, title: "Daftar Acara" },
+  { id: 5, title: "KIsah Cinta" },
 ];
 
 const currentTitle = computed(() => {
@@ -165,6 +166,15 @@ onMounted(() => {
 
         <UserInvitationFillEvents
           v-if="currentStep === 4"
+          :invitation-id="invitationId"
+          :package-id="invitationData.order.package_id"
+          @success="handleFormSuccess"
+          @error="handleFormError"
+          @next="handleNextStep"
+        />
+
+        <UserInvitationFillLoveStories
+          v-if="currentStep === 5"
           :invitation-id="invitationId"
           :package-id="invitationData.order.package_id"
           @success="handleFormSuccess"
