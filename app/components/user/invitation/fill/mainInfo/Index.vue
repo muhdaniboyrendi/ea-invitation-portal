@@ -566,117 +566,17 @@ onBeforeUnmount(() => {
               formData.custom_backsound ? 'opacity-50 pointer-events-none' : ''
             "
           >
-            <div
+            <UserInvitationFillMainInfoMusicCard
               v-for="music in musics"
               :key="music.id"
-              @click="handleMusicSelect(music)"
-              class="cursor-pointer transition-all duration-300"
-            >
-              <div
-                class="relative bg-white dark:bg-dark border border-gray-200 dark:border-white/10 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-2xl"
-              >
-                <div class="flex items-center gap-4 p-4">
-                  <div class="relative flex-shrink-0">
-                    <div class="relative">
-                      <NuxtImg
-                        v-if="music.thumbnail_url"
-                        :src="music.thumbnail_url"
-                        :alt="music.name"
-                        width="80"
-                        height="80"
-                        class="w-16 h-16 object-cover object-center rounded-xl border border-gray-200 dark:border-white/10"
-                        loading="lazy"
-                        format="webp"
-                      />
-                      <div
-                        v-else
-                        class="w-16 h-16 rounded-xl border border-gray-200 dark:border-white/10 flex flex-col justify-center items-center bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 text-gray-500 dark:text-gray-600"
-                      >
-                        <i class="bi bi-music-note text-3xl"></i>
-                      </div>
-
-                      <div
-                        v-if="formData.music_id == music.id"
-                        class="absolute -top-1 -left-1 z-10"
-                      >
-                        <div
-                          class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center shadow-lg"
-                        >
-                          <i
-                            class="bi bi-check-lg text-white text-xs font-bold"
-                          ></i>
-                        </div>
-                      </div>
-
-                      <div
-                        v-if="isPlaying(music.id)"
-                        class="absolute -top-1 -right-1 z-10"
-                      >
-                        <div
-                          class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-500 shadow-lg"
-                        >
-                          <div class="flex gap-0.5">
-                            <span
-                              class="w-0.5 h-2 bg-white rounded-full animate-pulse"
-                            ></span>
-                            <span
-                              class="w-0.5 h-2 bg-white rounded-full animate-pulse"
-                              style="animation-delay: 0.1s"
-                            ></span>
-                            <span
-                              class="w-0.5 h-2 bg-white rounded-full animate-pulse"
-                              style="animation-delay: 0.2s"
-                            ></span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="flex-1 min-w-0">
-                    <h4
-                      class="text-base font-bold text-gray-900 dark:text-white mb-0.5 line-clamp-1"
-                    >
-                      {{ music.name || "Untitled" }}
-                    </h4>
-                    <p
-                      class="text-sm text-gray-600 dark:text-gray-400 line-clamp-1 flex items-center gap-1"
-                    >
-                      <i class="bi bi-person-fill text-xs"></i>
-                      <span>{{ music.artist || "Unknown Artist" }}</span>
-                    </p>
-
-                    <div
-                      v-if="isPlaying(music.id)"
-                      class="flex items-center gap-1.5 mt-2"
-                    >
-                      <i
-                        class="bi bi-volume-up-fill text-green-500 text-sm animate-pulse"
-                      ></i>
-                      <span
-                        class="text-xs font-medium text-green-600 dark:text-green-400"
-                        >Now Playing</span
-                      >
-                    </div>
-                  </div>
-
-                  <div class="flex-shrink-0">
-                    <button
-                      type="button"
-                      @click.stop="handleMusicPlay(music)"
-                      :disabled="ui.isAudioLoading"
-                      class="w-10 h-10 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white flex items-center justify-center shadow-md transform hover:scale-110 transition-all duration-300 disabled:opacity-50"
-                    >
-                      <i
-                        v-if="!isPlaying(music.id)"
-                        class="bi bi-play-fill text-lg ml-0.5"
-                      ></i>
-                      <i v-else class="bi bi-pause-fill text-lg"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+              :music="music"
+              :is-selected="formData.music_id == music.id"
+              :is-playing="isPlaying(music.id)"
+              :is-audio-loading="ui.isAudioLoading"
+              :disabled="!!formData.custom_backsound"
+              @select="handleMusicSelect"
+              @play="handleMusicPlay"
+            />
 
             <div
               v-if="!musics || musics.length === 0"

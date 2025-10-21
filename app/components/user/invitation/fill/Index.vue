@@ -1,6 +1,4 @@
 <script setup>
-import { ref, computed } from "vue";
-
 const route = useRoute();
 const { fetchInvitation } = useInvitationStore();
 
@@ -8,12 +6,13 @@ const invitationId = route.params.invitationId;
 
 // --- State untuk Navigasi Form ---
 const currentStep = ref(1);
-const totalSteps = 3;
+const totalSteps = 4;
 
 const stepDetails = [
   { id: 1, title: "Informasi Utama Undangan" },
   { id: 2, title: "Data Mempelai Pria" },
   { id: 3, title: "Data Mempelai Wanita" },
+  { id: 4, title: "Daftar Acara" },
 ];
 
 const currentTitle = computed(() => {
@@ -25,6 +24,7 @@ const currentTitle = computed(() => {
 const nextStep = () => {
   if (currentStep.value < totalSteps) {
     currentStep.value++;
+    window.scrollTo({ top: 0, behavior: "instant" });
   }
 };
 
@@ -156,6 +156,15 @@ onMounted(() => {
 
         <UserInvitationFillBride
           v-if="currentStep === 3"
+          :invitation-id="invitationId"
+          :package-id="invitationData.order.package_id"
+          @success="handleFormSuccess"
+          @error="handleFormError"
+          @next="handleNextStep"
+        />
+
+        <UserInvitationFillEvents
+          v-if="currentStep === 4"
           :invitation-id="invitationId"
           :package-id="invitationData.order.package_id"
           @success="handleFormSuccess"

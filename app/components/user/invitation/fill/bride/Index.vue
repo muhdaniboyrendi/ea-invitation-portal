@@ -198,7 +198,6 @@ const resetForm = () => {
   resetBridePhotoUpload();
 };
 
-// Lifecycle Hook
 onMounted(() => {
   fetchData();
 });
@@ -289,13 +288,7 @@ onMounted(() => {
             clearBackendError('photo');
           }
         "
-      >
-        <template #description>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Gunakan foto portrait atau close-up untuk hasil terbaik.
-          </p>
-        </template>
-      </FormImageUpload>
+      />
 
       <div class="border-t border-gray-200 dark:border-gray-700 my-6"></div>
 
