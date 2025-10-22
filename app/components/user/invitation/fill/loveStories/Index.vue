@@ -203,8 +203,8 @@ const confirmDelete = async () => {
   try {
     await deleteLoveStory(deleteModal.storyId);
     emit("success", "Kisah berhasil dihapus!");
-    await fetchData();
     closeDeleteModal();
+    await fetchData();
   } catch (error) {
     const message = error?.message || "Gagal menghapus kisah.";
     emit("error", message);
@@ -355,7 +355,7 @@ onMounted(() => {
     <div class="mb-6">
       <button
         @click="toggleForm"
-        class="w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+        class="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
       >
         <i :class="ui.showForm ? 'bi bi-x-lg' : 'bi bi-plus-lg'"></i>
         {{ ui.showForm ? "Batal" : "Tambah Cerita Baru" }}
@@ -368,7 +368,7 @@ onMounted(() => {
         <h3
           class="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2"
         >
-          <i class="bi bi-heart-fill text-pink-500"></i>
+          <i class="bi bi-heart-fill text-blue-500"></i>
           {{ isEditMode ? "Edit Cerita" : "Tambah Cerita Baru" }}
         </h3>
       </div>
@@ -436,7 +436,7 @@ onMounted(() => {
           <button
             type="submit"
             :disabled="ui.isSubmitting || !isFormValid"
-            class="flex-1 px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:transform-none"
+            class="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:transform-none"
           >
             <span v-if="!ui.isSubmitting">
               {{ isEditMode ? "Perbarui Cerita" : "Simpan Cerita" }}

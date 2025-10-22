@@ -650,7 +650,7 @@ onBeforeUnmount(() => {
         <button
           type="submit"
           :disabled="ui.isSubmitting || !isFormValid"
-          class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:transform-none"
+          class="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:transform-none"
         >
           <span v-if="!ui.isSubmitting">
             {{ isEditMode ? "Perbarui Data" : "Simpan Data" }}

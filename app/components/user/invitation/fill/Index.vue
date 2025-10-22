@@ -6,14 +6,16 @@ const invitationId = route.params.invitationId;
 
 // --- State untuk Navigasi Form ---
 const currentStep = ref(1);
-const totalSteps = 5;
+const totalSteps = 7;
 
 const stepDetails = [
   { id: 1, title: "Informasi Utama Undangan" },
   { id: 2, title: "Data Mempelai Pria" },
   { id: 3, title: "Data Mempelai Wanita" },
   { id: 4, title: "Daftar Acara" },
-  { id: 5, title: "KIsah Cinta" },
+  { id: 5, title: "Kisah Cinta" },
+  { id: 6, title: "Daftar Hadiah" },
+  { id: 7, title: "Galeri Foto" },
 ];
 
 const currentTitle = computed(() => {
@@ -120,7 +122,7 @@ onMounted(() => {
           <button
             v-if="currentStep > 1"
             @click="prevStep"
-            class="h-10 aspect-square bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium rounded-lg hover:bg-gray-400 dark:hover:bg-gray-600 hover:scale-105 active:sclae-95 transition-all duration-300 shadow cursor-pointer"
+            class="h-10 aspect-square bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium rounded-xl hover:bg-gray-400 dark:hover:bg-gray-600 hover:scale-105 active:sclae-95 transition-all duration-300 shadow cursor-pointer"
           >
             <i class="bi bi-chevron-left"></i>
           </button>
@@ -129,7 +131,7 @@ onMounted(() => {
           <button
             v-if="currentStep < totalSteps"
             @click="nextStep"
-            class="h-10 aspect-square bg-linear-to-r from-blue-500 to-purple-500 text-white font-medium rounded-lg hover:scale-105 active:sclae-95 transition-all duration-300 shadow cursor-pointer"
+            class="h-10 aspect-square bg-linear-to-r from-blue-500 to-purple-500 text-white font-medium rounded-xl hover:scale-105 active:sclae-95 transition-all duration-300 shadow cursor-pointer"
           >
             <i class="bi bi-chevron-right"></i>
           </button>
@@ -175,6 +177,24 @@ onMounted(() => {
 
         <UserInvitationFillLoveStories
           v-if="currentStep === 5"
+          :invitation-id="invitationId"
+          :package-id="invitationData.order.package_id"
+          @success="handleFormSuccess"
+          @error="handleFormError"
+          @next="handleNextStep"
+        />
+
+        <UserInvitationFillGifts
+          v-if="currentStep === 6"
+          :invitation-id="invitationId"
+          :package-id="invitationData.order.package_id"
+          @success="handleFormSuccess"
+          @error="handleFormError"
+          @next="handleNextStep"
+        />
+
+        <UserInvitationFillGalleries
+          v-if="currentStep === 7"
           :invitation-id="invitationId"
           :package-id="invitationData.order.package_id"
           @success="handleFormSuccess"

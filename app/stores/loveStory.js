@@ -31,8 +31,6 @@ export const useLoveStoryStore = defineStore("loveStory", () => {
   };
 
   const createLoveStory = async (storyData) => {
-    console.log(storyData);
-
     const formData = new FormData();
 
     formData.append("invitation_id", storyData.invitation_id);
