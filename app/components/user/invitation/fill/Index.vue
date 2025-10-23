@@ -4,28 +4,65 @@ const { fetchInvitation } = useInvitationStore();
 
 const invitationId = route.params.invitationId;
 
+// --- State untuk data undangan ---
+const invitationData = ref({});
+const isLoading = ref(true);
+
 // --- State untuk Navigasi Form ---
 const currentStep = ref(1);
-const totalSteps = 7;
 
-const stepDetails = [
-  { id: 1, title: "Informasi Utama Undangan" },
-  { id: 2, title: "Data Mempelai Pria" },
-  { id: 3, title: "Data Mempelai Wanita" },
-  { id: 4, title: "Daftar Acara" },
-  { id: 5, title: "Kisah Cinta" },
-  { id: 6, title: "Daftar Hadiah" },
-  { id: 7, title: "Galeri Foto" },
+// ✅ Base step details (semua step yang tersedia)
+const baseStepDetails = [
+  { id: 1, title: "Informasi Utama Undangan", alwaysShow: true },
+  { id: 2, title: "Data Mempelai Pria", alwaysShow: true },
+  { id: 3, title: "Data Mempelai Wanita", alwaysShow: true },
+  { id: 4, title: "Daftar Acara", alwaysShow: true },
+  { id: 5, title: "Kisah Cinta", alwaysShow: true },
+  { id: 6, title: "Daftar Hadiah", alwaysShow: true },
+  { id: 7, title: "Galeri Foto", alwaysShow: true },
+  { id: 8, title: "Video", alwaysShow: false }, // Conditional step
+  { id: 9, title: "Selesai", alwaysShow: true }, // Completion step
 ];
 
+// ✅ Computed: Filter steps berdasarkan package
+const stepDetails = computed(() => {
+  const packageId = Number(invitationData.value?.order?.package_id);
+
+  // Jika package_id === 1, hapus step Video (id: 8)
+  if (packageId === 1) {
+    return baseStepDetails.filter((step) => step.id !== 8);
+  }
+
+  // Jika package lain, tampilkan semua step
+  return baseStepDetails;
+});
+
+// ✅ Computed: Total steps dinamis berdasarkan stepDetails yang terfilter
+const totalSteps = computed(() => stepDetails.value.length);
+
+// ✅ Computed: Current title berdasarkan step yang aktif
 const currentTitle = computed(() => {
-  const step = stepDetails.find((s) => s.id === currentStep.value);
+  const step = stepDetails.value.find((s) => s.id === currentStep.value);
   return step ? step.title : "";
+});
+
+// ✅ Computed: Check apakah step video tersedia
+const hasVideoStep = computed(() => {
+  const packageId = Number(invitationData.value?.order?.package_id);
+  return packageId !== 1;
 });
 
 // Fungsi untuk navigasi
 const nextStep = () => {
-  if (currentStep.value < totalSteps) {
+  if (currentStep.value < totalSteps.value) {
+    // Jika step saat ini adalah step 7 (Gallery) dan package_id === 1
+    // Skip langsung ke selesai atau step terakhir
+    if (currentStep.value === 7 && !hasVideoStep.value) {
+      // Bisa redirect atau tampilkan pesan sukses
+      // Untuk contoh ini, tetap di step 7
+      return;
+    }
+
     currentStep.value++;
     window.scrollTo({ top: 0, behavior: "instant" });
   }
@@ -34,18 +71,16 @@ const nextStep = () => {
 const prevStep = () => {
   if (currentStep.value > 1) {
     currentStep.value--;
+    window.scrollTo({ top: 0, behavior: "instant" });
   }
 };
 
-// --- State yang sudah ada ---
+// --- State Notification ---
 const notification = reactive({
   show: false,
   type: "info",
   message: "",
 });
-
-const invitationData = ref({});
-const isLoading = ref(true);
 
 const showNotification = (type, message) => {
   notification.type = type;
@@ -57,7 +92,7 @@ const closeNotification = () => {
   notification.show = false;
 };
 
-// Handle success/error dari form (tidak berubah)
+// Handle success/error dari form
 const handleFormSuccess = (message) => {
   showNotification("success", message);
 };
@@ -118,11 +153,19 @@ onMounted(() => {
           Langkah {{ currentStep }} dari {{ totalSteps }}
         </p>
 
+        <!-- Progress Bar -->
+        <div class="mt-4 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+          <div
+            class="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+            :style="{ width: `${(currentStep / totalSteps) * 100}%` }"
+          ></div>
+        </div>
+
         <div class="flex justify-between items-center pt-6">
           <button
             v-if="currentStep > 1"
             @click="prevStep"
-            class="h-10 aspect-square bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium rounded-xl hover:bg-gray-400 dark:hover:bg-gray-600 hover:scale-105 active:sclae-95 transition-all duration-300 shadow cursor-pointer"
+            class="h-10 aspect-square bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium rounded-xl hover:bg-gray-400 dark:hover:bg-gray-600 hover:scale-105 active:scale-95 transition-all duration-300 shadow cursor-pointer"
           >
             <i class="bi bi-chevron-left"></i>
           </button>
@@ -131,7 +174,7 @@ onMounted(() => {
           <button
             v-if="currentStep < totalSteps"
             @click="nextStep"
-            class="h-10 aspect-square bg-linear-to-r from-blue-500 to-purple-500 text-white font-medium rounded-xl hover:scale-105 active:sclae-95 transition-all duration-300 shadow cursor-pointer"
+            class="h-10 aspect-square bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium rounded-xl hover:scale-105 active:scale-95 transition-all duration-300 shadow cursor-pointer"
           >
             <i class="bi bi-chevron-right"></i>
           </button>
@@ -139,6 +182,7 @@ onMounted(() => {
       </div>
 
       <div>
+        <!-- Step 1: Informasi Utama -->
         <UserInvitationFillMainInfo
           v-if="currentStep === 1"
           :invitation-id="invitationId"
@@ -148,6 +192,7 @@ onMounted(() => {
           @next="handleNextStep"
         />
 
+        <!-- Step 2: Data Mempelai Pria -->
         <UserInvitationFillGroom
           v-if="currentStep === 2"
           :invitation-id="invitationId"
@@ -157,6 +202,7 @@ onMounted(() => {
           @next="handleNextStep"
         />
 
+        <!-- Step 3: Data Mempelai Wanita -->
         <UserInvitationFillBride
           v-if="currentStep === 3"
           :invitation-id="invitationId"
@@ -166,6 +212,7 @@ onMounted(() => {
           @next="handleNextStep"
         />
 
+        <!-- Step 4: Daftar Acara -->
         <UserInvitationFillEvents
           v-if="currentStep === 4"
           :invitation-id="invitationId"
@@ -175,6 +222,7 @@ onMounted(() => {
           @next="handleNextStep"
         />
 
+        <!-- Step 5: Kisah Cinta -->
         <UserInvitationFillLoveStories
           v-if="currentStep === 5"
           :invitation-id="invitationId"
@@ -184,6 +232,7 @@ onMounted(() => {
           @next="handleNextStep"
         />
 
+        <!-- Step 6: Daftar Hadiah -->
         <UserInvitationFillGifts
           v-if="currentStep === 6"
           :invitation-id="invitationId"
@@ -193,8 +242,32 @@ onMounted(() => {
           @next="handleNextStep"
         />
 
+        <!-- Step 7: Galeri Foto -->
         <UserInvitationFillGalleries
           v-if="currentStep === 7"
+          :invitation-id="invitationId"
+          :package-id="invitationData.order.package_id"
+          @success="handleFormSuccess"
+          @error="handleFormError"
+          @next="handleNextStep"
+        />
+
+        <!-- Step 8: Video (Conditional) -->
+        <UserInvitationFillVideos
+          v-if="currentStep === 8 && hasVideoStep"
+          :invitation-id="invitationId"
+          :package-id="invitationData.order.package_id"
+          @success="handleFormSuccess"
+          @error="handleFormError"
+          @next="handleNextStep"
+        />
+
+        <!-- Step 8: Video (Conditional) -->
+        <UserInvitationFillComplete
+          v-if="
+            (currentStep === 9 && hasVideoStep) ||
+            (currentStep === 8 && !hasVideoStep)
+          "
           :invitation-id="invitationId"
           :package-id="invitationData.order.package_id"
           @success="handleFormSuccess"

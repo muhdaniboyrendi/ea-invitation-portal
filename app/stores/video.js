@@ -1,4 +1,4 @@
-export const useGalleryStore = defineStore("gallery", () => {
+export const useVideoStore = defineStore("video", () => {
   const config = useRuntimeConfig();
   const apiBaseUrl = config.public.apiBaseUrl;
 
@@ -11,9 +11,9 @@ export const useGalleryStore = defineStore("gallery", () => {
     return err;
   };
 
-  const fetchGalleries = async (invitationId) => {
+  const fetchVideos = async (invitationId) => {
     try {
-      const response = await $fetch(`${apiBaseUrl}/galleries/${invitationId}`, {
+      const response = await $fetch(`${apiBaseUrl}/videos/${invitationId}`, {
         method: "GET",
         headers: {
           Accept: "application/json",
@@ -27,9 +27,9 @@ export const useGalleryStore = defineStore("gallery", () => {
     }
   };
 
-  const createGalleries = async (formData) => {
+  const createVideos = async (formData) => {
     try {
-      const response = await $fetch(`/api/galleries/create`, {
+      const response = await $fetch(`/api/videos/create`, {
         method: "POST",
         body: formData,
       });
@@ -40,9 +40,9 @@ export const useGalleryStore = defineStore("gallery", () => {
     }
   };
 
-  const deleteGallery = async (id) => {
+  const deleteVideo = async (id) => {
     try {
-      const response = await $fetch(`/api/galleries/${id}`, {
+      const response = await $fetch(`/api/videos/${id}`, {
         method: "DELETE",
       });
 
@@ -53,8 +53,8 @@ export const useGalleryStore = defineStore("gallery", () => {
   };
 
   return {
-    fetchGalleries,
-    createGalleries,
-    deleteGallery,
+    fetchVideos,
+    createVideos,
+    deleteVideo,
   };
 });

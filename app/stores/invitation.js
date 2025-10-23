@@ -2,21 +2,6 @@ export const useInvitationStore = defineStore("invitation", () => {
   const config = useRuntimeConfig();
   const apiBaseUrl = config.public.apiBaseUrl;
 
-  // const {
-  //   data: invitations,
-  //   error: invitationsError,
-  //   pending: invitationsPending,
-  //   refresh: invitationsRefresh,
-  // } = useFetch(`${apiBaseUrl}/invitations`, {
-  //   method: "GET",
-  //   headers: {
-  //     Accept: "application/json",
-  //   },
-  //   transform: (response) => {
-  //     return response.data;
-  //   },
-  // });
-
   const {
     data: userInvitations,
     error: userInvitationsError,
@@ -86,25 +71,10 @@ export const useInvitationStore = defineStore("invitation", () => {
     }
   };
 
-  const updateInvitation = async (invitationId, invitationData) => {
-    const formData = new FormData();
-
-    formData.append("_method", "PUT");
-    formData.append("name", invitationData.name);
-    formData.append("artist", invitationData.artist);
-
-    if (invitationData.audio) {
-      formData.append("audio", invitationData.audio);
-    }
-
-    if (invitationData.thumbnail) {
-      formData.append("thumbnail", invitationData.thumbnail);
-    }
-
+  const completeInvitation = async (invitationId) => {
     try {
       const response = await $fetch(`/api/invitations/${invitationId}`, {
-        method: "POST",
-        body: formData,
+        method: "PUT",
       });
 
       return response.data;
@@ -113,10 +83,24 @@ export const useInvitationStore = defineStore("invitation", () => {
     }
   };
 
-  const deleteInvitation = async (invitationId) => {
+  const updateCouple = async (invitationId, coupleData) => {
     try {
-      const response = await $fetch(`/api/invitations/${invitationId}`, {
-        method: "DELETE",
+      const response = await $fetch(`/api/invitations/${invitationId}/couple`, {
+        method: "PUT",
+        body: coupleData,
+      });
+
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
+  const updateTheme = async (invitationId, themeId) => {
+    try {
+      const response = await $fetch(`/api/invitations/${invitationId}/theme`, {
+        method: "PUT",
+        body: themeId,
       });
 
       return response.data;
@@ -126,10 +110,6 @@ export const useInvitationStore = defineStore("invitation", () => {
   };
 
   return {
-    // invitations,
-    // invitationsError,
-    // invitationsPending,
-    // invitationsRefresh,
     userInvitations,
     userInvitationsError,
     userInvitationsPending,
@@ -137,7 +117,8 @@ export const useInvitationStore = defineStore("invitation", () => {
     checkInvitation,
     createInvitation,
     fetchInvitation,
-    updateInvitation,
-    deleteInvitation,
+    completeInvitation,
+    updateCouple,
+    updateTheme,
   };
 });
