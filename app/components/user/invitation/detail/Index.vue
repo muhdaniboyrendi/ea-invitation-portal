@@ -35,7 +35,10 @@ onMounted(() => {
     <!-- Main Content -->
     <div v-else class="max-w-6xl mx-auto space-y-6">
       <!-- 1. Invitation Card -->
-      <UserInvitationDetailInvitation :invitation-data="invitationData" />
+      <UserInvitationDetailInvitation
+        :invitation-data="invitationData"
+        @updated="loadInvitation"
+      />
 
       <!-- 2. Theme Card -->
       <UserInvitationDetailTheme :invitation-data="invitationData" />

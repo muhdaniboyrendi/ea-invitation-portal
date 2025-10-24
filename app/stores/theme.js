@@ -117,6 +117,22 @@ export const useThemeStore = defineStore("theme", () => {
     }
   };
 
+  const fetchThemesByInvitationId = async (invitationId) => {
+    try {
+      const response = await $fetch(`/api/themes/invitation/${invitationId}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
   return {
     themes,
     themesError,
@@ -127,5 +143,6 @@ export const useThemeStore = defineStore("theme", () => {
     updateTheme,
     deleteTheme,
     fetchThemesByOrderId,
+    fetchThemesByInvitationId,
   };
 });

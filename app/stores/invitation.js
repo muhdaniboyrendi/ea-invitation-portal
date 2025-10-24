@@ -100,7 +100,7 @@ export const useInvitationStore = defineStore("invitation", () => {
     try {
       const response = await $fetch(`/api/invitations/${invitationId}/theme`, {
         method: "PUT",
-        body: themeId,
+        body: { theme_id: themeId },
       });
 
       return response.data;

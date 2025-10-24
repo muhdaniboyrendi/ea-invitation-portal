@@ -60,12 +60,12 @@ const props = defineProps(["invitationData"]);
               class="bi bi-box-arrow-up-right ml-2 group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-transform duration-300"
             ></i>
           </a>
-          <button
-            type="button"
+          <NuxtLink
+            :to="`/invitation/${props.invitationData.id}/themes`"
             class="w-full text-center py-3 px-6 rounded-2xl bg-gradient-to-r from-green-500 to-teal-500 text-white transition-all duration-300 group/link shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
           >
             <span class="font-semibold">Ubah Tema</span>
-          </button>
+          </NuxtLink>
         </div>
       </div>
     </div>

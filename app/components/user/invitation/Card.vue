@@ -159,19 +159,20 @@ const props = defineProps(["invitation"]);
       <!-- Action Buttons -->
       <div class="w-full flex flex-col sm:flex-row gap-x-6 gap-y-4">
         <NuxtLink
-          :to="`/invitation/detail/${props.invitation.id}`"
+          :to="`/invitation/${props.invitation.id}`"
           class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:scale-105"
         >
           <i class="bi bi-list text-sm"></i>
           <span class="block">Detail</span>
         </NuxtLink>
 
-        <button
+        <NuxtLink
+          :to="`/invitation/${props.invitation.id}/guests`"
           class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-105"
         >
           <i class="bi bi-people text-sm"></i>
           <span class="block">Tamu</span>
-        </button>
+        </NuxtLink>
 
         <a
           v-if="props.invitation.slug"
