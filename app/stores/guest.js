@@ -43,7 +43,7 @@ export const useGuestStore = defineStore("guest", () => {
   const updateGuest = async (id, guestData) => {
     try {
       const response = await $fetch(`/api/guests/${id}`, {
-        method: "POST",
+        method: "PUT",
         body: guestData,
       });
 
