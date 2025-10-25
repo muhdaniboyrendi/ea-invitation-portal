@@ -11,6 +11,11 @@ const ui = reactive({
   isLoading: false,
   showForm: false,
   editingGuest: null,
+  alert: {
+    show: false,
+    type: "success",
+    message: "",
+  },
 });
 
 const invitationData = ref([]);
@@ -60,14 +65,26 @@ const reloadData = async () => {
   }
 };
 
+const showAlert = (type, message) => {
+  ui.alert.type = type;
+  ui.alert.message = message;
+  ui.alert.show = true;
+};
+
+const closeAlert = () => {
+  ui.alert.show = false;
+};
+
 const handleFormSuccess = async (message) => {
   emit("success", message);
-  await reloadData();
+  showAlert("success", message);
   ui.editingGuest = null;
+  await reloadData();
 };
 
 const handleFormError = (message) => {
   emit("error", message);
+  showAlert("error", message);
 };
 
 const handleFormCancel = () => {
@@ -96,13 +113,13 @@ const handleEdit = (guest) => {
 };
 
 const handleDelete = async () => {
-  await fetchData();
+  await reloadData();
 };
 
 const toggleForm = () => {
   if (!ui.showForm && !ui.editingGuest && isGuestLimitReached.value) {
-    emit(
-      "error",
+    showAlert(
+      "warning",
       `Batas maksimal tamu untuk paket Anda adalah ${maxGuests.value} tamu.`
     );
     return;
@@ -110,6 +127,7 @@ const toggleForm = () => {
 
   if (ui.showForm) {
     ui.editingGuest = null;
+    ui.showForm = !ui.showForm;
   } else {
     ui.showForm = !ui.showForm;
     scrollToForm();
@@ -123,6 +141,15 @@ onMounted(() => {
 
 <template>
   <div>
+    <!-- Alert Notification -->
+    <FormAlertNotification
+      :show="ui.alert.show"
+      :type="ui.alert.type"
+      :message="ui.alert.message"
+      position="top-center"
+      @close="closeAlert"
+    />
+
     <UserInvitationDetailGuestSkeletonLoading v-if="ui.pending" />
 
     <div v-else class="space-y-6">
@@ -168,8 +195,8 @@ onMounted(() => {
         :max-guests="maxGuests"
         @edit="handleEdit"
         @delete="handleDelete"
-        @success="(msg) => emit('success', msg)"
-        @error="(msg) => emit('error', msg)"
+        @success="(msg) => showAlert('success', msg)"
+        @error="(msg) => showAlert('error', msg)"
       />
     </div>
   </div>

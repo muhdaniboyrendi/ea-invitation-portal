@@ -1,7 +1,4 @@
 <script setup>
-const config = useRuntimeConfig();
-const appUrl = config.public.appUrl;
-
 const props = defineProps({
   guests: {
     type: Array,
@@ -35,27 +32,6 @@ const isGuestLimitReached = computed(() => {
   if (props.maxGuests === null) return false;
   return props.guests.length >= props.maxGuests;
 });
-
-// Format attendance status badge
-const getStatusBadge = (status) => {
-  const badges = {
-    attending: {
-      text: "Hadir",
-      class:
-        "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-    },
-    not_attending: {
-      text: "Tidak Hadir",
-      class: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
-    },
-    pending: {
-      text: "Menunggu",
-      class:
-        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-    },
-  };
-  return badges[status] || badges.pending;
-};
 
 const handleEdit = (guest) => {
   emit("edit", guest);
@@ -149,63 +125,14 @@ const confirmDelete = async () => {
         </div>
       </div>
 
-      <div
+      <UserInvitationDetailGuestCard
         v-for="guest in guests"
         :key="guest.id"
-        class="bg-white dark:bg-dark rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-shadow duration-300"
-      >
-        <div class="flex justify-between items-start mb-4">
-          <div class="flex-1">
-            <div class="flex items-center gap-3 mb-2">
-              <h4 class="text-xl font-bold text-gray-900 dark:text-white">
-                {{ guest.name }}
-              </h4>
-              <span
-                v-if="guest.is_group"
-                class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
-              >
-                <i class="bi bi-people-fill"></i> Grup
-              </span>
-            </div>
-            <span
-              :class="[
-                'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold',
-                getStatusBadge(guest.attendance_status).class,
-              ]"
-            >
-              {{ getStatusBadge(guest.attendance_status).text }}
-            </span>
-          </div>
-          <div class="flex gap-2">
-            <button
-              @click="handleEdit(guest)"
-              class="h-10 aspect-square bg-gradient-to-br from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 hover:scale-105 active:scale-95 text-white rounded-xl transition-all duration-300"
-              title="Edit"
-            >
-              <i class="bi bi-pencil-fill"></i>
-            </button>
-            <button
-              @click="openDeleteModal(guest)"
-              class="h-10 aspect-square bg-gradient-to-br from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 hover:scale-105 active:scale-95 text-white rounded-xl transition-all duration-300"
-              title="Hapus"
-            >
-              <i class="bi bi-trash-fill"></i>
-            </button>
-            <a
-              :href="`${appUrl}/${invitationSlug}?guest=${guest.slug}`"
-              target="_blank"
-              class="h-10 aspect-square bg-gradient-to-br from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 hover:scale-105 active:scale-95 text-white rounded-xl transition-all duration-300 flex justify-center items-center"
-            >
-              <i class="bi bi-send-fill"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="text-sm text-gray-700 dark:text-gray-300">
-          <i class="bi bi-telephone"></i>
-          {{ guest.phone ? guest.phone : "-" }}
-        </div>
-      </div>
+        :guest="guest"
+        :invitation-slug="invitationSlug"
+        @edit="handleEdit"
+        @delete="openDeleteModal"
+      />
     </div>
 
     <!-- Empty State -->

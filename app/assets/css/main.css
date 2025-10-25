@@ -18,3 +18,13 @@
 html {
   scroll-behavior: smooth;
 }
+
+.scrollbar-hide {
+  /* Firefox */
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  /* Safari and Chrome */
+  display: none;
+}

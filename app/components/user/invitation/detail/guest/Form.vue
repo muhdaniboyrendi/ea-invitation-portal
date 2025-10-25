@@ -1,3 +1,4 @@
+<!-- UserInvitationDetailGuestForm -->
 <script setup>
 const props = defineProps({
   invitationId: {
@@ -14,7 +15,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["success", "error", "cancel", "update:showForm"]);
+const emit = defineEmits(["success", "error", "cancel"]);
 
 const { createGuest, updateGuest } = useGuestStore();
 
@@ -102,7 +103,6 @@ const submitForm = async () => {
     }
 
     resetForm();
-    emit("update:showForm", false);
   } catch (error) {
     const backendErrors =
       error?.validationErrors || error?.response?.data?.validationErrors;
@@ -133,7 +133,6 @@ const resetForm = () => {
 const handleCancel = () => {
   resetForm();
   emit("cancel");
-  emit("update:showForm", false);
 };
 
 // Watch for editing guest changes
@@ -146,7 +145,8 @@ watch(
         invitation_id: props.invitationId,
         name: newGuest.name || "",
         phone: newGuest.phone || "",
-        is_group: newGuest.is_group || false,
+        // PERBAIKAN: Konversi ke boolean eksplisit
+        is_group: Boolean(newGuest.is_group),
       });
     } else {
       resetForm();
@@ -187,7 +187,7 @@ watch(
         v-model="formData.name"
         type="text"
         label="Nama Tamu"
-        placeholder="contoh: Budi Santoso"
+        placeholder="contoh: John Doe"
         :required="true"
         :error="validationErrors.name"
         @input="handleInput('name', formData.name)"
@@ -197,25 +197,58 @@ watch(
         v-model="formData.phone"
         type="tel"
         label="Nomor Telepon (Opsional)"
-        placeholder="contoh: 08123456789"
+        placeholder="contoh: 08**********"
         :error="validationErrors.phone"
         @input="handleInput('phone', formData.phone)"
       />
 
-      <div class="flex items-center gap-3">
-        <input
-          v-model="formData.is_group"
-          type="checkbox"
-          id="is_group"
-          class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-        />
-        <label
-          for="is_group"
-          class="text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
-          Tamu Grup / Keluarga (otomatis hadir)
-        </label>
-      </div>
+      <!-- Modern Checkbox Card -->
+      <label
+        for="is_group"
+        class="block p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl border-2 transition-all duration-300 cursor-pointer hover:shadow-lg hover:scale-[1.02]"
+        :class="
+          formData.is_group
+            ? 'border-blue-500 dark:border-blue-400 shadow-md'
+            : 'border-blue-100 dark:border-gray-700'
+        "
+      >
+        <div class="flex items-center justify-between">
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <i class="bi bi-people-fill text-blue-500 text-lg"></i>
+              <span class="text-sm font-semibold text-gray-900 dark:text-white">
+                Tamu Grup / Keluarga
+              </span>
+            </div>
+            <p class="text-xs text-gray-600 dark:text-gray-400 ml-7">
+              Tandai jika ini adalah grup/keluarga (otomatis hadir)
+            </p>
+          </div>
+
+          <!-- Modern Checkbox -->
+          <div class="relative ml-4">
+            <input
+              v-model="formData.is_group"
+              type="checkbox"
+              id="is_group"
+              class="sr-only peer"
+            />
+            <div
+              class="w-7 h-7 rounded-lg border-2 transition-all duration-300 flex items-center justify-center"
+              :class="
+                formData.is_group
+                  ? 'bg-gradient-to-br from-blue-500 to-purple-500 border-blue-500 dark:border-blue-400'
+                  : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600'
+              "
+            >
+              <i
+                v-if="formData.is_group"
+                class="bi bi-check-lg text-white text-xl font-bold"
+              ></i>
+            </div>
+          </div>
+        </div>
+      </label>
 
       <div class="border-t border-gray-200 dark:border-gray-700 my-6"></div>
 
@@ -232,6 +265,7 @@ watch(
           type="submit"
           :disabled="ui.isSubmitting || !isFormValid"
           class="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:transform-none"
+          :class="ui.isSubmitting || !isFormValid ? 'cursor-not-allowed' : ''"
         >
           <span v-if="!ui.isSubmitting">
             {{ isEditMode ? "Perbarui Tamu" : "Simpan Tamu" }}
