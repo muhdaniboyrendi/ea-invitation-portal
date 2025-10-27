@@ -55,6 +55,7 @@ const handleConfirmLogout = async () => {
     showLogoutModal.value = false;
   } catch (error) {
     console.error("Logout failed:", error);
+    console.error("Logout failed:", error.validationErrors);
   } finally {
     isLoading.value = false;
     isMenuOpen.value = false;

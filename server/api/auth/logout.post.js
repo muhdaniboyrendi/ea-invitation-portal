@@ -1,32 +1,26 @@
+// server/api/auth/logout.post.js
 export default defineEventHandler(async (event) => {
+  const token = getCookie(event, "auth_token");
+
   const config = useRuntimeConfig();
   const apiBaseUrl = config.public.apiBaseUrl;
 
   try {
-    const token = getCookie(event, "auth_token");
+    const response = await $fetch(`${apiBaseUrl}/logout`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
 
-    if (token) {
-      // Call Laravel API to invalidate token
-      await $fetch(`${apiBaseUrl}/logout`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-    }
-
-    // Delete the cookie regardless of API response
     deleteCookie(event, "auth_token", {
       path: "/",
       httpOnly: true,
     });
 
-    return {
-      status: true,
-      message: "Logged out successfully",
-    };
+    return response;
   } catch (error) {
     // Still delete the cookie if API call fails
     deleteCookie(event, "auth_token", {

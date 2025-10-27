@@ -2,7 +2,7 @@
 const props = defineProps({
   user: {
     type: Object,
-    required: true,
+    required: false,
   },
   routeList: {
     type: Array,
@@ -14,7 +14,7 @@ const route = useRoute();
 
 const filteredRoutes = computed(() => {
   return props.routeList.filter(
-    (routeItem) => routeItem.role === props.user.role
+    (routeItem) => routeItem.role === props.user?.role
   );
 });
 

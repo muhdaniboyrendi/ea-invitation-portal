@@ -12,22 +12,6 @@ const validationPatterns = {
       required: "Tema wajib dipilih",
     },
   },
-  groom: {
-    required: /^.+$/,
-    minLength: /^.{2,}$/,
-    message: {
-      required: "Nama mempelai pria wajib diisi",
-      minLength: "Nama mempelai pria minimal 2 karakter",
-    },
-  },
-  bride: {
-    required: /^.+$/,
-    minLength: /^.{2,}$/,
-    message: {
-      required: "Nama mempelai wanita wajib diisi",
-      minLength: "Nama mempelai wanita minimal 2 karakter",
-    },
-  },
 };
 
 // Use composables
@@ -59,8 +43,6 @@ const closeNotification = () => {
 const invitationData = reactive({
   order_id: orderId,
   theme_id: null,
-  groom: "",
-  bride: "",
 });
 
 const ui = reactive({
@@ -76,9 +58,7 @@ const isFormValid = computed(() => {
   if (hasErrors) return false;
 
   return !!(
-    invitationData.theme_id &&
-    invitationData.groom.trim() &&
-    invitationData.bride.trim()
+    invitationData.theme_id
   );
 });
 
@@ -94,29 +74,8 @@ const validateForm = () => {
   let isValid = true;
 
   if (!validateField("theme_id", invitationData.theme_id)) isValid = false;
-  if (!validateField("groom", invitationData.groom)) isValid = false;
-  if (!validateField("bride", invitationData.bride)) isValid = false;
 
   return isValid;
-};
-
-// Form handlers
-const handleGroomInput = () => {
-  ui.isFormTouched = true;
-  clearBackendError("groom");
-  clearTimeout(window.groomValidationTimeout);
-  window.groomValidationTimeout = setTimeout(() => {
-    validateField("groom", invitationData.groom);
-  }, 300);
-};
-
-const handleBrideInput = () => {
-  ui.isFormTouched = true;
-  clearBackendError("bride");
-  clearTimeout(window.brideValidationTimeout);
-  window.brideValidationTimeout = setTimeout(() => {
-    validateField("bride", invitationData.bride);
-  }, 300);
 };
 
 const handleThemeSelected = (themeId) => {
@@ -211,14 +170,6 @@ onMounted(() => {
       <UserInvitationSetupThemeSelection
         :order-id="orderId"
         @theme-selected="handleThemeSelected"
-      />
-
-      <!-- Invitation Details Form Component -->
-      <UserInvitationSetupCoupleForm
-        v-model="invitationData"
-        :validation-errors="validationErrors"
-        @groom-input="handleGroomInput"
-        @bride-input="handleBrideInput"
       />
 
       <!-- Summary Card Component -->

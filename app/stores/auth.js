@@ -55,15 +55,16 @@ export const useAuthStore = defineStore("auth", () => {
 
   const logout = async () => {
     try {
-      await $fetch(`/api/auth/logout`, {
+      const response = await $fetch(`/api/auth/logout`, {
         method: "POST",
       });
-    } catch (error) {
-      // Tetap lanjutkan logout meskipun ada error
-      console.error("Logout error:", error);
-    } finally {
+
       user.value = null;
       await navigateTo("/login");
+      return response;
+    } catch (error) {
+      user.value = null;
+      throw handleApiError(error);
     }
   };
 
@@ -73,7 +74,6 @@ export const useAuthStore = defineStore("auth", () => {
         method: "GET",
       });
 
-      // Jika ada error (termasuk 401/404), set user ke null
       if (error.value) {
         user.value = null;
         throw handleApiError(error.value);

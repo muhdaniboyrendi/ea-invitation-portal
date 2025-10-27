@@ -8,7 +8,7 @@ const selectTheme = () => {
 </script>
 
 <template>
-  <div class="group relative w-full max-w-70">
+  <div class="group relative w-full">
     <!-- Theme Card -->
     <div
       class="relative bg-white dark:bg-dark border border-white/10 hover:border-white/20 rounded-3xl overflow-hidden shadow-lg transition-all duration-300 hover:scale-103 hover:shadow-2xl"

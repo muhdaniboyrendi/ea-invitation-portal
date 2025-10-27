@@ -54,7 +54,7 @@ const getCurrentCategoryName = computed(() => {
       title="Tema Undangan"
       subtitle="Daftar tema undangan yang tersedia untuk undangan anda."
       button-text="Tambah Tema"
-      :has-button="user.role == 'admin' ? true : false"
+      :has-button="user?.role == 'admin' ? true : false"
       button-link="/themes/create"
       icon="bi-palette2"
     />
@@ -63,7 +63,7 @@ const getCurrentCategoryName = computed(() => {
       class="relative p-6 bg-off-white dark:bg-gray-900 rounded-3xl border border-dark/10 dark:border-white/10 shadow-xl"
     >
       <div
-        v-if="user.role == 'admin'"
+        v-if="user?.role == 'admin'"
         class="flex flex-col-reverse sm:flex-row justify-between gap-4 mb-8 text-center"
       >
         <NuxtLink

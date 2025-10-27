@@ -20,7 +20,8 @@ const props = defineProps(["invitation"]);
           </div>
           <div>
             <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">
-              {{ props.invitation.groom }} & {{ props.invitation.bride }}
+              {{ props.invitation.main_info?.groom }} &
+              {{ props.invitation.main_info?.bride }}
             </h3>
             <p class="text-sm text-gray-600 dark:text-gray-400">
               Wedding Invitation

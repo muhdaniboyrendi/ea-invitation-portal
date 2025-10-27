@@ -5,7 +5,7 @@ const props = defineProps({
   packageId: { type: [Number, String], required: true },
 });
 
-const emit = defineEmits(["success", "error", "next"]);
+const emit = defineEmits(["success", "error", "next", "step-status"]);
 
 // Store
 const { fetchMainInfo, createMainInfo, updateMainInfo } = useMainInfoStore();
@@ -22,6 +22,22 @@ const timezoneOptions = [
 ];
 
 const validationPatterns = {
+  groom: {
+    required: /^.+$/,
+    minLength: /^.{2,}$/,
+    message: {
+      required: "Nama mempelai pria wajib diisi",
+      minLength: "Nama minimal 2 karakter",
+    },
+  },
+  bride: {
+    required: /^.+$/,
+    minLength: /^.{2,}$/,
+    message: {
+      required: "Nama mempelai wanita wajib diisi",
+      minLength: "Nama minimal 2 karakter",
+    },
+  },
   wedding_date: {
     required: /^.+$/,
     message: { required: "Tanggal pernikahan wajib diisi" },
@@ -92,6 +108,8 @@ const {
 const formData = reactive({
   id: null,
   invitation_id: props.invitationId,
+  groom: "",
+  bride: "",
   music_id: "",
   main_photo: null,
   wedding_date: "",
@@ -113,11 +131,21 @@ const isEditMode = computed(() => !!formData.id);
 const isFormValid = computed(() => {
   return (
     Object.keys(validationErrors.value).length === 0 &&
+    formData.groom &&
+    formData.bride &&
     formData.wedding_date &&
     formData.wedding_time &&
     formData.time_zone
   );
 });
+
+watch(
+  isEditMode,
+  (newValue) => {
+    emit("step-status", newValue);
+  },
+  { immediate: true }
+);
 
 const hasBacksoundSelected = computed(
   () => !!(formData.music_id || formData.custom_backsound)
@@ -139,6 +167,8 @@ const validateField = (field, value) => {
 
 const validateForm = () => {
   let isValid = true;
+  if (!validateField("groom", formData.groom)) isValid = false;
+  if (!validateField("bride", formData.bride)) isValid = false;
   if (!validateField("wedding_date", formData.wedding_date)) isValid = false;
   if (!validateField("wedding_time", formData.wedding_time)) isValid = false;
   if (!validateField("time_zone", formData.time_zone)) isValid = false;
@@ -183,6 +213,16 @@ const pauseMusic = () => {
 };
 
 // Handlers
+const handleGroomInput = () => {
+  clearBackendError("groom");
+  validateField("groom", formData.groom);
+};
+
+const handleBrideInput = () => {
+  clearBackendError("bride");
+  validateField("bride", formData.bride);
+};
+
 const handleMusicSelect = (music) => {
   formData.music_id = music.id;
   formData.custom_backsound = null;
@@ -235,6 +275,8 @@ const fetchMainInfoData = async () => {
 
     Object.assign(formData, {
       id: response.id?.toString() || "",
+      groom: response.groom || "",
+      bride: response.bride || "",
       music_id: response.music_id?.toString() || "",
       main_photo: response.main_photo || null,
       wedding_date: formatDateForInput(response.wedding_date),
@@ -286,10 +328,15 @@ const submitForm = async () => {
       emit("success", "Data pernikahan berhasil disimpan!");
     }
 
+    emit("step-status", true);
+
     setTimeout(() => {
       emit("next");
     }, 3000);
   } catch (error) {
+    console.error("Error submitting main info form:", error);
+    console.error("Error submitting main info form:", error.validationErrors);
+
     const backendErrors =
       error?.validationErrors || error?.response?.data?.validationErrors;
     if (backendErrors) setBackendValidationErrors(backendErrors);
@@ -312,6 +359,8 @@ const resetForm = () => {
     invitation_id: props.invitationId,
     music_id: "",
     main_photo: null,
+    groom: "",
+    bride: "",
     wedding_date: "",
     wedding_time: "",
     time_zone: "WIB",
@@ -366,6 +415,29 @@ onBeforeUnmount(() => {
     <div class="border-t border-gray-200 dark:border-gray-700 my-6"></div>
 
     <form @submit.prevent="submitForm" class="space-y-6">
+      <!-- Groom & Bride Names -->
+      <div class="grid md:grid-cols-2 gap-4">
+        <FormBaseInput
+          v-model="formData.groom"
+          type="text"
+          label="Nama Mempelai Pria"
+          placeholder="Masukkan nama mempelai pria"
+          :required="true"
+          :error="validationErrors.groom"
+          @input="handleGroomInput"
+        />
+
+        <FormBaseInput
+          v-model="formData.bride"
+          type="text"
+          label="Nama Mempelai Wanita"
+          placeholder="Masukkan nama mempelai wanita"
+          :required="true"
+          :error="validationErrors.bride"
+          @input="handleBrideInput"
+        />
+      </div>
+
       <!-- Wedding Date & Time -->
       <div class="grid md:grid-cols-2 gap-4">
         <FormBaseInput

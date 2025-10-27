@@ -4,7 +4,7 @@ const props = defineProps({
   packageId: { type: [Number, String], required: true },
 });
 
-const emit = defineEmits(["success", "error", "next"]);
+const emit = defineEmits(["success", "error", "next", "step-status"]);
 
 const { fetchBride, createBride, updateBride } = useBrideStore();
 
@@ -87,6 +87,14 @@ const isFormValid = computed(() => {
   );
 });
 
+watch(
+  isEditMode,
+  (newValue) => {
+    emit("step-status", newValue);
+  },
+  { immediate: true }
+);
+
 // Validation Methods
 const validateField = (field, value) => {
   const pattern = validationPatterns[field];
@@ -164,6 +172,8 @@ const submitForm = async () => {
       await createBride(dataToSubmit);
       emit("success", "Data mempelai wanita berhasil disimpan!");
     }
+
+    emit("step-status", true);
 
     setTimeout(() => {
       emit("next");

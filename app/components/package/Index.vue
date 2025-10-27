@@ -1,4 +1,5 @@
 <script setup>
+const { user } = storeToRefs(useAuthStore());
 const { packages, pending, error } = storeToRefs(usePackageStore());
 </script>
 

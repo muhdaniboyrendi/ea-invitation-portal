@@ -4,7 +4,7 @@ const props = defineProps({
   packageId: { type: [Number, String], required: true },
 });
 
-const emit = defineEmits(["success", "error", "next"]);
+const emit = defineEmits(["success", "error", "next", "step-status"]);
 
 const { fetchGroom, createGroom, updateGroom } = useGroomStore();
 
@@ -22,7 +22,6 @@ const validationPatterns = {
     message: { required: "Nama ibu wajib diisi" },
   },
   instagram: {
-    // Optional: only validates if not empty. Allows alphanumeric, underscore, dot.
     pattern: /^[a-zA-Z0-9._]*$/,
     message: {
       pattern: "Hanya boleh berisi huruf, angka, titik, dan underscore",
@@ -50,7 +49,7 @@ const {
   setPreview: setGroomPhotoPreview,
 } = useFileUpload({
   allowedTypes: /^image\/(jpeg|jpg|png|webp)$/i,
-  maxSize: 5 * 1024 * 1024, // 5 MB
+  maxSize: 5 * 1024 * 1024,
   onSuccess: (file) => {
     formData.photo = file;
     clearBackendError("photo");
@@ -58,7 +57,7 @@ const {
   onError: (message) => emit("error", message),
 });
 
-// Reactive form data object with the new structure
+// Reactive form data object
 const formData = reactive({
   id: null,
   invitation_id: props.invitationId,
@@ -78,7 +77,6 @@ const ui = reactive({
 const isEditMode = computed(() => !!formData.id);
 
 const isFormValid = computed(() => {
-  // Check for validation errors and presence of required fields
   return (
     Object.keys(validationErrors.value).length === 0 &&
     formData.full_name &&
@@ -86,6 +84,14 @@ const isFormValid = computed(() => {
     formData.mother
   );
 });
+
+watch(
+  isEditMode,
+  (newValue) => {
+    emit("step-status", newValue);
+  },
+  { immediate: true }
+);
 
 // Validation Methods
 const validateField = (field, value) => {
@@ -99,7 +105,6 @@ const validateForm = () => {
   if (!validateField("full_name", formData.full_name)) isValid = false;
   if (!validateField("father", formData.father)) isValid = false;
   if (!validateField("mother", formData.mother)) isValid = false;
-  // Instagram is optional, but if filled, it should be valid
   if (formData.instagram) {
     if (!validateField("instagram", formData.instagram)) isValid = false;
   }
@@ -118,7 +123,6 @@ const fetchData = async () => {
   try {
     const response = await fetchGroom(props.invitationId);
 
-    // Assign fetched data to the form
     Object.assign(formData, {
       id: response.id?.toString() || null,
       full_name: response.full_name || "",
@@ -128,14 +132,11 @@ const fetchData = async () => {
       photo: response.photo || null,
     });
 
-    // Set photo preview if a photo URL exists
     if (response.photo_url) {
       setGroomPhotoPreview(response.photo_url);
     }
   } catch (error) {
     console.error("Failed to fetch groom data:", error);
-    // Optionally emit an error to the parent
-    // emit("error", "Gagal memuat data mempelai.");
   } finally {
     ui.isLoading = false;
   }
@@ -152,7 +153,6 @@ const submitForm = async () => {
   try {
     const dataToSubmit = { ...formData };
 
-    // If in edit mode and photo is not updated, don't send the photo file
     if (isEditMode.value && !isGroomPhotoUpdated.value) {
       dataToSubmit.photo = null;
     }
@@ -164,6 +164,8 @@ const submitForm = async () => {
       await createGroom(dataToSubmit);
       emit("success", "Data mempelai pria berhasil disimpan!");
     }
+
+    emit("step-status", true);
 
     setTimeout(() => {
       emit("next");

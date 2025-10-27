@@ -1,110 +1,9 @@
 <script setup>
-const { updateCouple } = useInvitationStore();
-
 const props = defineProps(["invitationData"]);
-const emit = defineEmits(["updated"]);
-
-const isEditMode = ref(false);
-const isLoading = ref(false);
-
-const errors = ref({
-  groom: "",
-  bride: "",
-});
-
-// Alert notification state
-const alert = reactive({
-  show: false,
-  type: "success",
-  message: "",
-});
-
-const coupleData = reactive({
-  groom: props.invitationData.groom,
-  bride: props.invitationData.bride,
-});
-
-const toggleEditMode = () => {
-  if (isEditMode.value) {
-    // Cancel edit - reset values
-    coupleData.groom = props.invitationData.groom;
-    coupleData.bride = props.invitationData.bride;
-    errors.value = { groom: "", bride: "" };
-  }
-  isEditMode.value = !isEditMode.value;
-};
-
-const validateForm = () => {
-  errors.value = { groom: "", bride: "" };
-  let isValid = true;
-
-  if (!coupleData.groom || coupleData.groom.trim() === "") {
-    errors.value.groom = "Nama mempelai pria wajib diisi";
-    isValid = false;
-  }
-
-  if (!coupleData.bride || coupleData.bride.trim() === "") {
-    errors.value.bride = "Nama mempelai wanita wajib diisi";
-    isValid = false;
-  }
-
-  return isValid;
-};
-
-const showAlert = (type, message) => {
-  alert.show = false;
-  nextTick(() => {
-    alert.type = type;
-    alert.message = message;
-    alert.show = true;
-  });
-};
-
-const closeAlert = () => {
-  alert.show = false;
-};
-
-const saveNames = async () => {
-  if (!validateForm()) {
-    return;
-  }
-
-  isLoading.value = true;
-
-  try {
-    await updateCouple(props.invitationData.id, coupleData);
-
-    isEditMode.value = false;
-    showAlert("success", "Nama pasangan berhasil diperbarui!");
-
-    setTimeout(() => {
-      emit("updated");
-    }, 3000);
-  } catch (error) {
-    console.error("Error updating names:", error);
-
-    showAlert(
-      "error",
-      error.message || "Terjadi kesalahan saat memperbarui nama pasangan"
-    );
-  } finally {
-    isLoading.value = false;
-  }
-};
 </script>
 
 <template>
   <div>
-    <!-- Alert Notification -->
-    <FormAlertNotification
-      :show="alert.show"
-      :type="alert.type"
-      :message="alert.message"
-      position="top-center"
-      :duration="5000"
-      @close="closeAlert"
-    />
-
     <div
       class="relative bg-off-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden"
     >
@@ -127,18 +26,9 @@ const saveNames = async () => {
                 <h3
                   class="text-xl font-bold text-gray-800 dark:text-gray-100 truncate"
                 >
-                  {{ props.invitationData.groom }} &
-                  {{ props.invitationData.bride }}
+                  {{ props.invitationData.main_info?.groom }} &
+                  {{ props.invitationData.main_info?.bride }}
                 </h3>
-                <button
-                  @click="toggleEditMode"
-                  class="flex-shrink-0 p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-                  title="Edit nama pasangan"
-                >
-                  <i
-                    class="bi bi-pencil text-gray-600 dark:text-gray-400 text-sm"
-                  ></i>
-                </button>
               </div>
             </div>
           </div>
@@ -174,47 +64,6 @@ const saveNames = async () => {
                   : "Kadaluarsa"
               }}
             </span>
-          </div>
-        </div>
-
-        <!-- Edit Mode -->
-        <div v-if="isEditMode" class="mt-2 mb-6 space-y-4">
-          <div class="w-full grid sm:grid-cols-2 gap-4">
-            <FormBaseInput
-              v-model="coupleData.groom"
-              placeholder="Nama Mempelai Pria"
-              :error="errors.groom"
-              :disabled="isLoading"
-              required
-            />
-            <FormBaseInput
-              v-model="coupleData.bride"
-              placeholder="Nama Mempelai Wanita"
-              :error="errors.bride"
-              :disabled="isLoading"
-              required
-            />
-          </div>
-
-          <!-- Edit Actions -->
-          <div class="flex gap-4">
-            <button
-              @click="saveNames"
-              :disabled="isLoading"
-              class="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-medium text-sm hover:from-green-600 hover:to-emerald-600 hover:scale-105 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              <i v-if="!isLoading" class="bi bi-floppy"></i>
-              <Spinner v-else />
-              <span>{{ isLoading ? "Menyimpan..." : "Simpan" }}</span>
-            </button>
-            <button
-              @click="toggleEditMode"
-              :disabled="isLoading"
-              class="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              <i class="bi bi-x-lg"></i>
-              <span>Batal</span>
-            </button>
           </div>
         </div>
 

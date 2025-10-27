@@ -133,7 +133,7 @@ const handleDeleteTheme = async () => {
           <i class="bi bi-arrow-right ml-2"></i>
         </a>
 
-        <div v-if="user.role === 'admin'" class="flex items-center gap-3 mt-4">
+        <div v-if="user?.role === 'admin'" class="flex items-center gap-3 mt-4">
           <NuxtLink
             :to="`/themes/${props.theme.id}`"
             class="group/btn relative w-full inline-flex justify-center items-center px-4 py-2 backdrop-blur-md bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"

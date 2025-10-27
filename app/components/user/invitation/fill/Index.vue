@@ -11,6 +11,9 @@ const isLoading = ref(true);
 // --- State untuk Navigasi Form ---
 const currentStep = ref(1);
 
+// ✅ NEW: State untuk track apakah step dapat dilanjutkan
+const canProceedToNextStep = ref(true);
+
 // ✅ Base step details (semua step yang tersedia)
 const baseStepDetails = [
   { id: 1, title: "Informasi Utama Undangan", alwaysShow: true },
@@ -52,18 +55,22 @@ const hasVideoStep = computed(() => {
   return packageId !== 1;
 });
 
+// ✅ NEW: Handler untuk menerima update status dari child component
+const handleStepStatusUpdate = (canProceed) => {
+  canProceedToNextStep.value = canProceed;
+};
+
 // Fungsi untuk navigasi
 const nextStep = () => {
-  if (currentStep.value < totalSteps.value) {
+  if (currentStep.value < totalSteps.value && canProceedToNextStep.value) {
     // Jika step saat ini adalah step 7 (Gallery) dan package_id === 1
     // Skip langsung ke selesai atau step terakhir
     if (currentStep.value === 7 && !hasVideoStep.value) {
-      // Bisa redirect atau tampilkan pesan sukses
-      // Untuk contoh ini, tetap di step 7
       return;
     }
 
     currentStep.value++;
+    canProceedToNextStep.value = true; // Reset untuk step berikutnya
     window.scrollTo({ top: 0, behavior: "instant" });
   }
 };
@@ -71,6 +78,7 @@ const nextStep = () => {
 const prevStep = () => {
   if (currentStep.value > 1) {
     currentStep.value--;
+    canProceedToNextStep.value = true; // Reset saat kembali
     window.scrollTo({ top: 0, behavior: "instant" });
   }
 };
@@ -174,10 +182,26 @@ onMounted(() => {
           <button
             v-if="currentStep < totalSteps"
             @click="nextStep"
-            class="h-10 aspect-square bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium rounded-xl hover:scale-105 active:scale-95 transition-all duration-300 shadow cursor-pointer"
+            :disabled="!canProceedToNextStep"
+            :class="[
+              'h-10 aspect-square font-medium rounded-xl transition-all duration-300 shadow',
+              canProceedToNextStep
+                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:scale-105 active:scale-95 cursor-pointer'
+                : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-500 cursor-not-allowed opacity-50'
+            ]"
           >
             <i class="bi bi-chevron-right"></i>
           </button>
+        </div>
+
+        <div
+          v-if="currentStep < totalSteps && !canProceedToNextStep"
+          class="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg"
+        >
+          <p class="text-sm text-amber-800 dark:text-amber-200 flex items-center gap-2">
+            <i class="bi bi-info-circle"></i>
+            <span>Silakan isi dan simpan data terlebih dahulu untuk melanjutkan ke langkah berikutnya</span>
+          </p>
         </div>
       </div>
 
@@ -190,6 +214,7 @@ onMounted(() => {
           @success="handleFormSuccess"
           @error="handleFormError"
           @next="handleNextStep"
+          @step-status="handleStepStatusUpdate"
         />
 
         <!-- Step 2: Data Mempelai Pria -->
@@ -200,6 +225,7 @@ onMounted(() => {
           @success="handleFormSuccess"
           @error="handleFormError"
           @next="handleNextStep"
+          @step-status="handleStepStatusUpdate"
         />
 
         <!-- Step 3: Data Mempelai Wanita -->
@@ -210,6 +236,7 @@ onMounted(() => {
           @success="handleFormSuccess"
           @error="handleFormError"
           @next="handleNextStep"
+          @step-status="handleStepStatusUpdate"
         />
 
         <!-- Step 4: Daftar Acara -->
@@ -220,6 +247,7 @@ onMounted(() => {
           @success="handleFormSuccess"
           @error="handleFormError"
           @next="handleNextStep"
+          @step-status="handleStepStatusUpdate"
         />
 
         <!-- Step 5: Kisah Cinta -->
@@ -262,7 +290,7 @@ onMounted(() => {
           @next="handleNextStep"
         />
 
-        <!-- Step 8: Video (Conditional) -->
+        <!-- Step 9: Complete -->
         <UserInvitationFillComplete
           v-if="
             (currentStep === 9 && hasVideoStep) ||
