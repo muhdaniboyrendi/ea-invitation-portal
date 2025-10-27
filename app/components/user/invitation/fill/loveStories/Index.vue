@@ -121,6 +121,15 @@ const fetchData = async () => {
   }
 };
 
+const refreshData = async () => {
+  try {
+    const response = await fetchLoveStories(props.invitationId);
+    loveStories.value = response || [];
+  } catch (error) {
+    console.error("Failed to fetch love stories:", error);
+  }
+};
+
 const submitForm = async () => {
   if (!validateForm()) {
     emit("error", "Mohon periksa kembali, ada data yang belum valid.");
@@ -145,7 +154,7 @@ const submitForm = async () => {
       emit("success", "Cerita cinta berhasil ditambahkan!");
     }
 
-    await fetchData();
+    await refreshData();
     resetForm();
     ui.showForm = false;
   } catch (error) {
@@ -340,9 +349,9 @@ onMounted(() => {
     <!-- Empty State -->
     <div
       v-else
-      class="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-xl p-8 text-center mb-8 border-2 border-dashed border-pink-200 dark:border-pink-800"
+      class="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-xl p-8 text-center mb-8 border-2 border-dashed border-blue-200 dark:border-blue-800"
     >
-      <i class="bi bi-heart text-6xl text-pink-300 dark:text-pink-700"></i>
+      <i class="bi bi-heart text-6xl text-blue-300 dark:text-blue-700"></i>
       <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2 mt-4">
         Belum Ada Cerita
       </h3>
@@ -355,7 +364,12 @@ onMounted(() => {
     <div class="mb-6">
       <button
         @click="toggleForm"
-        class="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+        class="w-full px-6 py-3 bg-gradient-to-r text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+        :class="
+          ui.showForm
+            ? 'from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600'
+            : 'from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600'
+        "
       >
         <i :class="ui.showForm ? 'bi bi-x-lg' : 'bi bi-plus-lg'"></i>
         {{ ui.showForm ? "Batal" : "Tambah Cerita Baru" }}

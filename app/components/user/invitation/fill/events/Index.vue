@@ -4,7 +4,7 @@ const props = defineProps({
   packageId: { type: [Number, String], required: true },
 });
 
-const emit = defineEmits(["success", "error", "next"]);
+const emit = defineEmits(["success", "error", "next", "step-status"]);
 
 const { fetchEvents, createEvent, updateEvent, deleteEvent } = useEventStore();
 
@@ -87,6 +87,14 @@ const isFormValid = computed(() => {
   );
 });
 
+watch(
+  isEditMode,
+  (newValue) => {
+    emit("step-status", newValue);
+  },
+  { immediate: true }
+);
+
 // Validation Methods
 const validateField = (field, value) => {
   const pattern = validationPatterns[field];
@@ -136,10 +144,20 @@ const fetchData = async () => {
   try {
     const response = await fetchEvents(props.invitationId);
     events.value = response || [];
+    emit("step-status", true);
   } catch (error) {
     console.error("Failed to fetch events:", error);
   } finally {
     ui.isLoading = false;
+  }
+};
+
+const refreshData = async () => {
+  try {
+    const response = await fetchEvents(props.invitationId);
+    events.value = response || [];
+  } catch (error) {
+    console.error("Failed to fetch events:", error);
   }
 };
 
@@ -162,9 +180,10 @@ const submitForm = async () => {
       emit("success", "Data acara berhasil ditambahkan!");
     }
 
-    await fetchData();
+    await refreshData();
     resetForm();
     ui.showForm = false;
+    emit("step-status", true);
   } catch (error) {
     const backendErrors =
       error?.validationErrors || error?.response?.data?.validationErrors;
@@ -373,7 +392,12 @@ onMounted(() => {
     <div class="mb-6">
       <button
         @click="toggleForm"
-        class="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+        class="w-full px-6 py-3 bg-gradient-to-r text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+        :class="
+          ui.showForm
+            ? 'from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600'
+            : 'from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600'
+        "
       >
         <i :class="ui.showForm ? 'bi bi-x-lg' : 'bi bi-plus-lg'"></i>
         {{ ui.showForm ? "Batal" : "Tambah Acara Baru" }}

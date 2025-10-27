@@ -339,7 +339,7 @@ onMounted(() => {
 
           <!-- Manage Invitation Card -->
           <NuxtLink
-            :to="`/invitation/detail/${props.invitationId}`"
+            :to="`/invitation/${props.invitationId}`"
             class="group bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-transparent hover:border-blue-300 dark:hover:border-blue-700"
           >
             <div

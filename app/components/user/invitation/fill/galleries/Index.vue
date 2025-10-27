@@ -193,6 +193,15 @@ const fetchData = async () => {
   }
 };
 
+const refreshData = async () => {
+  try {
+    const response = await fetchGalleries(props.invitationId);
+    galleries.value = response || [];
+  } catch (error) {
+    console.error("Failed to fetch galleries:", error);
+  }
+};
+
 const submitForm = async () => {
   // ✅ Validation message with dynamic limit
   if (!isFormValid.value) {
@@ -219,7 +228,7 @@ const submitForm = async () => {
       `${imageUpload.files.length} foto berhasil ditambahkan ke galeri!`
     );
 
-    await fetchData();
+    await refreshData();
     resetForm();
     ui.showForm = false;
   } catch (error) {
@@ -381,9 +390,9 @@ onMounted(() => {
     <!-- Empty State -->
     <div
       v-else
-      class="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-900 rounded-xl p-8 text-center mb-8 border-2 border-dashed border-purple-200 dark:border-purple-800"
+      class="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-xl p-8 text-center mb-8 border-2 border-dashed border-blue-200 dark:border-blue-800"
     >
-      <i class="bi bi-images text-6xl text-purple-300 dark:text-purple-700"></i>
+      <i class="bi bi-images text-6xl text-blue-300 dark:text-blue-700"></i>
       <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2 mt-4">
         Belum Ada Foto
       </h3>
@@ -396,7 +405,12 @@ onMounted(() => {
     <div class="mb-6">
       <button
         @click="toggleForm"
-        class="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+        class="w-full px-6 py-3 bg-gradient-to-r text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+        :class="
+          ui.showForm
+            ? 'from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600'
+            : 'from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600'
+        "
       >
         <i :class="ui.showForm ? 'bi bi-x-lg' : 'bi bi-plus-lg'"></i>
         {{ ui.showForm ? "Batal" : "Tambah Foto" }}

@@ -127,6 +127,15 @@ const fetchData = async () => {
   }
 };
 
+const refreshData = async () => {
+  try {
+    const response = await fetchGifts(props.invitationId);
+    gifts.value = response || [];
+  } catch (error) {
+    console.error("Failed to fetch gifts:", error);
+  }
+};
+
 const submitForm = async () => {
   if (!validateForm()) {
     emit("error", "Mohon periksa kembali, ada data yang belum valid.");
@@ -146,7 +155,7 @@ const submitForm = async () => {
       emit("success", "Rekening hadiah berhasil ditambahkan!");
     }
 
-    await fetchData();
+    await refreshData();
     resetForm();
     ui.showForm = false;
   } catch (error) {
@@ -356,7 +365,12 @@ onMounted(() => {
     <div class="mb-6">
       <button
         @click="toggleForm"
-        class="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+        class="w-full px-6 py-3 bg-gradient-to-r text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+        :class="
+          ui.showForm
+            ? 'from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600'
+            : 'from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600'
+        "
       >
         <i :class="ui.showForm ? 'bi bi-x-lg' : 'bi bi-plus-lg'"></i>
         {{ ui.showForm ? "Batal" : "Tambah Rekening Baru" }}
