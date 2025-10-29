@@ -45,7 +45,7 @@ const handleChange = (event) => {
 <template>
   <div>
     <label
-      class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+      class="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2"
     >
       {{ label }}
       <span v-if="required" class="text-red-500">*</span>
@@ -53,11 +53,11 @@ const handleChange = (event) => {
     <select
       :value="modelValue"
       @change="handleChange"
-      class="w-full px-4 py-3 bg-white dark:bg-gray-800 dark:text-slate-300 border-2 rounded-xl focus:outline-none transition-colors"
+      class="w-full px-4 py-3 bg-white dark:bg-slate-800 dark:text-slate-50 border-2 rounded-xl focus:outline-none transition-colors"
       :class="
         error
           ? 'border-red-500 focus:border-red-500'
-          : 'border-gray-200 dark:border-gray-600 focus:border-purple-500 dark:focus:border-purple-400'
+          : 'border-slate-200 dark:border-slate-700 focus:border-sky-500 dark:focus:border-sky-400'
       "
     >
       <option value="">{{ placeholder }}</option>

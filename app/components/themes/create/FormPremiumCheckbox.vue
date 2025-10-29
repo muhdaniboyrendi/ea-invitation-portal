@@ -25,18 +25,18 @@ const handleChange = (event) => {
 <template>
   <div>
     <label
-      class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+      class="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2"
     >
       {{ label }}
     </label>
 
     <!-- Modern Toggle Card -->
     <div
-      class="relative overflow-hidden bg-white dark:bg-gray-800 dark:text-slate-300 border-2 rounded-xl transition-all duration-300"
+      class="relative overflow-hidden bg-white dark:bg-slate-800 dark:text-slate-300 border-2 rounded-xl transition-all duration-300"
       :class="[
         modelValue
-          ? 'border-purple-400 dark:border-purple-500 shadow-lg shadow-purple-100 dark:shadow-purple-900/20'
-          : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-600',
+          ? 'border-sky-400 dark:border-sky-500 shadow-lg shadow-sky-100 dark:shadow-sky-900/20'
+          : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600',
         error ? 'border-red-400 dark:border-red-500' : '',
       ]"
     >
@@ -59,8 +59,8 @@ const handleChange = (event) => {
               class="w-6 h-6 rounded-lg border-2 transition-all duration-300 flex items-center justify-center"
               :class="[
                 modelValue
-                  ? 'bg-gradient-to-br from-purple-500 to-pink-500 border-purple-500 scale-100'
-                  : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 group-hover:border-purple-400 dark:group-hover:border-purple-500',
+                  ? 'bg-gradient-to-br from-sky-500 to-sky-600 border-sky-500 scale-100'
+                  : 'bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600 group-hover:border-sky-400 dark:group-hover:border-sky-500',
               ]"
             >
               <Transition
@@ -85,11 +85,11 @@ const handleChange = (event) => {
               class="text-sm font-semibold transition-colors duration-200"
               :class="
                 modelValue
-                  ? 'text-purple-700 dark:text-purple-400'
-                  : 'text-gray-700 dark:text-gray-300'
+                  ? 'text-sky-700 dark:text-sky-400'
+                  : 'text-slate-900 dark:text-slate-50'
               "
             >
-              {{ modelValue ? "Premium" : "Gratis" }}
+              {{ modelValue ? "Premium" : "Basic" }}
             </span>
           </div>
         </div>

@@ -39,29 +39,29 @@ const emit = defineEmits(["close"]);
 const alertConfig = computed(() => {
   const configs = {
     success: {
-      bgClass: "bg-gradient-to-r from-green-500 to-emerald-600",
-      borderClass: "border-green-400",
+      bgClass: "bg-gradient-to-r from-emerald-500 to-emerald-600",
+      borderClass: "border-emerald-400",
       textClass: "text-white",
       icon: "bi-check-circle-fill",
       iconBg: "bg-white/20",
     },
     error: {
-      bgClass: "bg-gradient-to-r from-red-500 to-rose-600",
+      bgClass: "bg-gradient-to-r from-red-500 to-red-600",
       borderClass: "border-red-400",
       textClass: "text-white",
       icon: "bi-exclamation-triangle-fill",
       iconBg: "bg-white/20",
     },
     warning: {
-      bgClass: "bg-gradient-to-r from-yellow-500 to-orange-600",
-      borderClass: "border-yellow-400",
+      bgClass: "bg-gradient-to-r from-amber-500 to-amber-600",
+      borderClass: "border-amber-400",
       textClass: "text-white",
       icon: "bi-exclamation-circle-fill",
       iconBg: "bg-white/20",
     },
     info: {
-      bgClass: "bg-gradient-to-r from-blue-500 to-indigo-600",
-      borderClass: "border-blue-400",
+      bgClass: "bg-gradient-to-r from-sky-500 to-sky-600",
+      borderClass: "border-sky-400",
       textClass: "text-white",
       icon: "bi-info-circle-fill",
       iconBg: "bg-white/20",

@@ -50,7 +50,7 @@ defineExpose({
 <template>
   <div>
     <label
-      class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+      class="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2"
     >
       {{ label }}
       <span v-if="required" class="text-red-500">*</span>
@@ -63,17 +63,17 @@ defineExpose({
         :class="
           error
             ? 'border-red-500'
-            : 'border-gray-300 dark:border-gray-600 hover:border-purple-500 dark:hover:border-purple-400'
+            : 'border-slate-300 dark:border-slate-700 hover:border-sky-500 dark:hover:border-sky-400'
         "
         @click="triggerFileInput"
       >
         <div class="flex flex-col items-center gap-3">
-          <i class="bi bi-cloud-upload text-4xl text-gray-400" />
+          <i class="bi bi-cloud-upload text-4xl text-slate-400" />
           <div>
-            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <p class="text-sm font-medium text-slate-900 dark:text-slate-50">
               Klik untuk upload {{ label.toLowerCase() }}
             </p>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">
               {{ helpText }}
             </p>
           </div>
@@ -91,7 +91,7 @@ defineExpose({
     <!-- Preview -->
     <div v-else class="relative">
       <div
-        class="border-2 border-gray-200 dark:border-gray-600 rounded-xl overflow-hidden"
+        class="border-2 border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden"
       >
         <NuxtImg
           :src="preview"
@@ -110,9 +110,9 @@ defineExpose({
         <i class="bi bi-arrow-repeat"></i>
       </button>
       <div
-        class="mt-2 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
+        class="mt-2 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"
       >
-        <i class="bi bi-check-circle text-green-500" />
+        <i class="bi bi-check-circle text-emerald-500" />
         <span>{{ label }} berhasil diupload</span>
       </div>
     </div>
