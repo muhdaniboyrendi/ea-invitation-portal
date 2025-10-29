@@ -12,21 +12,21 @@ const getStatusConfig = (status) => {
     pending: {
       text: "Menunggu pembayaran",
       class:
-        "bg-amber-100/80 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
+        "bg-amber-50/80 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300",
     },
     paid: {
       text: "Dibayar",
       class:
-        "bg-green-100/80 text-green-700 dark:bg-green-900/40 dark:text-green-300",
+        "bg-emerald-50/80 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300",
     },
     expired: {
       text: "Kadaluarsa",
-      class: "bg-red-100/80 text-red-700 dark:bg-red-900/40 dark:text-red-300",
+      class: "bg-red-50/80 text-red-700 dark:bg-red-950/40 dark:text-red-300",
     },
     canceled: {
       text: "Dibatalkan",
       class:
-        "bg-gray-100/80 text-gray-700 dark:bg-gray-900/40 dark:text-gray-300",
+        "bg-slate-50/80 text-slate-700 dark:bg-slate-950/40 dark:text-slate-300",
     },
   };
 
@@ -38,12 +38,12 @@ const getButtonConfig = (status) => {
     pending: {
       text: "Bayar Sekarang",
       show: true,
-      bg: "from-blue-500 to-purple-500 shadow-blue-500/30 hover:shadow-blue-500/60",
+      bg: "from-sky-500 to-sky-600 shadow-sky-500/30 hover:shadow-sky-500/60",
     },
     paid: {
       text: "Isi Undangan",
       show: true,
-      bg: "from-green-500 to-teal-500 shadow-green-500/30 hover:shadow-green-500/60",
+      bg: "from-emerald-500 to-emerald-600 shadow-emerald-500/30 hover:shadow-emerald-500/60",
     },
     expired: {
       text: "",
@@ -105,7 +105,7 @@ const handlePaymentClosed = () => {
     >
       <!-- Card Content -->
       <div
-        class="relative p-4 md:p-6 bg-off-white dark:bg-gray-900 rounded-3xl border border-dark/10 dark:border-white/10"
+        class="relative p-4 md:p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/10 dark:border-slate-800/10"
       >
         <div class="flex flex-col sm:flex-row sm:justify-between gap-2">
           <!-- Transaction Info -->
@@ -113,7 +113,7 @@ const handlePaymentClosed = () => {
             <!-- Transaction Icon -->
             <div class="relative flex-shrink-0">
               <div
-                class="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transition-all duration-300 group-hover:scale-110 bg-linear-to-r from-blue-500 to-purple-500"
+                class="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transition-all duration-300 group-hover:scale-110 bg-gradient-to-r from-sky-500 to-sky-600"
               >
                 <i
                   class="bi bi-box text-white text-xl transition-transform duration-300 group-hover:rotate-12"
@@ -126,11 +126,11 @@ const handlePaymentClosed = () => {
               <div class="flex items-start justify-between mb-2">
                 <div class="flex-1">
                   <h3
-                    class="text-lg font-bold text-gray-800 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 truncate"
+                    class="text-lg font-bold text-slate-900 dark:text-slate-50 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors duration-300 truncate"
                   >
                     Paket {{ props.order?.package?.name }}
                   </h3>
-                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">
                     {{ props.order?.payment_method }}
                   </p>
                 </div>
@@ -139,11 +139,11 @@ const handlePaymentClosed = () => {
           </div>
           <div>
             <p
-              class="text-lg text-blue-600 dark:text-blue-400 font-bold transition-colors duration-300"
+              class="text-lg text-sky-600 dark:text-sky-400 font-bold transition-colors duration-300"
             >
               Rp {{ formatRupiah(props.order?.amount) }}
             </p>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">IDR</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">IDR</p>
           </div>
         </div>
         <div class="flex items-center mt-4">
@@ -151,13 +151,13 @@ const handlePaymentClosed = () => {
             <!-- Date -->
             <div class="flex items-center space-x-2">
               <div
-                class="w-6 h-6 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-all duration-300"
+                class="w-6 h-6 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-sky-50 dark:group-hover:bg-sky-950/40 transition-all duration-300"
               >
                 <i
-                  class="bi bi-calendar3 text-xs text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                  class="bi bi-calendar3 text-xs text-slate-600 dark:text-slate-300 group-hover:text-sky-600 dark:group-hover:text-sky-400"
                 ></i>
               </div>
-              <span class="text-xs text-gray-600 dark:text-gray-400">
+              <span class="text-xs text-slate-600 dark:text-slate-300">
                 {{ formatRelativeDate(props.order.created_at) }}
               </span>
             </div>
@@ -165,13 +165,13 @@ const handlePaymentClosed = () => {
             <!-- Time -->
             <div class="flex items-center space-x-2">
               <div
-                class="w-6 h-6 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-all duration-300"
+                class="w-6 h-6 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-sky-50 dark:group-hover:bg-sky-950/40 transition-all duration-300"
               >
                 <i
-                  class="bi bi-clock text-xs text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                  class="bi bi-clock text-xs text-slate-600 dark:text-slate-300 group-hover:text-sky-600 dark:group-hover:text-sky-400"
                 ></i>
               </div>
-              <span class="text-xs text-gray-600 dark:text-gray-400">
+              <span class="text-xs text-slate-600 dark:text-slate-300">
                 {{ formatTimeToIndonesian(props.order.created_at) }}
               </span>
             </div>
@@ -189,7 +189,7 @@ const handlePaymentClosed = () => {
             v-if="getButtonConfig(props.order?.payment_status).show"
             @click="handleButtonAction"
             type="button"
-            class="px-6 py-3 bg-linear-to-r text-white rounded-2xl font-medium shadow-lg hover:scale-105 transition-all duration-300"
+            class="px-6 py-3 bg-gradient-to-r text-white rounded-2xl font-medium shadow-lg hover:scale-105 transition-all duration-300"
             :class="getButtonConfig(props.order?.payment_status).bg"
           >
             {{ getButtonConfig(props.order?.payment_status).text }}

@@ -29,12 +29,12 @@ const activeTab = computed(() => {
   <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50">
     <!-- Modern backdrop blur with enhanced glassmorphism -->
     <div
-      class="absolute inset-0 backdrop-blur-2xl bg-off-white/80 dark:bg-gray-900/80 border-t border-white/20 dark:border-gray-700/30"
+      class="absolute inset-0 backdrop-blur-2xl bg-white/80 dark:bg-slate-950/80 border-t border-slate-200/20 dark:border-slate-800/30"
     ></div>
 
     <!-- Floating accent line at top -->
     <div
-      class="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-b-full opacity-60"
+      class="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-gradient-to-r from-sky-500 to-sky-600 rounded-b-full opacity-60"
     ></div>
 
     <!-- Navigation container -->
@@ -60,15 +60,15 @@ const activeTab = computed(() => {
                 'bi text-lg transition-all duration-300',
                 route.icon,
                 activeTab === route.name
-                  ? 'text-cyan-500 drop-shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white',
+                  ? 'text-sky-500 drop-shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-50',
               ]"
             ></i>
 
             <!-- Subtle glow effect for active icon -->
             <div
               v-if="activeTab === route.name"
-              class="absolute inset-0 bg-cyan-300/20 rounded-full blur-sm -z-10"
+              class="absolute inset-0 bg-sky-400/20 rounded-full blur-sm -z-10"
             ></div>
           </div>
 
@@ -77,8 +77,8 @@ const activeTab = computed(() => {
             :class="[
               'text-xs font-medium transition-all duration-300 relative z-10',
               activeTab === route.name
-                ? 'text-cyan-500 drop-shadow-sm font-semibold'
-                : 'text-gray-600 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white',
+                ? 'text-sky-500 drop-shadow-sm font-semibold'
+                : 'text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-50',
             ]"
           >
             {{ route.label }}

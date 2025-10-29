@@ -53,27 +53,27 @@ const modalConfig = computed(() => {
   const configs = {
     danger: {
       iconBg:
-        "bg-gradient-to-br from-red-100 to-rose-100 dark:from-red-900/30 dark:to-rose-900/30",
+        "bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950/30 dark:to-red-900/30",
       icon: "bi-exclamation-triangle-fill",
-      iconColor: "text-red-600 dark:text-red-400",
+      iconColor: "text-red-500 dark:text-red-400",
       buttonBg:
-        "bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 disabled:from-red-300 disabled:to-rose-300",
+        "bg-gradient-to-r from-red-500 to-red-500 hover:from-red-600 hover:to-red-600 disabled:from-red-300 disabled:to-red-300",
     },
     warning: {
       iconBg:
-        "bg-gradient-to-br from-yellow-100 to-orange-100 dark:from-yellow-900/30 dark:to-orange-900/30",
+        "bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950/30 dark:to-amber-900/30",
       icon: "bi-exclamation-circle-fill",
-      iconColor: "text-yellow-600 dark:text-yellow-400",
+      iconColor: "text-amber-500 dark:text-amber-400",
       buttonBg:
-        "bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 disabled:from-yellow-300 disabled:to-orange-300",
+        "bg-gradient-to-r from-amber-500 to-amber-500 hover:from-amber-600 hover:to-amber-600 disabled:from-amber-300 disabled:to-amber-300",
     },
     info: {
       iconBg:
-        "bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30",
+        "bg-gradient-to-br from-sky-50 to-sky-100 dark:from-sky-950/30 dark:to-sky-900/30",
       icon: "bi-info-circle-fill",
-      iconColor: "text-blue-600 dark:text-blue-400",
+      iconColor: "text-sky-500 dark:text-sky-400",
       buttonBg:
-        "bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 disabled:from-blue-300 disabled:to-indigo-300",
+        "bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 disabled:from-sky-300 disabled:to-sky-400",
     },
   };
   return configs[props.type] || configs.danger;
@@ -121,7 +121,7 @@ onUnmounted(() => {
         >
           <div
             v-if="show"
-            class="relative bg-white dark:bg-dark border border-white/10 rounded-3xl shadow-2xl max-w-md w-full p-6"
+            class="relative bg-white dark:bg-slate-900 border border-slate-200/10 dark:border-slate-800/10 rounded-3xl shadow-2xl max-w-md w-full p-6"
           >
             <!-- Icon Warning -->
             <div class="flex justify-center mb-4">
@@ -138,17 +138,17 @@ onUnmounted(() => {
 
             <!-- Judul Modal -->
             <h3
-              class="text-xl font-bold text-center text-dark dark:text-white mb-2"
+              class="text-xl font-bold text-center text-slate-900 dark:text-slate-50 mb-2"
             >
               {{ title }}
             </h3>
 
             <!-- Deskripsi -->
-            <p class="text-center text-black/70 dark:text-white/70 mb-6">
+            <p class="text-center text-slate-600 dark:text-slate-300 mb-6">
               {{ message }}
               <span
                 v-if="itemName"
-                class="font-semibold text-dark dark:text-white"
+                class="font-semibold text-slate-900 dark:text-slate-50"
               >
                 {{ itemName }}
               </span>
@@ -166,7 +166,7 @@ onUnmounted(() => {
                 type="button"
                 @click="handleClose"
                 :disabled="isDeleting"
-                class="flex-1 px-4 py-2.5 bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20 text-dark dark:text-white font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-50 font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {{ cancelText }}
               </button>

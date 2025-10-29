@@ -4,7 +4,7 @@ const { packages, pending, error } = storeToRefs(usePackageStore());
 
 <template>
   <div
-    class="relative bg-off-white dark:bg-gray-900 rounded-3xl p-4 sm:pt-8 md:p-8 md:pt-12 shadow-2xl border border-white/30 dark:border-gray-700/30 overflow-hidden"
+    class="relative bg-white dark:bg-slate-900 rounded-3xl p-4 sm:pt-8 md:p-8 md:pt-12 shadow-2xl border border-slate-200/30 dark:border-slate-800/30 overflow-hidden"
   >
     <!-- Loading State -->
     <div
@@ -14,16 +14,16 @@ const { packages, pending, error } = storeToRefs(usePackageStore());
       <!-- Loading Spinner -->
       <div class="relative mb-6">
         <div
-          class="w-16 h-16 border-4 border-blue-200 dark:border-blue-900/30 border-t-blue-500 dark:border-t-blue-400 rounded-full animate-spin"
+          class="w-16 h-16 border-4 border-sky-200 dark:border-sky-900/30 border-t-sky-500 dark:border-t-sky-400 rounded-full animate-spin"
         ></div>
       </div>
 
       <!-- Loading Text -->
-      <h3 class="text-xl font-semibold text-dark dark:text-white mb-3">
+      <h3 class="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-3">
         Memuat Paket Undangan...
       </h3>
 
-      <p class="text-dark/60 dark:text-white/60 text-center max-w-md">
+      <p class="text-slate-600 dark:text-slate-300 text-center max-w-md">
         Mohon tunggu sebentar, kami sedang memuat daftar paket undangan untuk
         Anda.
       </p>
@@ -32,13 +32,13 @@ const { packages, pending, error } = storeToRefs(usePackageStore());
     <!-- Empty State -->
     <div v-else-if="packages.length === 0" class="text-center py-20">
       <div
-        class="w-20 h-20 mx-auto mb-6 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center"
+        class="w-20 h-20 mx-auto mb-6 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center"
       >
         <i
-          class="bi bi-music-note-list text-4xl text-gray-400 dark:text-gray-600"
+          class="bi bi-music-note-list text-4xl text-slate-400 dark:text-slate-600"
         ></i>
       </div>
-      <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+      <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-2">
         Belum Ada Paket Undangan Tersedia
       </h3>
     </div>

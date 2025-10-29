@@ -77,11 +77,11 @@ const handlePaymentClosed = () => {
     <button
       @click="submitOrder"
       :disabled="isProcessing"
-      class="w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 shadow-lg shadow-blue-500/40 hover:shadow-blue-500/60"
+      class="w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 shadow-lg shadow-sky-500/40 hover:shadow-sky-500/60"
       :class="
         isProcessing
-          ? 'bg-gray-400 text-gray-200'
-          : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-2xl shadow-blue-500/25'
+          ? 'bg-slate-400 text-slate-200'
+          : 'bg-gradient-to-r from-sky-500 to-sky-600 text-white hover:from-sky-600 hover:to-sky-700 shadow-2xl shadow-sky-500/25'
       "
     >
       <!-- Loading Spinner -->

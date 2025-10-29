@@ -5,23 +5,6 @@ const router = useRouter();
 
 const orderId = route.params.orderId;
 
-const validationPatterns = {
-  theme_id: {
-    required: /^.+$/,
-    message: {
-      required: "Tema wajib dipilih",
-    },
-  },
-};
-
-// Use composables
-const {
-  validationErrors,
-  clearBackendError,
-  setBackendValidationErrors,
-  validateWithPattern,
-} = useFormValidation(validationPatterns);
-
 // Notification state
 const notification = reactive({
   show: false,
@@ -39,63 +22,48 @@ const closeNotification = () => {
   notification.show = false;
 };
 
+// Step management
+const currentStep = ref(1);
+const totalSteps = 3;
+
 // Reactive state
 const invitationData = reactive({
   order_id: orderId,
+  groom: "",
+  bride: "",
   theme_id: null,
 });
+
+const selectedTheme = ref(null);
 
 const ui = reactive({
   pending: true,
   isSubmitting: false,
-  isFormTouched: false,
 });
 
-// Computed
-const isFormValid = computed(() => {
-  const hasErrors = Object.keys(validationErrors.value).length > 0;
-
-  if (hasErrors) return false;
-
-  return !!(
-    invitationData.theme_id
-  );
-});
-
-// Validation functions
-const validateField = (field, value) => {
-  const pattern = validationPatterns[field];
-  if (!pattern) return true;
-
-  return validateWithPattern(field, value, pattern);
+// Step handlers
+const handleCoupleSaved = (coupleNames) => {
+  invitationData.bride = coupleNames.bride;
+  invitationData.groom = coupleNames.groom;
+  currentStep.value = 2;
 };
 
-const validateForm = () => {
-  let isValid = true;
-
-  if (!validateField("theme_id", invitationData.theme_id)) isValid = false;
-
-  return isValid;
+const handleThemeSelected = (theme) => {
+  invitationData.theme_id = theme.id;
+  selectedTheme.value = theme;
+  currentStep.value = 3;
 };
 
-const handleThemeSelected = (themeId) => {
-  ui.isFormTouched = true;
-  invitationData.theme_id = themeId;
-  clearBackendError("theme_id");
-  if (ui.isFormTouched) {
-    validateField("theme_id", themeId);
-  }
+const handleBackToCouple = () => {
+  currentStep.value = 1;
+};
+
+const handleBackToTheme = () => {
+  currentStep.value = 2;
 };
 
 // Form submission
 const submitForm = async () => {
-  ui.isFormTouched = true;
-
-  if (!validateForm()) {
-    showNotification("warning", "Mohon lengkapi semua field yang wajib diisi.");
-    return;
-  }
-
   ui.isSubmitting = true;
   try {
     const response = await createInvitation(invitationData);
@@ -108,23 +76,11 @@ const submitForm = async () => {
   } catch (error) {
     console.error("Error creating invitation:", error);
 
-    if (error?.validationErrors || error?.response?.data?.validationErrors) {
-      const backendErrors =
-        error.validationErrors || error.response.data.validationErrors;
-      setBackendValidationErrors(backendErrors);
-
-      const generalMessage =
-        error?.message ||
-        error?.response?.data?.message ||
-        "Gagal membuat undangan. Periksa form dan coba lagi.";
-      showNotification("error", generalMessage);
-    } else {
-      const message =
-        error?.message ||
-        error?.response?.data?.message ||
-        "Gagal membuat undangan. Silakan coba lagi.";
-      showNotification("error", message);
-    }
+    const message =
+      error?.message ||
+      error?.response?.data?.message ||
+      "Gagal membuat undangan. Silakan coba lagi.";
+    showNotification("error", message);
   } finally {
     ui.isSubmitting = false;
   }
@@ -135,12 +91,9 @@ const loadInvitation = async () => {
 
   try {
     const response = await checkInvitation(orderId);
-
     router.push(`/invitation/fill/${response.id}`);
   } catch (error) {
     console.error(error);
-    console.error(error.status);
-    console.error(error.validationErrors);
   } finally {
     ui.pending = false;
   }
@@ -166,18 +119,75 @@ onMounted(() => {
     <UserInvitationSetupLoadingState v-if="ui.pending" />
 
     <div v-else class="space-y-8">
-      <!-- Theme Selection Section -->
-      <UserInvitationSetupThemeSelection
+      <!-- Progress Indicator -->
+      <div class="max-w-3xl mx-auto mb-8">
+        <div class="flex items-center justify-between mb-4">
+          <div
+            v-for="step in totalSteps"
+            :key="step"
+            class="flex items-center flex-1"
+          >
+            <div class="flex flex-col items-center flex-1">
+              <div
+                :class="[
+                  'w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-300',
+                  currentStep >= step
+                    ? 'bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-lg'
+                    : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400',
+                ]"
+              >
+                <i v-if="currentStep > step" class="bi bi-check-lg text-lg"></i>
+                <span v-else>{{ step }}</span>
+              </div>
+              <span
+                :class="[
+                  'text-xs mt-2 font-medium',
+                  currentStep >= step
+                    ? 'text-sky-600 dark:text-sky-400'
+                    : 'text-slate-500 dark:text-slate-400',
+                ]"
+              >
+                {{
+                  step === 1 ? "Pasangan" : step === 2 ? "Tema" : "Ringkasan"
+                }}
+              </span>
+            </div>
+            <div
+              v-if="step < totalSteps"
+              :class="[
+                'h-1 flex-1 mx-2 transition-all duration-300',
+                currentStep > step
+                  ? 'bg-gradient-to-r from-sky-500 to-sky-600'
+                  : 'bg-slate-200 dark:bg-slate-700',
+              ]"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 1: Couple Form -->
+      <UserInvitationSetupCoupleForm
+        v-if="currentStep === 1"
         :order-id="orderId"
-        @theme-selected="handleThemeSelected"
+        @next="handleCoupleSaved"
       />
 
-      <!-- Summary Card Component -->
+      <!-- Step 2: Theme Selection -->
+      <UserInvitationSetupThemeSelection
+        v-if="currentStep === 2"
+        :order-id="orderId"
+        @theme-selected="handleThemeSelected"
+        @back="handleBackToCouple"
+      />
+
+      <!-- Step 3: Summary -->
       <UserInvitationSetupSummary
+        v-if="currentStep === 3"
         :invitation-data="invitationData"
+        :theme-data="selectedTheme"
         :is-submitting="ui.isSubmitting"
-        :is-form-valid="isFormValid"
         @submit="submitForm"
+        @back="handleBackToTheme"
       />
     </div>
   </div>

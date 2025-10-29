@@ -1,4 +1,7 @@
 <script setup>
+const config = useRuntimeConfig();
+const mainAppUrl = config.public.mainAppUrl;
+
 const props = defineProps(["invitationData"]);
 </script>
 
@@ -124,7 +127,7 @@ const props = defineProps(["invitationData"]);
 
           <a
             v-if="props.invitationData.slug"
-            :href="`http://localhost:3000/${props.invitationData.slug}`"
+            :href="`${mainAppUrl}/${props.invitationData.slug}`"
             target="_blank"
             class="w-full py-3 px-6 flex justify-center items-center gap-2 bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-2xl font-semibold transition-all duration-300 hover:scale-105 active:scale-95"
           >

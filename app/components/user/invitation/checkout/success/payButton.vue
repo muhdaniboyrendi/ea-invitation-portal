@@ -47,10 +47,10 @@ const handlePaymentClosed = () => {
 
     <button
       @click="handlePayNow"
-      class="group w-full relative px-8 py-4 rounded-2xl font-semibold text-lg text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center justify-center overflow-hidden cursor-pointer"
+      class="group w-full relative px-8 py-4 rounded-2xl font-semibold text-lg text-white bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center justify-center overflow-hidden cursor-pointer"
     >
       <div
-        class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        class="absolute inset-0 bg-gradient-to-r from-sky-600 to-sky-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
       ></div>
       <span class="relative flex items-center">
         <i class="bi bi-wallet mr-3"></i>

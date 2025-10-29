@@ -4,32 +4,32 @@ const props = defineProps(["package", "adminFee"]);
 
 <template>
   <div
-    class="bg-white dark:bg-dark rounded-3xl shadow-2xl border border-white/30 dark:border-gray-700/30 overflow-hidden"
+    class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/30 dark:border-slate-800/30 overflow-hidden"
   >
     <div class="relative p-6">
       <h2
-        class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center"
+        class="text-xl font-bold text-slate-900 dark:text-slate-50 mb-6 flex items-center"
       >
-        <i class="bi bi-bag text-blue-600 dark:text-blue-400 mr-3"></i>
+        <i class="bi bi-bag text-sky-500 dark:text-sky-400 mr-3"></i>
         Ringkasan Pesanan
       </h2>
 
       <div class="space-y-4">
         <div
-          class="flex items-center space-x-4 p-4 rounded-2xl bg-off-white dark:bg-gray-900 border border-white/20 dark:border-gray-700/20 shadow-lg"
+          class="flex items-center space-x-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200/20 dark:border-slate-700/20 shadow-lg"
         >
           <div
-            class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/40 dark:to-purple-900/40 flex items-center justify-center overflow-hidden"
+            class="w-16 h-16 rounded-xl bg-gradient-to-br from-sky-50 to-sky-100 dark:from-sky-950/40 dark:to-sky-900/40 flex items-center justify-center overflow-hidden"
           >
-            <i class="bi bi-box text-2xl text-blue-600 dark:text-blue-400"></i>
+            <i class="bi bi-box text-2xl text-sky-500 dark:text-sky-400"></i>
           </div>
 
           <div class="flex-1">
-            <h3 class="font-semibold text-gray-800 dark:text-gray-200">
+            <h3 class="font-semibold text-slate-900 dark:text-slate-50">
               Paket {{ props.package.name }}
             </h3>
             <div class="flex items-center mt-2 space-x-4">
-              <span class="font-bold text-blue-600 dark:text-blue-400"
+              <span class="font-bold text-sky-600 dark:text-sky-400"
                 >Rp {{ formatRupiah(props.package.price) }}</span
               >
             </div>
@@ -39,28 +39,25 @@ const props = defineProps(["package", "adminFee"]);
 
       <!-- Price Summary -->
       <div
-        class="mt-6 pt-6 border-t border-gray-200/50 dark:border-gray-700/50 space-y-3"
+        class="mt-6 pt-6 border-t border-slate-200/50 dark:border-slate-800/50 space-y-3"
       >
-        <div class="flex justify-between text-gray-600 dark:text-gray-400">
+        <div class="flex justify-between text-slate-600 dark:text-slate-300">
           <span>Diskon</span>
           <span>Rp {{ formatRupiah(props.package.discount) }}</span>
         </div>
-        <div class="flex justify-between text-gray-600 dark:text-gray-400">
+        <div class="flex justify-between text-slate-600 dark:text-slate-300">
           <span>Biaya Admin</span>
           <span>Rp {{ formatRupiah(props.adminFee) }}</span>
         </div>
         <div
-          class="h-px bg-gradient-to-r from-transparent via-gray-300/50 dark:via-gray-600/50 to-transparent"
+          class="h-px bg-gradient-to-r from-transparent via-slate-200/50 dark:via-slate-800/50 to-transparent"
         ></div>
         <div
-          class="flex justify-between text-xl font-bold text-gray-800 dark:text-gray-200"
+          class="flex justify-between text-xl font-bold text-slate-900 dark:text-slate-50"
         >
           <span>Total</span>
-          <span class="text-blue-600 dark:text-blue-400"
-            >Rp
-            {{
-              formatRupiah(parseInt(props.package.final_price))
-            }}</span
+          <span class="text-sky-600 dark:text-sky-400"
+            >Rp {{ formatRupiah(parseInt(props.package.final_price)) }}</span
           >
         </div>
       </div>

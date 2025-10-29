@@ -4,7 +4,7 @@ const props = defineProps(["invitation"]);
 
 <template>
   <div
-    class="relative bg-off-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden"
+    class="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/50 dark:border-slate-800/50 overflow-hidden"
   >
     <!-- Card Content -->
     <div class="relative p-6">
@@ -14,16 +14,16 @@ const props = defineProps(["invitation"]);
       >
         <div class="flex items-center space-x-3">
           <div
-            class="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-400 to-purple-600 flex items-center justify-center shadow-lg"
+            class="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center shadow-lg"
           >
             <i class="bi bi-heart-fill text-white text-xl"></i>
           </div>
           <div>
-            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">
+            <h3 class="text-xl font-bold text-slate-900 dark:text-slate-50">
               {{ props.invitation.main_info?.groom }} &
               {{ props.invitation.main_info?.bride }}
             </h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
+            <p class="text-sm text-slate-600 dark:text-slate-300">
               Wedding Invitation
             </p>
           </div>
@@ -32,11 +32,11 @@ const props = defineProps(["invitation"]);
         <!-- Status Badge -->
         <div
           :class="{
-            'bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/40 dark:to-orange-900/40 border border-amber-200 dark:border-amber-700':
+            'bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-950/40 dark:to-amber-900/40 border border-amber-200 dark:border-amber-700':
               props.invitation.status === 'draft',
-            'bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/40 dark:to-emerald-900/40 border border-green-200 dark:border-green-700':
+            'bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-950/40 dark:to-emerald-900/40 border border-emerald-200 dark:border-emerald-700':
               props.invitation.status === 'published',
-            'bg-gradient-to-r from-red-100 to-rose-100 dark:from-red-900/40 dark:to-rose-900/40 border border-red-200 dark:border-red-700':
+            'bg-gradient-to-r from-red-50 to-red-100 dark:from-red-950/40 dark:to-red-900/40 border border-red-200 dark:border-red-700':
               props.invitation.status === 'expired',
           }"
           class="px-4 py-1 rounded-full"
@@ -45,7 +45,7 @@ const props = defineProps(["invitation"]);
             :class="{
               'text-amber-700 dark:text-amber-300':
                 props.invitation.status === 'draft',
-              'text-green-700 dark:text-green-300':
+              'text-emerald-700 dark:text-emerald-300':
                 props.invitation.status === 'published',
               'text-red-700 dark:text-red-300':
                 props.invitation.status === 'expired',
@@ -66,72 +66,74 @@ const props = defineProps(["invitation"]);
       <!-- Stats -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div
-          class="text-center p-4 bg-white dark:bg-dark rounded-2xl shadow-lg border border-gray-100/50 dark:border-gray-700/50"
+          class="text-center p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100/50 dark:border-slate-700/50"
         >
           <div
-            class="w-10 h-10 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/40 dark:to-blue-800/40 flex items-center justify-center"
+            class="w-10 h-10 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-sky-50 to-sky-100 dark:from-sky-950/40 dark:to-sky-900/40 flex items-center justify-center"
           >
-            <i class="bi bi-people text-blue-600 dark:text-blue-400"></i>
+            <i class="bi bi-people text-sky-500 dark:text-sky-400"></i>
           </div>
-          <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+          <p class="text-2xl font-bold text-slate-900 dark:text-slate-50">
             {{ props.invitation.guests.length }}
           </p>
-          <p class="text-xs text-gray-600 dark:text-gray-400">Total Tamu</p>
+          <p class="text-xs text-slate-600 dark:text-slate-300">Total Tamu</p>
         </div>
 
         <div
-          class="text-center p-4 bg-white dark:bg-dark rounded-2xl shadow-lg border border-gray-100/50 dark:border-gray-700/50"
+          class="text-center p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100/50 dark:border-slate-700/50"
         >
           <div
-            class="w-10 h-10 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/40 dark:to-green-800/40 flex items-center justify-center"
+            class="w-10 h-10 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950/40 dark:to-emerald-900/40 flex items-center justify-center"
           >
             <i
-              class="bi bi-check-circle text-green-600 dark:text-green-400"
+              class="bi bi-check-circle text-emerald-500 dark:text-emerald-400"
             ></i>
           </div>
-          <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+          <p class="text-2xl font-bold text-slate-900 dark:text-slate-50">
             {{
               props.invitation.guests.filter((guest) => {
                 guest.attendance_status == "attending";
               }).length
             }}
           </p>
-          <p class="text-xs text-gray-600 dark:text-gray-400">Hadir</p>
+          <p class="text-xs text-slate-600 dark:text-slate-300">Hadir</p>
         </div>
 
         <div
-          class="text-center p-4 bg-white dark:bg-dark rounded-2xl shadow-lg border border-gray-100/50 dark:border-gray-700/50"
+          class="text-center p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100/50 dark:border-slate-700/50"
         >
           <div
-            class="w-10 h-10 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-red-100 to-red-200 dark:from-red-900/40 dark:to-red-800/40 flex items-center justify-center"
+            class="w-10 h-10 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950/40 dark:to-red-900/40 flex items-center justify-center"
           >
-            <i class="bi bi-x-circle text-red-600 dark:text-red-400"></i>
+            <i class="bi bi-x-circle text-red-500 dark:text-red-400"></i>
           </div>
-          <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+          <p class="text-2xl font-bold text-slate-900 dark:text-slate-50">
             {{
               props.invitation.guests.filter((guest) => {
                 guest.attendance_status == "not_attending";
               }).length
             }}
           </p>
-          <p class="text-xs text-gray-600 dark:text-gray-400">Tidak Hadir</p>
+          <p class="text-xs text-slate-600 dark:text-slate-300">Tidak Hadir</p>
         </div>
       </div>
 
       <!-- Dates Info -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div
-          class="p-3 bg-white dark:bg-dark rounded-2xl shadow-lg border border-gray-100/50 dark:border-gray-700/50"
+          class="p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100/50 dark:border-slate-700/50"
         >
           <div class="flex items-center space-x-3">
             <div
-              class="h-8 aspect-square bg-linear-to-r from-blue-500 to-cyan-500 rounded-xl flex justify-center items-center"
+              class="h-8 aspect-square bg-gradient-to-r from-sky-500 to-sky-600 rounded-xl flex justify-center items-center"
             >
               <i class="bi bi-calendar-plus text-white"></i>
             </div>
             <div class="text-start">
-              <p class="text-xs text-gray-600 dark:text-gray-400">Dibuat</p>
-              <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">
+              <p class="text-xs text-slate-600 dark:text-slate-300">Dibuat</p>
+              <p
+                class="text-sm font-semibold text-slate-900 dark:text-slate-50"
+              >
                 {{ formatDateToIndonesian(props.invitation.created_at) }}
               </p>
             </div>
@@ -139,17 +141,21 @@ const props = defineProps(["invitation"]);
         </div>
 
         <div
-          class="py-3 px-4 bg-white dark:bg-dark rounded-2xl shadow-lg border border-gray-100/50 dark:border-gray-700/50"
+          class="py-3 px-4 bg-slate-50 dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100/50 dark:border-slate-700/50"
         >
           <div class="flex items-center space-x-3">
             <div
-              class="h-8 aspect-square bg-linear-to-r from-orange-500 to-amber-500 rounded-xl flex justify-center items-center"
+              class="h-8 aspect-square bg-gradient-to-r from-amber-500 to-amber-600 rounded-xl flex justify-center items-center"
             >
               <i class="bi bi-calendar-x text-white"></i>
             </div>
             <div class="text-start">
-              <p class="text-xs text-gray-600 dark:text-gray-400">Kadaluarsa</p>
-              <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">
+              <p class="text-xs text-slate-600 dark:text-slate-300">
+                Kadaluarsa
+              </p>
+              <p
+                class="text-sm font-semibold text-slate-900 dark:text-slate-50"
+              >
                 {{ formatDateToIndonesian(props.invitation.expiry_date) }}
               </p>
             </div>
@@ -161,7 +167,7 @@ const props = defineProps(["invitation"]);
       <div class="w-full flex flex-col sm:flex-row gap-x-6 gap-y-4">
         <NuxtLink
           :to="`/invitation/${props.invitation.id}`"
-          class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:scale-105"
+          class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 hover:scale-105"
         >
           <i class="bi bi-list text-sm"></i>
           <span class="block">Detail</span>
@@ -169,7 +175,7 @@ const props = defineProps(["invitation"]);
 
         <NuxtLink
           :to="`/invitation/${props.invitation.id}/guests`"
-          class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-105"
+          class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-105"
         >
           <i class="bi bi-people text-sm"></i>
           <span class="block">Tamu</span>
@@ -179,7 +185,7 @@ const props = defineProps(["invitation"]);
           v-if="props.invitation.slug"
           :href="`http://localhost:3000/${props.invitation.slug}`"
           target="_blank"
-          class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-green-500/25 hover:shadow-green-500/40 hover:scale-105"
+          class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:scale-105"
         >
           <i class="bi bi-box-arrow-up-right text-sm"></i>
           <span class="block">lihat</span>
