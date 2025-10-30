@@ -5,21 +5,21 @@ const props = defineProps(["invitationData"]);
 
 <template>
   <div
-    class="relative bg-off-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden"
+    class="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/50 dark:border-slate-800/50 overflow-hidden"
   >
     <div class="relative p-6">
       <!-- Header -->
       <div class="flex items-center gap-4 mb-6">
         <div
-          class="h-12 w-12 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 flex justify-center items-center shadow-lg"
+          class="h-12 w-12 rounded-2xl bg-gradient-to-r from-sky-500 to-sky-600 flex justify-center items-center shadow-lg"
         >
           <i class="bi bi-palette-fill text-white text-xl"></i>
         </div>
         <div>
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+          <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-50">
             Tema Undangan
           </h2>
-          <p class="text-sm text-gray-600 dark:text-gray-400">
+          <p class="text-sm text-slate-600 dark:text-slate-300">
             Desain dan tampilan undangan Anda
           </p>
         </div>
@@ -28,23 +28,23 @@ const props = defineProps(["invitationData"]);
       <!-- Theme Details -->
       <div class="space-y-4">
         <div
-          class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-dark border border-gray-100/50 dark:border-gray-700/50"
+          class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100/50 dark:border-slate-700/50"
         >
-          <span class="text-sm text-gray-600 dark:text-gray-300"
+          <span class="text-sm text-slate-600 dark:text-slate-300"
             >Nama Tema</span
           >
-          <span class="font-semibold text-gray-900 dark:text-white">{{
+          <span class="font-semibold text-slate-900 dark:text-slate-50">{{
             props.invitationData.theme?.name
           }}</span>
         </div>
 
         <div
-          class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-dark border border-gray-100/50 dark:border-gray-700/50"
+          class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100/50 dark:border-slate-700/50"
         >
-          <span class="text-sm text-gray-600 dark:text-gray-300"
+          <span class="text-sm text-slate-600 dark:text-slate-300"
             >Status Tema</span
           >
-          <span class="font-semibold text-gray-900 dark:text-white">{{
+          <span class="font-semibold text-slate-900 dark:text-slate-50">{{
             props.invitationData.theme?.is_premium ? "Premuim" : "Basic"
           }}</span>
         </div>
@@ -53,7 +53,7 @@ const props = defineProps(["invitationData"]);
           <a
             :href="props.invitationData.theme?.link"
             target="_blank"
-            class="w-full text-center py-3 px-6 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 text-white transition-all duration-300 group/link shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+            class="w-full text-center py-3 px-6 rounded-2xl bg-gradient-to-r from-sky-500 to-sky-600 text-white transition-all duration-300 group/link shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
           >
             <span class="font-semibold">Preview Tema</span>
             <i
@@ -62,7 +62,7 @@ const props = defineProps(["invitationData"]);
           </a>
           <NuxtLink
             :to="`/invitation/${props.invitationData.id}/themes`"
-            class="w-full text-center py-3 px-6 rounded-2xl bg-gradient-to-r from-green-500 to-teal-500 text-white transition-all duration-300 group/link shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+            class="w-full text-center py-3 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white transition-all duration-300 group/link shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
           >
             <span class="font-semibold">Ubah Tema</span>
           </NuxtLink>

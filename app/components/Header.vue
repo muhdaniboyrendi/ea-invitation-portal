@@ -40,7 +40,7 @@ const props = defineProps({
             <div
               class="w-16 h-16 rounded-3xl bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center shadow-lg shadow-sky-500/25 dark:shadow-sky-400/20"
             >
-              <i class="bi text-white text-xl" :class="props.icon"></i>
+              <i class="bi text-white text-3xl" :class="props.icon"></i>
             </div>
             <div
               class="absolute inset-0 rounded-2xl bg-gradient-to-br from-sky-500 to-sky-600 opacity-20 blur-xl animate-pulse-slow"
@@ -49,7 +49,7 @@ const props = defineProps({
 
           <div class="w-full flex flex-col">
             <h2
-              class="text-xl md:text-4xl font-bold bg-gradient-to-r from-sky-600 to-sky-600 dark:from-sky-400 dark:to-sky-400 bg-clip-text text-transparent"
+              class="text-2xl md:text-4xl font-bold bg-gradient-to-r from-sky-600 to-sky-600 dark:from-sky-400 dark:to-sky-400 bg-clip-text text-transparent"
             >
               {{ props.title }}
             </h2>

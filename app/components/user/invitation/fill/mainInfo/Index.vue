@@ -371,7 +371,22 @@ onBeforeUnmount(() => {
     </div>
   </div>
 
-  <div v-else>
+  <div v-else class="space-y-4 md:space-y-6">
+    <div
+      class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-3 md:space-y-6"
+    >
+      <h2
+        class="text-2xl font-semibold text-gray-900 dark:text-white flex items-center gap-3"
+      >
+        {{
+          isEditMode ? "Edit Informasi Utama" : "Tambah Informasi Utama"
+        }}
+      </h2>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+        ID Undangan: <span class="font-semibold">{{ invitationId }}</span>
+      </p>
+    </div>
+
     <form @submit.prevent="submitForm" class="space-y-4 md:space-y-6">
       <!-- Date & Time - Optimized for Mobile -->
       <div

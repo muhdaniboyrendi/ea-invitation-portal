@@ -218,7 +218,9 @@ onMounted(() => {
   </div>
 
   <div v-else>
-    <div>
+    <div
+      class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-3 md:space-y-6"
+    >
       <h2
         class="text-2xl font-semibold text-gray-900 dark:text-white flex items-center gap-3"
       >
@@ -230,8 +232,6 @@ onMounted(() => {
         ID Undangan: <span class="font-semibold">{{ invitationId }}</span>
       </p>
     </div>
-
-    <div class="border-t border-gray-200 dark:border-gray-700 my-6"></div>
 
     <form @submit.prevent="submitForm" class="space-y-6">
       <FormBaseInput

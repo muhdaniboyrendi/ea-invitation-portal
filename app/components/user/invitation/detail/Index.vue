@@ -33,7 +33,7 @@ onMounted(() => {
     <UserInvitationDetailSkeletonLoading v-if="pending" />
 
     <!-- Main Content -->
-    <div v-else class="max-w-6xl mx-auto space-y-6">
+    <div v-else class="max-w-6xl mx-auto space-y-6 px-4 md:px-6">
       <!-- 1. Invitation Card -->
       <UserInvitationDetailInvitation
         :invitation-data="invitationData"

@@ -43,7 +43,7 @@ const handleInput = (e) => {
       :class="
         error
           ? 'border-red-500 focus:border-red-500'
-          : 'border-gray-200 dark:border-gray-600 focus:border-purple-500 dark:focus:border-purple-400'
+          : 'border-gray-200 dark:border-gray-600 focus:border-sky-500 dark:focus:border-sky-400'
       "
     />
     <div v-if="maxlength" class="flex justify-end mt-1">

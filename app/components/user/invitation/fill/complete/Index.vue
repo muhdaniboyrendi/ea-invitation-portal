@@ -181,7 +181,7 @@ onMounted(() => {
         </button>
 
         <NuxtLink
-          :to="`/invitation/detail/${props.invitationId}`"
+          :to="`/invitation/${props.invitationId}`"
           class="px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 border border-gray-200 dark:border-gray-700"
         >
           <span class="flex items-center gap-2">
@@ -357,7 +357,7 @@ onMounted(() => {
 
           <!-- Manage Guests Card -->
           <NuxtLink
-            :to="`/invitation/guests/${props.invitationId}`"
+            :to="`/invitation/${props.invitationId}/guests`"
             class="group bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-transparent hover:border-green-300 dark:hover:border-green-700"
           >
             <div
