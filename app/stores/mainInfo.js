@@ -32,8 +32,6 @@ export const useMainInfoStore = defineStore("mainInfo", () => {
 
     formData.append("invitation_id", mainInfoData.invitation_id);
     formData.append("music_id", mainInfoData.music_id);
-    formData.append("groom", mainInfoData.groom);
-    formData.append("bride", mainInfoData.bride);
     formData.append("wedding_date", mainInfoData.wedding_date);
     formData.append("wedding_time", mainInfoData.wedding_time);
     formData.append("time_zone", mainInfoData.time_zone);
@@ -63,8 +61,6 @@ export const useMainInfoStore = defineStore("mainInfo", () => {
 
     formData.append("_method", "PUT");
     formData.append("music_id", mainInfoData.music_id);
-    formData.append("groom", mainInfoData.groom);
-    formData.append("bride", mainInfoData.bride);
     formData.append("wedding_date", mainInfoData.wedding_date);
     formData.append("wedding_time", mainInfoData.wedding_time);
     formData.append("time_zone", mainInfoData.time_zone);

@@ -59,7 +59,7 @@ defineExpose({
     <!-- Upload Area -->
     <div v-if="!preview" class="space-y-4">
       <div
-        class="border-2 border-dashed rounded-xl p-6 text-center transition-colors cursor-pointer"
+        class="border-2 border-dashed rounded-2xl p-6 text-center transition-colors cursor-pointer"
         :class="
           error
             ? 'border-red-500'
@@ -91,7 +91,7 @@ defineExpose({
     <!-- Preview -->
     <div v-else class="relative">
       <div
-        class="border-2 border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden"
+        class="border-2 border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden"
       >
         <NuxtImg
           :src="preview"

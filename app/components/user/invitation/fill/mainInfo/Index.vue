@@ -1,5 +1,4 @@
 <script setup>
-// Props & Emits
 const props = defineProps({
   invitationId: { type: String, required: true },
   packageId: { type: [Number, String], required: true },
@@ -7,11 +6,9 @@ const props = defineProps({
 
 const emit = defineEmits(["success", "error", "next", "step-status"]);
 
-// Store
 const { fetchMainInfo, createMainInfo, updateMainInfo } = useMainInfoStore();
 const { musics } = storeToRefs(useMusicStore());
 
-// Refs
 const audioPlayer = ref(null);
 
 // Constants
@@ -22,22 +19,6 @@ const timezoneOptions = [
 ];
 
 const validationPatterns = {
-  groom: {
-    required: /^.+$/,
-    minLength: /^.{2,}$/,
-    message: {
-      required: "Nama mempelai pria wajib diisi",
-      minLength: "Nama minimal 2 karakter",
-    },
-  },
-  bride: {
-    required: /^.+$/,
-    minLength: /^.{2,}$/,
-    message: {
-      required: "Nama mempelai wanita wajib diisi",
-      minLength: "Nama minimal 2 karakter",
-    },
-  },
   wedding_date: {
     required: /^.+$/,
     message: { required: "Tanggal pernikahan wajib diisi" },
@@ -108,8 +89,6 @@ const {
 const formData = reactive({
   id: null,
   invitation_id: props.invitationId,
-  groom: "",
-  bride: "",
   music_id: "",
   main_photo: null,
   wedding_date: "",
@@ -131,8 +110,6 @@ const isEditMode = computed(() => !!formData.id);
 const isFormValid = computed(() => {
   return (
     Object.keys(validationErrors.value).length === 0 &&
-    formData.groom &&
-    formData.bride &&
     formData.wedding_date &&
     formData.wedding_time &&
     formData.time_zone
@@ -167,8 +144,6 @@ const validateField = (field, value) => {
 
 const validateForm = () => {
   let isValid = true;
-  if (!validateField("groom", formData.groom)) isValid = false;
-  if (!validateField("bride", formData.bride)) isValid = false;
   if (!validateField("wedding_date", formData.wedding_date)) isValid = false;
   if (!validateField("wedding_time", formData.wedding_time)) isValid = false;
   if (!validateField("time_zone", formData.time_zone)) isValid = false;
@@ -213,16 +188,6 @@ const pauseMusic = () => {
 };
 
 // Handlers
-const handleGroomInput = () => {
-  clearBackendError("groom");
-  validateField("groom", formData.groom);
-};
-
-const handleBrideInput = () => {
-  clearBackendError("bride");
-  validateField("bride", formData.bride);
-};
-
 const handleMusicSelect = (music) => {
   formData.music_id = music.id;
   formData.custom_backsound = null;
@@ -388,256 +353,247 @@ onBeforeUnmount(() => {
 
 <template>
   <!-- Loading State -->
-  <div v-if="ui.isLoading" class="text-center py-8">
-    <div
-      class="flex flex-col items-center justify-center gap-3 text-gray-600 dark:text-gray-400"
-    >
+  <div
+    v-if="ui.isLoading"
+    class="min-h-[60vh] flex items-center justify-center"
+  >
+    <div class="text-center space-y-4 md:space-y-6">
       <div
-        class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"
-      ></div>
-      <p>Memuat informasi utama...</p>
+        class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-sky-50 dark:bg-sky-950 backdrop-blur-sm"
+      >
+        <div
+          class="w-10 h-10 border-3 border-sky-500 border-t-transparent rounded-full animate-spin"
+        ></div>
+      </div>
+      <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
+        Memuat informasi utama...
+      </p>
     </div>
   </div>
 
   <div v-else>
-    <!-- Header -->
-    <div>
-      <h2
-        class="text-2xl font-semibold text-gray-900 dark:text-white flex items-center gap-3"
+    <form @submit.prevent="submitForm" class="space-y-4 md:space-y-6">
+      <!-- Date & Time - Optimized for Mobile -->
+      <div
+        class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-3 md:space-y-6"
       >
-        {{ isEditMode ? "Edit Informasi Utama" : "Tambah Informasi Utama" }}
-      </h2>
-      <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-        ID Undangan: <span class="font-semibold">{{ invitationId }}</span>
-      </p>
-    </div>
+        <div class="flex items-center gap-2 mb-1 md:mb-4">
+          <div
+            class="w-8 h-8 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center"
+          >
+            <i class="bi bi-calendar-heart text-sky-500"></i>
+          </div>
+          <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-50">
+            Waktu Acara
+          </h3>
+        </div>
 
-    <div class="border-t border-gray-200 dark:border-gray-700 my-6"></div>
-
-    <form @submit.prevent="submitForm" class="space-y-6">
-      <!-- Groom & Bride Names -->
-      <div class="grid md:grid-cols-2 gap-4">
-        <FormBaseInput
-          v-model="formData.groom"
-          type="text"
-          label="Nama Mempelai Pria"
-          placeholder="Masukkan nama mempelai pria"
-          :required="true"
-          :error="validationErrors.groom"
-          @input="handleGroomInput"
-        />
-
-        <FormBaseInput
-          v-model="formData.bride"
-          type="text"
-          label="Nama Mempelai Wanita"
-          placeholder="Masukkan nama mempelai wanita"
-          :required="true"
-          :error="validationErrors.bride"
-          @input="handleBrideInput"
-        />
-      </div>
-
-      <!-- Wedding Date & Time -->
-      <div class="grid md:grid-cols-2 gap-4">
         <FormBaseInput
           v-model="formData.wedding_date"
           type="date"
-          label="Tanggal Pernikahan"
+          label="Tanggal"
           :required="true"
           :error="validationErrors.wedding_date"
           @change="handleWeddingDateChange"
         />
 
-        <FormBaseInput
-          v-model="formData.wedding_time"
-          type="time"
-          label="Waktu Pernikahan"
-          placeholder="14:30"
-          :required="true"
-          :error="validationErrors.wedding_time"
-          @input="handleWeddingTimeInput"
+        <div class="grid grid-cols-2 gap-3">
+          <FormBaseInput
+            v-model="formData.wedding_time"
+            type="time"
+            label="Jam"
+            :required="true"
+            :error="validationErrors.wedding_time"
+            @input="handleWeddingTimeInput"
+          />
+
+          <FormBaseSelect
+            v-model="formData.time_zone"
+            label="Zona"
+            placeholder="Pilih"
+            :options="timezoneOptions"
+            :required="true"
+            :error="validationErrors.time_zone"
+            @change="handleTimeZoneChange"
+          />
+        </div>
+      </div>
+
+      <!-- Main Photo Upload - Compact -->
+      <div
+        class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800"
+      >
+        <div class="flex items-center gap-2 mb-3 md:mb-4">
+          <div
+            class="w-8 h-8 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center"
+          >
+            <i class="bi bi-image text-sky-500"></i>
+          </div>
+          <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-50">
+            Foto Utama
+            <span class="text-xs text-slate-400 font-normal">(Opsional)</span>
+          </h3>
+        </div>
+
+        <FormImageUpload
+          ref="mainPhotoInput"
+          label="Foto Utama (Opsional)"
+          :preview="mainPhotoPreview"
+          :error="validationErrors.main_photo"
+          @change="
+            (e) => {
+              const file = handleMainPhotoUpload(e);
+              if (file) formData.main_photo = file;
+            }
+          "
+          @remove="
+            () => {
+              removeMainPhoto();
+              formData.main_photo = null;
+              clearBackendError('main_photo');
+            }
+          "
         />
       </div>
 
-      <!-- Time Zone -->
-      <FormBaseSelect
-        v-model="formData.time_zone"
-        label="Zona Waktu"
-        placeholder="Pilih Zona Waktu"
-        :options="timezoneOptions"
-        :required="true"
-        :error="validationErrors.time_zone"
-        @change="handleTimeZoneChange"
-      />
+      <!-- Backsound Section - Mobile Optimized -->
+      <div
+        class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-3 md:space-y-6"
+      >
+        <div class="flex items-center gap-2">
+          <div
+            class="w-8 h-8 rounded-xl bg-sky-500 hover:bg-sky-600 flex items-center justify-center shadow-sm transition-colors"
+          >
+            <i class="bi bi-music-note-beamed text-white"></i>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-50">
+              Backsound
+            </h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300">Opsional</p>
+          </div>
+          <div
+            v-if="hasBacksoundSelected"
+            class="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950 rounded-full border border-emerald-200 dark:border-emerald-800"
+          >
+            <i class="bi bi-check-circle-fill text-emerald-500 text-xs"></i>
+            <span
+              class="text-xs font-medium text-emerald-600 dark:text-emerald-400"
+            >
+              Terpilih
+            </span>
+          </div>
+        </div>
 
-      <!-- Main Photo Upload -->
-      <FormImageUpload
-        ref="mainPhotoInput"
-        label="Foto Utama (Opsional)"
-        :preview="mainPhotoPreview"
-        :error="validationErrors.main_photo"
-        @change="
-          (e) => {
-            const file = handleMainPhotoUpload(e);
-            if (file) formData.main_photo = file;
-          }
-        "
-        @remove="
-          () => {
-            removeMainPhoto();
-            formData.main_photo = null;
-            clearBackendError('main_photo');
-          }
-        "
-      />
-
-      <div class="border-t border-gray-200 dark:border-gray-700 my-6"></div>
-
-      <!-- Backsound Section -->
-      <div class="space-y-4">
-        <h3
-          class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2"
-        >
-          <i
-            class="bi bi-music-note-beamed text-blue-600 dark:text-blue-400"
-          ></i>
-          Backsound (Opsional)
-        </h3>
-
-        <!-- Custom Backsound Preview (when exists) -->
+        <!-- Selected Custom Backsound -->
         <div
           v-if="formData.custom_backsound || customBacksoundPreview"
-          class="mb-4"
+          class="relative overflow-hidden rounded-2xl bg-sky-50 dark:bg-sky-950 border-2 border-sky-200 dark:border-sky-800 p-3"
         >
-          <div
-            class="p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-300 dark:border-purple-700 rounded-xl"
-          >
-            <div class="flex items-center gap-3">
-              <div class="flex-shrink-0">
-                <div
-                  class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center"
-                >
-                  <i class="bi bi-music-note-beamed text-white text-2xl"></i>
-                </div>
-              </div>
-
-              <div class="flex-1 min-w-0">
-                <p
-                  class="text-sm font-semibold text-purple-900 dark:text-purple-300"
-                >
-                  Backsound Kustom Terpilih
-                </p>
-                <p
-                  class="text-xs text-purple-700 dark:text-purple-400 truncate font-medium"
-                >
-                  {{
-                    customBacksoundPreview
-                      ? "File audio kustom"
-                      : "Audio kustom baru"
-                  }}
-                </p>
-              </div>
-
-              <button
-                type="button"
-                @click="
-                  removeCustomBacksound();
-                  formData.custom_backsound = null;
-                  clearBackendError('custom_backsound');
-                "
-                class="flex-shrink-0 px-3 py-1.5 rounded-lg bg-white dark:bg-gray-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-1.5 transition-all duration-200 text-sm font-medium"
-              >
-                <i class="bi bi-trash text-sm"></i>
-                <span>Hapus</span>
-              </button>
+          <div class="flex items-center gap-3">
+            <div
+              class="w-11 h-11 rounded-lg bg-sky-500 flex items-center justify-center flex-shrink-0 shadow-sm"
+            >
+              <i class="bi bi-music-note-beamed text-white text-lg"></i>
             </div>
+            <div class="flex-1 min-w-0">
+              <p
+                class="text-xs font-semibold text-slate-900 dark:text-slate-50"
+              >
+                Audio Kustom
+              </p>
+              <p class="text-xs text-slate-600 dark:text-slate-300 truncate">
+                {{ customBacksoundPreview ? "Tersimpan" : "Baru dipilih" }}
+              </p>
+            </div>
+            <button
+              type="button"
+              @click="
+                removeCustomBacksound();
+                formData.custom_backsound = null;
+                clearBackendError('custom_backsound');
+              "
+              class="w-9 h-9 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-red-500 hover:bg-red-50 dark:hover:bg-red-950 flex items-center justify-center transition-all active:scale-95 flex-shrink-0"
+            >
+              <i class="bi bi-trash text-sm"></i>
+            </button>
           </div>
         </div>
 
-        <!-- Selected Music Display -->
-        <div v-if="selectedMusic && !formData.custom_backsound" class="mb-4">
-          <div
-            class="p-4 bg-gradient-to-r from-blue-50 to-pink-50 dark:from-blue-900/20 dark:to-pink-900/20 border-2 border-blue-300 dark:border-blue-700 rounded-xl"
-          >
-            <div class="flex items-center gap-3">
-              <div class="flex-shrink-0">
-                <div
-                  v-if="selectedMusic.thumbnail_url"
-                  class="relative w-12 h-12 rounded-lg overflow-hidden"
-                >
-                  <NuxtImg
-                    :src="selectedMusic.thumbnail_url"
-                    :alt="selectedMusic.name"
-                    width="48"
-                    height="48"
-                    class="w-full h-full object-cover"
-                    loading="lazy"
-                    format="webp"
-                  />
-                </div>
-                <div
-                  v-else
-                  class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center"
-                >
-                  <i class="bi bi-music-note-beamed text-white text-2xl"></i>
-                </div>
-              </div>
-
-              <div class="flex-1 min-w-0">
-                <p
-                  class="text-sm font-semibold text-blue-900 dark:text-blue-300"
-                >
-                  Musik Terpilih
-                </p>
-                <p
-                  class="text-xs text-blue-700 dark:text-blue-400 truncate font-medium"
-                >
-                  {{ selectedMusic.name }} - {{ selectedMusic.artist }}
-                </p>
-              </div>
-
-              <button
-                type="button"
-                @click="handleMusicPlay(selectedMusic)"
-                :disabled="ui.isAudioLoading"
-                class="flex-shrink-0 w-9 h-9 rounded-lg bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-gray-700 flex items-center justify-center transition-all duration-200 disabled:opacity-50"
+        <!-- Selected Music from Library -->
+        <div
+          v-if="selectedMusic && !formData.custom_backsound"
+          class="relative overflow-hidden rounded-2xl bg-sky-50 dark:bg-sky-950 border-2 border-sky-200 dark:border-sky-800 p-3"
+        >
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl overflow-hidden flex-shrink-0">
+              <NuxtImg
+                v-if="selectedMusic.thumbnail_url"
+                :src="selectedMusic.thumbnail_url"
+                :alt="selectedMusic.name"
+                width="44"
+                height="44"
+                class="w-full h-full object-cover"
+                loading="lazy"
+                format="webp"
+              />
+              <div
+                v-else
+                class="w-full h-full bg-sky-500 flex items-center justify-center"
               >
-                <i
-                  v-if="!isPlaying(selectedMusic.id)"
-                  class="bi bi-play-fill text-base"
-                ></i>
-                <i v-else class="bi bi-pause-fill text-base"></i>
-              </button>
-
-              <button
-                type="button"
-                @click="
-                  formData.music_id = '';
-                  pauseMusic();
-                "
-                class="flex-shrink-0 w-8 h-8 rounded-lg bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center justify-center transition-all duration-200"
-              >
-                <i class="bi bi-x-lg text-sm"></i>
-              </button>
+                <i class="bi bi-music-note-beamed text-white"></i>
+              </div>
             </div>
+            <div class="flex-1 min-w-0">
+              <p
+                class="text-xs font-semibold text-slate-900 dark:text-slate-50 truncate"
+              >
+                {{ selectedMusic.name }}
+              </p>
+              <p
+                class="text-xs text-slate-600 dark:text-slate-300 truncate mt-0.5"
+              >
+                {{ selectedMusic.artist }}
+              </p>
+            </div>
+            <button
+              type="button"
+              @click="handleMusicPlay(selectedMusic)"
+              :disabled="ui.isAudioLoading"
+              class="w-9 h-9 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sky-500 hover:bg-sky-50 dark:hover:bg-sky-950 flex items-center justify-center transition-all active:scale-95 disabled:opacity-50 flex-shrink-0"
+            >
+              <i
+                v-if="!isPlaying(selectedMusic.id)"
+                class="bi bi-play-fill"
+              ></i>
+              <i v-else class="bi bi-pause-fill"></i>
+            </button>
+            <button
+              type="button"
+              @click="
+                formData.music_id = '';
+                pauseMusic();
+              "
+              class="w-9 h-9 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950 flex items-center justify-center transition-all active:scale-95 flex-shrink-0"
+            >
+              <i class="bi bi-x-lg text-sm"></i>
+            </button>
           </div>
         </div>
 
-        <!-- Music Cards Grid -->
-        <div>
+        <!-- Music Library -->
+        <div
+          :class="
+            formData.custom_backsound ? 'opacity-50 pointer-events-none' : ''
+          "
+        >
           <label
-            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3"
+            class="block text-xs font-medium text-slate-900 dark:text-slate-50 mb-2"
           >
             Pilih dari Library
           </label>
 
-          <div
-            class="grid gap-3 max-h-96 overflow-y-auto pr-2"
-            :class="
-              formData.custom_backsound ? 'opacity-50 pointer-events-none' : ''
-            "
-          >
+          <div class="space-y-2 md:space-y-3 max-h-80 overflow-y-auto">
             <UserInvitationFillMainInfoMusicCard
               v-for="music in musics"
               :key="music.id"
@@ -652,27 +608,36 @@ onBeforeUnmount(() => {
 
             <div
               v-if="!musics || musics.length === 0"
-              class="text-center py-8 text-gray-500 dark:text-gray-400"
+              class="text-center py-12 text-slate-400 dark:text-slate-500"
             >
-              <i class="bi bi-music-note-list text-4xl mb-2"></i>
-              <p>Tidak ada musik tersedia</p>
+              <i class="bi bi-music-note-list text-3xl mb-2"></i>
+              <p class="text-sm">Tidak ada musik</p>
             </div>
           </div>
 
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+          <p class="text-xs text-slate-600 dark:text-slate-300 mt-2">
             {{
               formData.custom_backsound
-                ? "Hapus backsound kustom untuk memilih dari library"
-                : "Klik card untuk memilih musik, klik tombol play untuk preview"
+                ? "Hapus audio kustom untuk pilih dari library"
+                : "Tap untuk pilih, tap play untuk dengar"
             }}
           </p>
         </div>
 
-        <!-- Custom Backsound Upload -->
+        <div
+          class="relative w-full border-t border-slate-200 dark:border-slate-800"
+        >
+          <span
+            class="absolute -top-2.5 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-white dark:bg-slate-900 text-xs text-slate-400 dark:text-slate-500"
+            >atau</span
+          >
+        </div>
+
+        <!-- Custom Upload -->
         <FormAudioUpload
           v-if="props.packageId != 1"
           ref="customBacksoundInput"
-          label="Upload Backsound Kustom"
+          label="Upload Audio Kustom"
           :preview="customBacksoundPreview"
           :error="validationErrors.custom_backsound"
           :disabled="!!formData.music_id"
@@ -690,44 +655,31 @@ onBeforeUnmount(() => {
             }
           "
         />
-
-        <!-- Backsound Status -->
-        <div
-          v-if="hasBacksoundSelected"
-          class="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg"
-        >
-          <i
-            class="bi bi-check-circle-fill text-green-600 dark:text-green-400"
-          ></i>
-          <span class="text-sm text-green-700 dark:text-green-300">
-            {{
-              formData.custom_backsound
-                ? "Backsound kustom dipilih"
-                : "Backsound dari library dipilih"
-            }}
-          </span>
-        </div>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="flex gap-4 pt-6">
+      <!-- Fixed Bottom Action Bar -->
+      <div class="flex gap-3">
         <button
           type="button"
           @click="resetForm"
           :disabled="ui.isSubmitting"
-          class="flex-1 px-6 py-3 bg-gray-300 dark:bg-gray-800 dark:text-slate-300 text-gray-700 font-medium rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
+          class="flex-shrink-0 w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition-all active:scale-95 flex items-center justify-center font-medium"
         >
-          Reset
+          <i class="bi bi-arrow-clockwise text-lg"></i>
         </button>
         <button
           type="submit"
           :disabled="ui.isSubmitting || !isFormValid"
-          class="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:transform-none"
+          class="flex-1 h-12 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-semibold shadow-lg shadow-sky-500/25 disabled:opacity-50 disabled:shadow-none transition-all active:scale-[0.98] flex items-center justify-center gap-2"
         >
           <span v-if="!ui.isSubmitting">
-            {{ isEditMode ? "Perbarui Data" : "Simpan Data" }}
+            <i
+              :class="isEditMode ? 'bi-check-circle' : 'bi-save'"
+              class="bi mr-1"
+            ></i>
+            {{ isEditMode ? "Perbarui" : "Simpan" }}
           </span>
-          <span v-else class="flex items-center justify-center gap-2">
+          <span v-else class="flex items-center gap-2">
             <Spinner />
             {{ isEditMode ? "Memperbarui..." : "Menyimpan..." }}
           </span>

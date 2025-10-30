@@ -26,6 +26,28 @@ const closeNotification = () => {
 const currentStep = ref(1);
 const totalSteps = 3;
 
+// Step configuration
+const steps = [
+  {
+    number: 1,
+    label: "Pasangan",
+    icon: "bi-heart-fill",
+    shortLabel: "Pasangan",
+  },
+  {
+    number: 2,
+    label: "Tema",
+    icon: "bi-palette-fill",
+    shortLabel: "Tema",
+  },
+  {
+    number: 3,
+    label: "Ringkasan",
+    icon: "bi-check-circle-fill",
+    shortLabel: "Review",
+  },
+];
+
 // Reactive state
 const invitationData = reactive({
   order_id: orderId,
@@ -58,16 +80,12 @@ const handleBackToCouple = () => {
   currentStep.value = 1;
 };
 
-const handleBackToTheme = () => {
-  currentStep.value = 2;
-};
-
 // Form submission
 const submitForm = async () => {
   ui.isSubmitting = true;
   try {
     console.log("Submitting invitation data:", invitationData);
-    
+
     const response = await createInvitation(invitationData);
 
     showNotification("success", "Undangan berhasil dibuat!");
@@ -107,7 +125,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="space-y-8">
+  <div class="space-y-6 md:space-y-8">
     <!-- Popup Alert Notification -->
     <FormAlertNotification
       :type="notification.type"
@@ -120,53 +138,7 @@ onMounted(() => {
 
     <UserInvitationSetupLoadingState v-if="ui.pending" />
 
-    <div v-else class="space-y-8">
-      <!-- Progress Indicator -->
-      <div class="max-w-3xl mx-auto mb-8">
-        <div class="flex items-center justify-between mb-4">
-          <div
-            v-for="step in totalSteps"
-            :key="step"
-            class="flex items-center flex-1"
-          >
-            <div class="flex flex-col items-center flex-1">
-              <div
-                :class="[
-                  'w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-300',
-                  currentStep >= step
-                    ? 'bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-lg'
-                    : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400',
-                ]"
-              >
-                <i v-if="currentStep > step" class="bi bi-check-lg text-lg"></i>
-                <span v-else>{{ step }}</span>
-              </div>
-              <span
-                :class="[
-                  'text-xs mt-2 font-medium',
-                  currentStep >= step
-                    ? 'text-sky-600 dark:text-sky-400'
-                    : 'text-slate-500 dark:text-slate-400',
-                ]"
-              >
-                {{
-                  step === 1 ? "Pasangan" : step === 2 ? "Tema" : "Ringkasan"
-                }}
-              </span>
-            </div>
-            <div
-              v-if="step < totalSteps"
-              :class="[
-                'h-1 flex-1 mx-2 transition-all duration-300',
-                currentStep > step
-                  ? 'bg-gradient-to-r from-sky-500 to-sky-600'
-                  : 'bg-slate-200 dark:bg-slate-700',
-              ]"
-            ></div>
-          </div>
-        </div>
-      </div>
-
+    <div v-else class="px-4 md:px-6">
       <!-- Step 1: Couple Form -->
       <UserInvitationSetupCoupleForm
         v-if="currentStep === 1"
@@ -179,7 +151,6 @@ onMounted(() => {
         v-if="currentStep === 2"
         :order-id="orderId"
         @theme-selected="handleThemeSelected"
-        @back="handleBackToCouple"
       />
 
       <!-- Step 3: Summary -->
@@ -189,7 +160,7 @@ onMounted(() => {
         :theme-data="selectedTheme"
         :is-submitting="ui.isSubmitting"
         @submit="submitForm"
-        @back="handleBackToTheme"
+        @reset="handleBackToCouple"
       />
     </div>
   </div>

@@ -3,8 +3,7 @@ const { packages, pending, error } = storeToRefs(usePackageStore());
 </script>
 
 <template>
-  <div
-    class="relative bg-white dark:bg-slate-900 rounded-3xl p-4 sm:pt-8 md:p-8 md:pt-12 shadow-2xl border border-slate-200/30 dark:border-slate-800/30 overflow-hidden"
+  <div class="px-4 md:px-6"
   >
     <!-- Loading State -->
     <div

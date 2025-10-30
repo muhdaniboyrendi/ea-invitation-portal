@@ -1,5 +1,12 @@
 <script setup>
 const props = defineProps(["package", "adminFee"]);
+
+// Computed property untuk menghitung total dengan benar
+const totalPrice = computed(() => {
+  const finalPrice = parseInt(props.package.final_price) || 0;
+  const adminFee = parseInt(props.adminFee) || 0;
+  return finalPrice + adminFee;
+});
 </script>
 
 <template>
@@ -57,7 +64,7 @@ const props = defineProps(["package", "adminFee"]);
         >
           <span>Total</span>
           <span class="text-sky-600 dark:text-sky-400"
-            >Rp {{ formatRupiah(parseInt(props.package.final_price)) }}</span
+            >Rp {{ formatRupiah(totalPrice) }}</span
           >
         </div>
       </div>

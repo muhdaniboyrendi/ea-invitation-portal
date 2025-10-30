@@ -122,8 +122,8 @@ const confirmDelete = async () => {
       class="relative w-full h-full p-8 rounded-3xl transition-all duration-300 shadow-lg hover:shadow-xl"
       :class="
         props.package.id === 2
-          ? 'border-2 border-sky-500/80 bg-sky-500/10 dark:bg-slate-950'
-          : 'border border-slate-200/10 dark:border-slate-800/10 bg-white dark:bg-slate-950'
+          ? 'border-2 border-sky-500/80 bg-sky-50 dark:bg-slate-950'
+          : 'border border-slate-200/10 dark:border-slate-800/10 bg-white dark:bg-slate-900'
       "
     >
       <!-- Package Header -->

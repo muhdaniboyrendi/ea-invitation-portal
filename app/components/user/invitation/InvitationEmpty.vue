@@ -7,7 +7,7 @@
       <!-- Illustration -->
       <div class="flex justify-center mb-6">
         <div
-          class="w-24 h-24 rounded-full bg-gradient-to-br from-sky-50 to-sky-100 dark:from-sky-950/40 dark:to-sky-900/40 flex items-center justify-center shadow-lg"
+          class="w-24 h-24 rounded-4xl bg-gradient-to-br from-sky-50 to-sky-100 dark:from-sky-950/40 dark:to-sky-900/40 flex items-center justify-center shadow-lg"
         >
           <i class="bi bi-inbox text-5xl text-sky-500 dark:text-sky-400"></i>
         </div>
@@ -29,17 +29,19 @@
       </div>
 
       <!-- CTA Button -->
-      <div class="flex justify-center mb-8 gap-4">
+      <div
+        class="flex flex-col md:flex-row justify-center text-center mb-8 gap-4"
+      >
         <NuxtLink
           to="/invitation/create"
-          class="px-6 sm:px-8 py-3 sm:py-4 flex items-center gap-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white rounded-2xl text-sm sm:text-base font-semibold transition-all duration-300 shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 hover:scale-105"
+          class="px-6 sm:px-8 py-3 sm:py-4 flex justify-center items-center gap-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white rounded-2xl text-sm sm:text-base font-semibold transition-all duration-300 shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 hover:scale-105"
         >
           <i class="bi bi-plus-circle text-lg"></i>
           <span>Buat Undangan Sekarang</span>
         </NuxtLink>
         <NuxtLink
           to="/transaction"
-          class="px-6 sm:px-8 py-3 sm:py-4 flex items-center gap-2 border-2 border-sky-500 text-sky-500 dark:text-sky-400 rounded-2xl text-sm sm:text-base font-semibold transition-all duration-300 shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 hover:scale-105"
+          class="px-6 sm:px-8 py-3 sm:py-4 flex justify-center items-center gap-2 border-2 border-sky-500 text-sky-500 dark:text-sky-400 rounded-2xl text-sm sm:text-base font-semibold transition-all duration-300 shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 hover:scale-105"
         >
           <span>Daftar Transaksi</span>
         </NuxtLink>

@@ -4,8 +4,7 @@ const { packages, pending, error } = storeToRefs(usePackageStore());
 </script>
 
 <template>
-  <div
-    class="relative bg-off-white dark:bg-gray-900 rounded-3xl p-4 md:p-8 shadow-2xl border border-white/30 dark:border-gray-700/30 overflow-hidden"
+  <div class="px-4 md:px-6"
   >
     <!-- Loading State -->
     <div

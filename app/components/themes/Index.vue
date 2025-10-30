@@ -168,11 +168,11 @@ onUnmounted(() => {
           @click="activeCategory = 'all'"
           :class="[
             activeCategory === 'all'
-              ? 'active-category bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-lg'
-              : 'bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 hover:text-slate-900 dark:hover:text-slate-50 shadow-lg',
+              ? 'active-category bg-gradient-to-r from-sky-500 to-sky-600 text-white'
+              : 'bg-white dark:bg-slate-900 hover:bg-sky-100 dark:hover:bg-sky-950 text-slate-900 dark:text-slate-50 hover:text-slate-900 dark:hover:text-slate-50',
           ]"
           :disabled="themesPending"
-          class="group/btn relative px-5 py-2.5 border border-slate-200/10 hover:border-slate-200/20 dark:border-slate-800/10 dark:hover:border-slate-800/20 rounded-xl font-medium cursor-pointer hover:-translate-y-0.5 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0 flex-shrink-0"
+          class="group/btn relative px-5 py-2.5 border border-slate-200/10 hover:border-slate-200/20 dark:border-slate-800/10 dark:hover:border-slate-800/20 rounded-2xl font-medium cursor-pointer transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0 flex-shrink-0"
         >
           <!-- Active Glow Effect -->
           <div
@@ -205,11 +205,11 @@ onUnmounted(() => {
           @click="activeCategory = category.id"
           :class="[
             activeCategory === category.id
-              ? 'active-category bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-lg'
-              : 'bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 hover:text-slate-900 dark:hover:text-slate-50 shadow-lg',
+              ? 'active-category bg-gradient-to-r from-sky-500 to-sky-600 text-white'
+              : 'bg-white dark:bg-slate-900 hover:bg-sky-100 dark:hover:bg-sky-950 text-slate-900 dark:text-slate-50 hover:text-slate-900 dark:hover:text-slate-50',
           ]"
           :disabled="themesPending"
-          class="group/btn relative px-5 py-2.5 border border-slate-200/10 hover:border-slate-200/20 dark:border-slate-800/10 dark:hover:border-slate-800/20 rounded-xl font-medium cursor-pointer hover:-translate-y-0.5 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0 flex-shrink-0"
+          class="group/btn relative px-5 py-2.5 border border-slate-200/10 hover:border-slate-200/20 dark:border-slate-800/10 dark:hover:border-slate-800/20 rounded-2xl font-medium cursor-pointer transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0 flex-shrink-0"
         >
           <!-- Active Glow Effect -->
           <div

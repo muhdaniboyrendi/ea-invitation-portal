@@ -8,11 +8,13 @@ const props = defineProps({
     type: Object,
     required: false,
   },
+  isSubmitting: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 const emit = defineEmits(["reset", "submit"]);
-
-const isSubmitting = ref(false);
 
 const handleSubmit = () => {
   emit("submit");
@@ -25,7 +27,7 @@ const handleReset = () => {
 
 <template>
   <div>
-    <div class="mx-auto">
+    <div class="mx-auto mt-10">
       <!-- Header Section -->
       <div class="text-center mb-6 animate-fade-in">
         <div
@@ -175,26 +177,7 @@ const handleReset = () => {
             Buat Undangan Sekarang
           </span>
           <span v-else class="flex items-center justify-center gap-3">
-            <svg
-              class="animate-spin h-5 w-5 text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                class="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="4"
-              ></circle>
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
+            <Spinner />
             Membuat Undangan...
           </span>
         </button>

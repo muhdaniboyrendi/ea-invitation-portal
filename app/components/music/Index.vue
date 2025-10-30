@@ -138,7 +138,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="grid gap-6">
+  <div class="space-y-6">
     <Header
       title="Daftar Musik"
       button-text="Tambah Musik"
@@ -157,9 +157,7 @@ onUnmounted(() => {
       @close="closeNotification"
     />
 
-    <div
-      class="relative p-6 md:p-8 bg-off-white dark:bg-gray-900 rounded-3xl border border-dark/10 dark:border-white/10 shadow-xl"
-    >
+    <div class="px-4 md:px-6">
       <!-- Loading State -->
       <div
         v-if="musicsPending"
@@ -168,16 +166,18 @@ onUnmounted(() => {
         <!-- Loading Spinner -->
         <div class="relative mb-6">
           <div
-            class="w-16 h-16 border-4 border-blue-200 dark:border-blue-900/30 border-t-blue-500 dark:border-t-blue-400 rounded-full animate-spin"
+            class="w-16 h-16 border-4 border-sky-200 dark:border-sky-900/30 border-t-sky-500 dark:border-t-sky-400 rounded-full animate-spin"
           ></div>
         </div>
 
         <!-- Loading Text -->
-        <h3 class="text-xl font-semibold text-dark dark:text-white mb-3">
+        <h3
+          class="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-3"
+        >
           Memuat Musik...
         </h3>
 
-        <p class="text-dark/60 dark:text-white/60 text-center max-w-md">
+        <p class="text-slate-600 dark:text-slate-300 text-center max-w-md">
           Mohon tunggu sebentar, kami sedang memuat daftar musik untuk Anda.
         </p>
       </div>
@@ -185,25 +185,25 @@ onUnmounted(() => {
       <!-- Empty State -->
       <div v-else-if="musics.length === 0" class="text-center py-20">
         <div
-          class="w-20 h-20 mx-auto mb-6 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center"
+          class="w-20 h-20 mx-auto mb-6 bg-slate-100 dark:bg-slate-800 rounded-3xl flex items-center justify-center"
         >
           <i
-            class="bi bi-music-note-list text-4xl text-gray-400 dark:text-gray-600"
+            class="bi bi-music-note-list text-4xl text-slate-400 dark:text-slate-600"
           ></i>
         </div>
-        <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+        <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-2">
           Belum Ada Musik
         </h3>
         <p
           v-if="user?.role === 'admin'"
-          class="text-gray-600 dark:text-gray-400 mb-6"
+          class="text-slate-600 dark:text-slate-300 mb-6"
         >
           Koleksi musik masih kosong. Tambahkan musik pertama Anda!
         </p>
         <NuxtLink
           v-if="user?.role === 'admin'"
           to="/musics/create"
-          class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-semibold rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300"
         >
           <i class="bi bi-plus-lg"></i>
           Tambah Musik
@@ -237,7 +237,7 @@ onUnmounted(() => {
       @close="closeDeleteModal"
       @confirm="handleDeleteMusic"
     >
-      <p class="text-sm text-center text-black/60 dark:text-white/60 italic">
+      <p class="text-sm text-center text-slate-600 dark:text-slate-300 italic">
         Tindakan ini tidak dapat dibatalkan.
       </p>
     </ConfirmDeleteModal>

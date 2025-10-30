@@ -373,7 +373,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="bg-off-white dark:bg-gray-900 rounded-3xl shadow-xl p-8">
+  <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-8">
     <!-- Notification -->
     <FormAlertNotification
       :type="notification.type"
@@ -387,16 +387,16 @@ onUnmounted(() => {
     <!-- Header -->
     <header class="mb-6">
       <h2
-        class="text-2xl font-semibold text-gray-900 dark:text-white flex items-center gap-3"
+        class="text-2xl font-semibold text-slate-900 dark:text-slate-50 flex items-center gap-3"
       >
         <div
-          class="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center"
+          class="w-8 h-8 bg-sky-50 dark:bg-sky-950/30 rounded-lg flex items-center justify-center"
         >
           <i
             :class="
               isEditMode ? 'bi bi-pencil-square' : 'bi bi-music-note-beamed'
             "
-            class="text-purple-600 dark:text-purple-400"
+            class="text-sky-500 dark:text-sky-400"
           />
         </div>
         {{ isEditMode ? "Edit Musik" : "Tambah Musik" }}
@@ -406,7 +406,7 @@ onUnmounted(() => {
     <!-- Loading State -->
     <div v-if="ui.isLoading" class="text-center py-8">
       <div
-        class="flex items-center justify-center gap-3 text-gray-600 dark:text-gray-400"
+        class="flex items-center justify-center gap-3 text-slate-600 dark:text-slate-300"
       >
         <Spinner />
         <p>Memuat data musik...</p>
@@ -464,14 +464,14 @@ onUnmounted(() => {
             type="button"
             @click="resetForm"
             :disabled="ui.isSubmitting"
-            class="flex-1 px-6 py-3 bg-gray-300 dark:bg-gray-800 dark:text-slate-300 text-gray-700 font-medium rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            class="flex-1 px-6 py-3 bg-slate-100 dark:bg-slate-800 dark:text-slate-300 text-slate-900 font-medium rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Reset
           </button>
           <button
             type="submit"
             :disabled="ui.isSubmitting || !isFormValid"
-            class="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            class="flex-1 px-6 py-3 bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             <span v-if="!ui.isSubmitting">
               {{ isEditMode ? "Perbarui Musik" : "Simpan Musik" }}

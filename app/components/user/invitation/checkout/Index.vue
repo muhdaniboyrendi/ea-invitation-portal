@@ -31,7 +31,7 @@ onMounted(() => {
 
   <div v-else>
     <!-- Main Content -->
-    <div class="grid lg:grid-cols-2 gap-8">
+    <div class="grid lg:grid-cols-2 gap-8 px-4 md:px-6">
       <!-- Left Column - Order Summary -->
       <div class="space-y-6">
         <!-- Order Items -->

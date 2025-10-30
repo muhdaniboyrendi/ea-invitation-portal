@@ -403,7 +403,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="bg-off-white dark:bg-gray-900 rounded-3xl shadow-xl p-8">
+  <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-8">
     <!-- Alert Notification -->
     <FormAlertNotification
       :show="notification.show"
@@ -417,14 +417,14 @@ onMounted(() => {
     <!-- Header -->
     <div class="mb-6">
       <h2
-        class="text-2xl font-semibold text-gray-900 dark:text-white flex items-center gap-3"
+        class="text-2xl font-semibold text-slate-900 dark:text-slate-50 flex items-center gap-3"
       >
         <div
-          class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center"
+          class="w-8 h-8 bg-sky-50 dark:bg-sky-950/30 rounded-lg flex items-center justify-center"
         >
           <i
             :class="isEditMode ? 'bi bi-pencil-square' : 'bi bi-plus-lg'"
-            class="text-blue-600 dark:text-blue-400"
+            class="text-sky-500 dark:text-sky-400"
           />
         </div>
         {{ isEditMode ? "Edit Paket" : "Detail Paket" }}
@@ -434,7 +434,7 @@ onMounted(() => {
     <!-- Loading State -->
     <div v-if="ui.isLoading" class="text-center py-8">
       <div
-        class="flex items-center justify-center gap-3 text-gray-600 dark:text-gray-400"
+        class="flex items-center justify-center gap-3 text-slate-600 dark:text-slate-300"
       >
         <Spinner />
         <p>Memuat data paket...</p>
@@ -473,7 +473,7 @@ onMounted(() => {
             <Transition name="fade">
               <p
                 v-if="formData.price && !validationErrors.price"
-                class="text-green-600 dark:text-green-400 text-sm mt-1"
+                class="text-emerald-600 dark:text-emerald-400 text-sm mt-1"
               >
                 Rp {{ formatRupiah(formData.price) }}
               </p>
@@ -498,7 +498,7 @@ onMounted(() => {
                   !validationErrors.discount &&
                   !validationErrors.price
                 "
-                class="text-green-600 dark:text-green-400 text-sm mt-1"
+                class="text-emerald-600 dark:text-emerald-400 text-sm mt-1"
               >
                 Harga setelah diskon: Rp {{ formatRupiah(discountedPrice) }}
               </p>
@@ -509,13 +509,15 @@ onMounted(() => {
         <!-- Features Section -->
         <div>
           <div class="flex items-end justify-between mb-2">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              class="text-sm font-medium text-slate-900 dark:text-slate-50"
+            >
               Fitur Paket <span class="text-red-500">*</span>
             </label>
             <button
               type="button"
               @click="addFeature"
-              class="flex items-center gap-2 px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
+              class="flex items-center gap-2 px-3 py-1.5 bg-sky-50 dark:bg-sky-950/30 text-sky-600 dark:text-sky-400 rounded-xl hover:bg-sky-100 dark:hover:bg-sky-950/50 transition-colors"
             >
               <i class="bi bi-plus text-sm" />
               <span class="text-sm">Tambah</span>
@@ -535,7 +537,7 @@ onMounted(() => {
                   type="text"
                   :placeholder="`Fitur ${index + 1}`"
                   :disabled="ui.isSubmitting"
-                  class="w-full px-4 py-3 bg-white dark:bg-gray-800 dark:text-slate-300 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="w-full px-4 py-3 bg-white dark:bg-slate-800 dark:text-slate-50 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-sky-500 dark:focus:border-sky-400 focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
               <button
@@ -543,7 +545,7 @@ onMounted(() => {
                 type="button"
                 @click="removeFeature(index)"
                 :disabled="ui.isSubmitting"
-                class="flex items-center justify-center w-12 h-12 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                class="flex items-center justify-center w-12 h-12 bg-red-50 dark:bg-red-950/30 text-red-500 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <i class="bi bi-trash text-sm" />
               </button>
@@ -566,14 +568,14 @@ onMounted(() => {
             type="button"
             @click="resetForm"
             :disabled="ui.isSubmitting"
-            class="flex-1 px-6 py-3 bg-gray-300 dark:bg-gray-800 dark:text-slate-300 text-gray-700 font-medium rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            class="flex-1 px-6 py-3 bg-slate-100 dark:bg-slate-800 dark:text-slate-300 text-slate-900 font-medium rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Reset
           </button>
           <button
             type="submit"
             :disabled="ui.isSubmitting || !isFormValid"
-            class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            class="flex-1 px-6 py-3 bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             <span v-if="!ui.isSubmitting">
               {{ isEditMode ? "Perbarui Paket" : "Simpan Paket" }}

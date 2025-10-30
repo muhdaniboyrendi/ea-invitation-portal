@@ -4,30 +4,25 @@ const { fetchInvitation } = useInvitationStore();
 
 const invitationId = route.params.invitationId;
 
-// --- State untuk data undangan ---
 const invitationData = ref({});
 const isLoading = ref(true);
 
-// --- State untuk Navigasi Form ---
 const currentStep = ref(1);
 
-// ✅ NEW: State untuk track apakah step dapat dilanjutkan
 const canProceedToNextStep = ref(true);
 
-// ✅ Base step details (semua step yang tersedia)
 const baseStepDetails = [
-  { id: 1, title: "Informasi Utama Undangan", alwaysShow: true },
-  { id: 2, title: "Data Mempelai Pria", alwaysShow: true },
-  { id: 3, title: "Data Mempelai Wanita", alwaysShow: true },
-  { id: 4, title: "Daftar Acara", alwaysShow: true },
-  { id: 5, title: "Kisah Cinta", alwaysShow: true },
-  { id: 6, title: "Daftar Hadiah", alwaysShow: true },
-  { id: 7, title: "Galeri Foto", alwaysShow: true },
-  { id: 8, title: "Video", alwaysShow: false }, // Conditional step
-  { id: 9, title: "Selesai", alwaysShow: true }, // Completion step
+  { id: 1, title: "Informasi Utama", icon: "bi-heart-fill", alwaysShow: true },
+  { id: 2, title: "Mempelai Pria", icon: "bi-person-fill", alwaysShow: true },
+  { id: 3, title: "Mempelai Wanita", icon: "bi-person-fill", alwaysShow: true },
+  { id: 4, title: "Daftar Acara", icon: "bi-calendar-event", alwaysShow: true },
+  { id: 5, title: "Kisah Cinta", icon: "bi-book-heart", alwaysShow: true },
+  { id: 6, title: "Daftar Hadiah", icon: "bi-gift", alwaysShow: true },
+  { id: 7, title: "Galeri Foto", icon: "bi-images", alwaysShow: true },
+  { id: 8, title: "Video", icon: "bi-play-circle", alwaysShow: false },
+  { id: 9, title: "Selesai", icon: "bi-check-circle-fill", alwaysShow: true },
 ];
 
-// ✅ Computed: Filter steps berdasarkan package
 const stepDetails = computed(() => {
   const packageId = Number(invitationData.value?.order?.package_id);
 
@@ -36,42 +31,43 @@ const stepDetails = computed(() => {
     return baseStepDetails.filter((step) => step.id !== 8);
   }
 
-  // Jika package lain, tampilkan semua step
   return baseStepDetails;
 });
 
-// ✅ Computed: Total steps dinamis berdasarkan stepDetails yang terfilter
 const totalSteps = computed(() => stepDetails.value.length);
 
-// ✅ Computed: Current title berdasarkan step yang aktif
 const currentTitle = computed(() => {
   const step = stepDetails.value.find((s) => s.id === currentStep.value);
   return step ? step.title : "";
 });
 
-// ✅ Computed: Check apakah step video tersedia
+const currentIcon = computed(() => {
+  const step = stepDetails.value.find((s) => s.id === currentStep.value);
+  return step ? step.icon : "bi-circle";
+});
+
 const hasVideoStep = computed(() => {
   const packageId = Number(invitationData.value?.order?.package_id);
   return packageId !== 1;
 });
 
-// ✅ NEW: Handler untuk menerima update status dari child component
+const progressPercentage = computed(() => {
+  return Math.round((currentStep.value / totalSteps.value) * 100);
+});
+
 const handleStepStatusUpdate = (canProceed) => {
   canProceedToNextStep.value = canProceed;
 };
 
-// Fungsi untuk navigasi
 const nextStep = () => {
   if (currentStep.value < totalSteps.value && canProceedToNextStep.value) {
-    // Jika step saat ini adalah step 7 (Gallery) dan package_id === 1
-    // Skip langsung ke selesai atau step terakhir
     if (currentStep.value === 7 && !hasVideoStep.value) {
       return;
     }
 
     currentStep.value++;
     canProceedToNextStep.value = true; // Reset untuk step berikutnya
-    window.scrollTo({ top: 0, behavior: "instant" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 };
 
@@ -79,11 +75,10 @@ const prevStep = () => {
   if (currentStep.value > 1) {
     currentStep.value--;
     canProceedToNextStep.value = true; // Reset saat kembali
-    window.scrollTo({ top: 0, behavior: "instant" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 };
 
-// --- State Notification ---
 const notification = reactive({
   show: false,
   type: "info",
@@ -100,7 +95,6 @@ const closeNotification = () => {
   notification.show = false;
 };
 
-// Handle success/error dari form
 const handleFormSuccess = (message) => {
   showNotification("success", message);
 };
@@ -131,7 +125,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="bg-off-white dark:bg-gray-900 rounded-3xl shadow-xl p-8">
+  <div class="min-h-screen bg-slate-50 dark:bg-slate-950">
     <FormAlertNotification
       :type="notification.type"
       :message="notification.message"
@@ -141,41 +135,93 @@ onMounted(() => {
       @close="closeNotification"
     />
 
-    <div v-if="isLoading" class="text-center py-8">
-      <div
-        class="flex flex-col items-center justify-center gap-3 text-gray-600 dark:text-gray-400"
-      >
+    <!-- Loading State -->
+    <div
+      v-if="isLoading"
+      class="min-h-screen flex items-center justify-center px-4 md:px-6"
+    >
+      <div class="text-center space-y-4">
         <div
-          class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"
-        ></div>
-        <p>Memuat data pernikahan...</p>
+          class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-sky-50 dark:bg-sky-950 backdrop-blur-sm"
+        >
+          <div
+            class="w-12 h-12 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"
+          ></div>
+        </div>
+        <div>
+          <p class="text-base font-semibold text-slate-900 dark:text-slate-50">
+            Memuat Data
+          </p>
+          <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">
+            Mohon tunggu sebentar...
+          </p>
+        </div>
       </div>
     </div>
 
+    <!-- Main Content -->
     <div v-else>
-      <div class="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
-          {{ currentTitle }}
-        </h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          Langkah {{ currentStep }} dari {{ totalSteps }}
-        </p>
+      <!-- Sticky Header dengan Progress -->
+      <div class="">
+        <div class="px-4 md:px-6 py-4 md:py-5">
+          <!-- Title & Step Counter -->
+          <div class="flex items-start justify-between gap-3 mb-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-3 md:gap-4 mb-3">
+                <div
+                  class="h-10 w-10 rounded-xl bg-sky-500 hover:bg-sky-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-sky-500/25 transition-colors"
+                >
+                  <i :class="currentIcon" class="bi text-white text-lg"></i>
+                </div>
+                <h2
+                  class="text-lg md:text-xl font-bold text-slate-900 dark:text-slate-50 truncate"
+                >
+                  {{ currentTitle }}
+                </h2>
+              </div>
+              <p class="text-xs md:text-sm text-slate-600 dark:text-slate-300">
+                Langkah {{ currentStep }} dari {{ totalSteps }}
+              </p>
+            </div>
+          </div>
 
-        <!-- Progress Bar -->
-        <div class="mt-4 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+          <!-- Progress Bar -->
           <div
-            class="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
-            :style="{ width: `${(currentStep / totalSteps) * 100}%` }"
-          ></div>
+            class="relative w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden"
+          >
+            <div
+              class="absolute h-full bg-sky-500 rounded-full transition-all duration-500 ease-out"
+              :style="{ width: `${progressPercentage}%` }"
+            >
+              <div
+                class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Warning Message -->
+          <div
+            v-if="currentStep < totalSteps && !canProceedToNextStep"
+            class="mt-4 p-3 md:p-4 bg-sky-50 dark:bg-sky-950 border border-sky-200 dark:border-sky-800 rounded-xl"
+          >
+            <p
+              class="text-xs md:text-sm text-slate-900 dark:text-slate-50 flex items-center gap-2"
+            >
+              <i class="bi bi-info-circle-fill flex-shrink-0 text-sky-500"></i>
+              <span>Simpan data terlebih dahulu untuk melanjutkan</span>
+            </p>
+          </div>
         </div>
 
-        <div class="flex justify-between items-center pt-6">
+        <!-- Navigation Buttons -->
+        <div class="flex items-center justify-between gap-3 px-4 md:px-6 pb-4">
           <button
             v-if="currentStep > 1"
             @click="prevStep"
-            class="h-10 aspect-square bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium rounded-xl hover:bg-gray-400 dark:hover:bg-gray-600 hover:scale-105 active:scale-95 transition-all duration-300 shadow cursor-pointer"
+            class="flex items-center gap-2 px-4 h-11 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 font-medium rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95 transition-all shadow-sm"
           >
-            <i class="bi bi-chevron-left"></i>
+            <i class="bi bi-chevron-left text-lg"></i>
+            <span class="text-sm">Kembali</span>
           </button>
           <div v-else></div>
 
@@ -184,28 +230,20 @@ onMounted(() => {
             @click="nextStep"
             :disabled="!canProceedToNextStep"
             :class="[
-              'h-10 aspect-square font-medium rounded-xl transition-all duration-300 shadow',
+              'flex items-center gap-2 px-4 h-11 font-medium rounded-xl transition-all shadow-sm',
               canProceedToNextStep
-                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:scale-105 active:scale-95 cursor-pointer'
-                : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-500 cursor-not-allowed opacity-50'
+                ? 'bg-sky-500 text-white hover:bg-sky-600 active:scale-95 shadow-sky-500/25'
+                : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-60',
             ]"
           >
-            <i class="bi bi-chevron-right"></i>
+            <span class="text-sm">Lanjut</span>
+            <i class="bi bi-chevron-right text-lg"></i>
           </button>
-        </div>
-
-        <div
-          v-if="currentStep < totalSteps && !canProceedToNextStep"
-          class="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg"
-        >
-          <p class="text-sm text-amber-800 dark:text-amber-200 flex items-center gap-2">
-            <i class="bi bi-info-circle"></i>
-            <span>Silakan isi dan simpan data terlebih dahulu untuk melanjutkan ke langkah berikutnya</span>
-          </p>
         </div>
       </div>
 
-      <div>
+      <!-- Form Content -->
+      <div class="pt-6 px-4 md:px-6 pb-8">
         <!-- Step 1: Informasi Utama -->
         <UserInvitationFillMainInfo
           v-if="currentStep === 1"

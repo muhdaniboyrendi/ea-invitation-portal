@@ -60,7 +60,7 @@ defineExpose({
 <template>
   <div>
     <label
-      class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+      class="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2"
     >
       {{ label }}
       <span v-if="required" class="text-red-500">*</span>
@@ -69,21 +69,21 @@ defineExpose({
     <!-- Upload Area -->
     <div v-if="!preview" class="space-y-4">
       <div
-        class="border-2 border-dashed rounded-xl p-6 text-center transition-colors cursor-pointer"
+        class="border-2 border-dashed rounded-2xl p-6 text-center transition-colors cursor-pointer"
         :class="
           error
             ? 'border-red-500'
-            : 'border-gray-300 dark:border-gray-600 hover:border-purple-500 dark:hover:border-purple-400'
+            : 'border-slate-300 dark:border-slate-700 hover:border-sky-500 dark:hover:border-sky-400'
         "
         @click="triggerFileInput"
       >
         <div class="flex flex-col items-center gap-3">
-          <i class="bi bi-cloud-upload text-4xl text-gray-400" />
+          <i class="bi bi-cloud-upload text-4xl text-slate-400" />
           <div>
-            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <p class="text-sm font-medium text-slate-900 dark:text-slate-50">
               Klik untuk upload {{ label.toLowerCase() }}
             </p>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">
               {{ helpText }}
             </p>
           </div>
@@ -101,19 +101,19 @@ defineExpose({
     <!-- Preview -->
     <div v-else class="space-y-3">
       <div
-        class="border-2 border-gray-200 dark:border-gray-600 rounded-xl p-4 bg-gray-50 dark:bg-gray-800"
+        class="border-2 border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50 dark:bg-slate-800"
       >
         <div class="flex items-start gap-3">
           <div
-            class="flex-shrink-0 w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center"
+            class="flex-shrink-0 w-12 h-12 bg-sky-50 dark:bg-sky-950/30 rounded-xl flex items-center justify-center"
           >
             <i
-              class="bi bi-music-note-beamed text-2xl text-purple-600 dark:text-purple-400"
+              class="bi bi-music-note-beamed text-2xl text-sky-500 dark:text-sky-400"
             />
           </div>
           <div class="flex-1 min-w-0">
             <p
-              class="text-sm font-medium text-gray-700 dark:text-gray-300 truncate"
+              class="text-sm font-medium text-slate-900 dark:text-slate-50 truncate"
             >
               {{ fileName || "Audio file" }}
             </p>
@@ -132,7 +132,7 @@ defineExpose({
           <button
             type="button"
             @click="handleRemove"
-            class="flex-shrink-0 p-2 text-gray-400 hover:text-red-500 transition-colors"
+            class="flex-shrink-0 p-2 text-slate-400 hover:text-red-500 transition-colors"
             title="Hapus audio"
           >
             <i class="bi bi-trash text-lg" />
@@ -150,9 +150,9 @@ defineExpose({
       </button>
 
       <div
-        class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
+        class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"
       >
-        <i class="bi bi-check-circle text-green-500" />
+        <i class="bi bi-check-circle text-emerald-500" />
         <span>{{ label }} berhasil diupload</span>
       </div>
     </div>
@@ -182,10 +182,10 @@ audio {
 }
 
 audio::-webkit-media-controls-panel {
-  background-color: #f9fafb;
+  background-color: #f8fafc;
 }
 
 .dark audio::-webkit-media-controls-panel {
-  background-color: #1f2937;
+  background-color: #0f172a;
 }
 </style>

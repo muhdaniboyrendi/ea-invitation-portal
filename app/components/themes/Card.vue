@@ -123,31 +123,32 @@ const handleDeleteTheme = async () => {
           </span>
         </div>
 
-        <a
-          :href="props.theme?.link || '#'"
-          target="_blank"
-          :rel="props.theme?.name || 'null'"
-          class="group/btn relative w-full inline-flex justify-center items-center px-4 py-2 backdrop-blur-md bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
-        >
-          <span class="relative z-10">Lihat Tema</span>
-          <i class="bi bi-arrow-right ml-2"></i>
-        </a>
-
-        <div v-if="user?.role === 'admin'" class="flex items-center gap-3 mt-4">
-          <NuxtLink
-            :to="`/themes/${props.theme.id}`"
-            class="group/btn relative w-full inline-flex justify-center items-center px-4 py-2 backdrop-blur-md bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
-            >Edit
-            <i class="bi bi-pencil-square ml-2"></i>
-          </NuxtLink>
-          <button
-            type="button"
-            @click="openDeleteModal"
-            class="group/btn relative w-full inline-flex justify-center items-center px-4 py-2 backdrop-blur-md bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+        <div class="flex items-center gap-3">
+          <a
+            :href="props.theme?.link || '#'"
+            target="_blank"
+            :rel="props.theme?.name || 'null'"
+            class="group/btn relative h-10 w-full inline-flex justify-center items-center px-4 backdrop-blur-md bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
           >
-            Hapus
-            <i class="bi bi-trash3 ml-2"></i>
-          </button>
+            <span class="relative z-10">Lihat Tema</span>
+            <i class="bi bi-arrow-right ml-2"></i>
+          </a>
+
+          <div v-if="user?.role === 'admin'" class="flex items-center gap-3">
+            <NuxtLink
+              :to="`/themes/${props.theme.id}`"
+              class="group/btn h-10 aspect-square relative flex justify-center items-center backdrop-blur-md bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+            >
+              <i class="bi bi-pencil-square"></i>
+            </NuxtLink>
+            <button
+              type="button"
+              @click="openDeleteModal"
+              class="group/btn h-10 aspect-square relative flex justify-center items-center backdrop-blur-md bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+            >
+              <i class="bi bi-trash3"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>

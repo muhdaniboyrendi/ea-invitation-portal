@@ -103,7 +103,7 @@ const handleDeleteModalClose = () => {
 </script>
 
 <template>
-  <div class="grid gap-6">
+  <div class="space-y-6">
     <FormAlertNotification
       :show="notification.show"
       :type="notification.type"
@@ -137,9 +137,7 @@ const handleDeleteModalClose = () => {
     />
 
     <!-- Category Cards Container -->
-    <div
-      class="relative p-6 bg-off-white dark:bg-gray-900 rounded-3xl border border-dark/10 dark:border-white/10 shadow-xl"
-    >
+    <div>
       <!-- Loading State -->
       <div
         v-if="categoriesPending"
@@ -147,13 +145,15 @@ const handleDeleteModalClose = () => {
       >
         <div class="relative mb-6">
           <div
-            class="w-16 h-16 border-4 border-blue-200 dark:border-blue-900/30 border-t-blue-500 dark:border-t-blue-400 rounded-full animate-spin"
+            class="w-16 h-16 border-4 border-sky-200 dark:border-sky-900/30 border-t-sky-500 dark:border-t-sky-400 rounded-full animate-spin"
           ></div>
         </div>
-        <h3 class="text-xl font-semibold text-dark dark:text-white mb-3">
+        <h3
+          class="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-3"
+        >
           Memuat Kategori...
         </h3>
-        <p class="text-dark/60 dark:text-white/60 text-center max-w-md">
+        <p class="text-slate-600 dark:text-slate-300 text-center max-w-md">
           Mohon tunggu sebentar, kami sedang memuat daftar kategori tema.
         </p>
       </div>
@@ -165,23 +165,23 @@ const handleDeleteModalClose = () => {
       >
         <div class="relative mb-6">
           <div
-            class="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 rounded-4xl flex items-center justify-center"
+            class="w-24 h-24 bg-gradient-to-br from-sky-50 to-sky-100 dark:from-sky-950/20 dark:to-sky-900/20 rounded-4xl flex items-center justify-center"
           >
-            <i
-              class="bi bi-inbox text-4xl text-blue-500 dark:text-blue-400"
-            ></i>
+            <i class="bi bi-inbox text-4xl text-sky-500 dark:text-sky-400"></i>
           </div>
         </div>
-        <h3 class="text-xl font-semibold text-dark dark:text-white mb-3">
+        <h3
+          class="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-3"
+        >
           Belum Ada Kategori
         </h3>
-        <p class="text-dark/60 dark:text-white/60 text-center max-w-md mb-6">
+        <p class="text-slate-600 dark:text-slate-300 text-center max-w-md mb-6">
           Tidak ada kategori tema yang tersedia saat ini. Buat kategori baru
           untuk memulai.
         </p>
         <button
           @click="handleAddCategory"
-          class="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2"
+          class="px-6 py-3 bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2"
         >
           <i class="bi bi-plus-lg"></i>
           Buat Kategori Pertama
@@ -189,7 +189,7 @@ const handleDeleteModalClose = () => {
       </div>
 
       <!-- Categories List -->
-      <div v-else class="space-y-4">
+      <div v-else class="space-y-4 px-4 md:px-6">
         <CategoriesCard
           v-for="category in categories"
           :key="category.id"
@@ -199,10 +199,12 @@ const handleDeleteModalClose = () => {
         />
 
         <!-- Summary -->
-        <div class="mt-6 pt-6 border-t border-dark/10 dark:border-white/10">
-          <p class="text-sm text-dark/60 dark:text-white/60">
+        <div
+          class="mt-6 pt-6 border-t border-slate-200/10 dark:border-slate-800/10"
+        >
+          <p class="text-sm text-slate-600 dark:text-slate-300">
             Menampilkan
-            <span class="font-semibold text-dark dark:text-white">{{
+            <span class="font-semibold text-slate-900 dark:text-slate-50">{{
               categories.length
             }}</span>
             kategori tema

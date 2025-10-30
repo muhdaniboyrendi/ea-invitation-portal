@@ -5,7 +5,7 @@ const { userInvitations, userInvitationsPending } = storeToRefs(
 </script>
 
 <template>
-  <div>
+  <div class="px-4 md:px-6">
     <UserInvitationSkeletonLoading v-if="userInvitationsPending" />
 
     <UserInvitationEmpty v-else-if="userInvitations.length === 0" />

@@ -193,7 +193,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div class="px-4 md:px-6">
     <FormAlertNotification
       :type="notification.type"
       :message="notification.message"
@@ -213,13 +213,13 @@ onMounted(() => {
       leave-to-class="opacity-0 -translate-y-4"
     >
       <div
-        class="relative p-8 bg-off-white dark:bg-gray-900 rounded-3xl border border-dark/10 dark:border-white/10 shadow-xl"
+        class="relative p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/10 dark:border-slate-800/10 shadow-xl"
       >
         <!-- Header Form -->
         <header class="flex items-center justify-between mb-6">
           <div class="flex items-center gap-3">
             <div
-              class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center"
+              class="w-10 h-10 bg-gradient-to-br from-sky-500 to-sky-600 rounded-2xl flex items-center justify-center"
             >
               <i
                 :class="isEditMode ? 'bi bi-pencil-square' : 'bi bi-plus-lg'"
@@ -227,16 +227,9 @@ onMounted(() => {
               />
             </div>
             <div>
-              <h3 class="text-lg font-bold text-dark dark:text-white">
+              <h3 class="text-lg font-bold text-slate-900 dark:text-slate-50">
                 {{ isEditMode ? "Edit Kategori" : "Tambah Kategori Baru" }}
               </h3>
-              <p class="text-sm text-dark/60 dark:text-white/60">
-                {{
-                  isEditMode
-                    ? "Ubah informasi kategori tema"
-                    : "Buat kategori tema baru untuk undangan Anda"
-                }}
-              </p>
             </div>
           </div>
 
@@ -244,11 +237,11 @@ onMounted(() => {
           <button
             @click="closeForm"
             :disabled="ui.isSubmitting"
-            class="h-8 aspect-square bg-red-100 dark:bg-red-950/70 hover:bg-red-500 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed group"
+            class="h-8 aspect-square bg-red-50 dark:bg-red-950/70 hover:bg-red-500 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed group"
             aria-label="Close form"
           >
             <i
-              class="bi bi-x-lg text-red-600 dark:text-red-500 text-lg group-hover:text-white"
+              class="bi bi-x-lg text-red-500 dark:text-red-400 text-lg group-hover:text-white"
             ></i>
           </button>
         </header>
@@ -269,7 +262,7 @@ onMounted(() => {
           <!-- Description -->
           <div>
             <label
-              class="block text-sm font-semibold text-dark dark:text-white mb-2"
+              class="block text-sm font-semibold text-slate-900 dark:text-slate-50 mb-2"
             >
               Deskripsi
               <span class="text-red-500">*</span>
@@ -282,45 +275,45 @@ onMounted(() => {
               @blur="() => validateField('description', formData.description)"
               rows="4"
               maxlength="500"
-              class="w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 rounded-xl text-dark dark:text-white placeholder-dark/40 dark:placeholder-white/40 resize-none transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none"
+              class="w-full px-4 py-3 bg-white dark:bg-slate-800 border-2 rounded-xl text-slate-900 dark:text-slate-50 placeholder-slate-400 dark:placeholder-slate-500 resize-none transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none"
               :class="
                 validationErrors.description
                   ? 'border-red-500 dark:border-red-500/50 focus:border-red-600 focus:ring-2 focus:ring-red-500/20'
-                  : 'border-dark/10 dark:border-white/20 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+                  : 'border-slate-200 dark:border-slate-700 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20'
               "
             ></textarea>
 
             <!-- Error Message -->
             <p
               v-if="validationErrors.description"
-              class="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center gap-1.5"
+              class="mt-2 text-sm text-red-500 dark:text-red-400 flex items-center gap-1.5"
             >
               <i class="bi bi-exclamation-circle"></i>
               {{ validationErrors.description }}
             </p>
 
             <!-- Character Counter -->
-            <p class="mt-2 text-xs text-dark/60 dark:text-white/60">
+            <p class="mt-2 text-xs text-slate-600 dark:text-slate-300">
               {{ formData.description.length }} / 500 karakter
             </p>
           </div>
 
           <!-- Action Buttons -->
           <div
-            class="flex gap-4 pt-6 border-t border-dark/10 dark:border-white/10"
+            class="flex gap-4 pt-6 border-t border-slate-200/10 dark:border-slate-800/10"
           >
             <button
               type="button"
               @click="closeForm"
               :disabled="ui.isSubmitting"
-              class="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-dark dark:text-white font-medium rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              class="flex-1 px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-50 font-medium rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               Batal
             </button>
             <button
               type="submit"
               :disabled="!isFormValid || ui.isSubmitting"
-              class="flex-1 px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              class="flex-1 px-4 py-3 bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               <span
                 v-if="!ui.isSubmitting"
