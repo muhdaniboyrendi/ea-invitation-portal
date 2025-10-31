@@ -4,10 +4,10 @@ const props = defineProps(["invitation"]);
 
 <template>
   <div
-    class="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/50 dark:border-slate-800/50 overflow-hidden"
+    class="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/50 dark:border-slate-800/50 overflow-hidden"
   >
     <!-- Card Content -->
-    <div class="relative p-6">
+    <div class="relative p-4 md:p-6">
       <!-- Header -->
       <div
         class="flex flex-col-reverse sm:flex-row items-center justify-between mb-6 gap-y-4"
@@ -164,10 +164,10 @@ const props = defineProps(["invitation"]);
       </div>
 
       <!-- Action Buttons -->
-      <div class="w-full flex flex-col sm:flex-row gap-x-6 gap-y-4">
+      <div class="w-full flex flex-col sm:flex-row gap-4">
         <NuxtLink
           :to="`/invitation/${props.invitation.id}`"
-          class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 hover:scale-105"
+          class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white rounded-2xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 hover:scale-105"
         >
           <i class="bi bi-list text-sm"></i>
           <span class="block">Detail</span>
@@ -175,7 +175,7 @@ const props = defineProps(["invitation"]);
 
         <NuxtLink
           :to="`/invitation/${props.invitation.id}/guests`"
-          class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-105"
+          class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-2xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-105"
         >
           <i class="bi bi-people text-sm"></i>
           <span class="block">Tamu</span>
@@ -185,7 +185,7 @@ const props = defineProps(["invitation"]);
           v-if="props.invitation.slug"
           :href="`http://localhost:3000/${props.invitation.slug}`"
           target="_blank"
-          class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:scale-105"
+          class="w-full p-3 flex justify-center items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-2xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:scale-105"
         >
           <i class="bi bi-box-arrow-up-right text-sm"></i>
           <span class="block">lihat</span>

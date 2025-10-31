@@ -2,7 +2,7 @@
 const props = defineProps({
   label: {
     type: String,
-    required: true,
+    required: false,
   },
   required: {
     type: Boolean,
@@ -50,6 +50,7 @@ defineExpose({
 <template>
   <div>
     <label
+      v-if="props.label"
       class="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2"
     >
       {{ label }}
@@ -71,7 +72,7 @@ defineExpose({
           <i class="bi bi-cloud-upload text-4xl text-slate-400" />
           <div>
             <p class="text-sm font-medium text-slate-900 dark:text-slate-50">
-              Klik untuk upload {{ label.toLowerCase() }}
+              Klik untuk upload
             </p>
             <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">
               {{ helpText }}

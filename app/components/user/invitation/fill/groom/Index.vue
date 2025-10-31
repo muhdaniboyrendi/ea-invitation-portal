@@ -206,110 +206,187 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="ui.isLoading" class="text-center py-8">
-    <div
-      class="flex flex-col items-center justify-center gap-3 text-gray-600 dark:text-gray-400"
-    >
+  <!-- Loading State -->
+  <div
+    v-if="ui.isLoading"
+    class="min-h-[60vh] flex items-center justify-center"
+  >
+    <div class="text-center space-y-4 md:space-y-6">
       <div
-        class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"
-      ></div>
-      <p>Memuat data mempelai pria...</p>
+        class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-sky-50 dark:bg-sky-950 backdrop-blur-sm"
+      >
+        <div
+          class="w-10 h-10 border-3 border-sky-500 border-t-transparent rounded-full animate-spin"
+        ></div>
+      </div>
+      <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
+        Memuat data mempelai pria...
+      </p>
     </div>
   </div>
 
-  <div v-else>
+  <div v-else class="space-y-4 md:space-y-6">
+    <!-- Header Card -->
     <div
-      class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-3 md:space-y-6"
+      class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800"
     >
-      <h2
-        class="text-2xl font-semibold text-gray-900 dark:text-white flex items-center gap-3"
-      >
-        {{
-          isEditMode ? "Edit Data Mempelai Pria" : "Tambah Data Mempelai Pria"
-        }}
-      </h2>
-      <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-        ID Undangan: <span class="font-semibold">{{ invitationId }}</span>
-      </p>
+      <div class="flex items-center gap-3">
+        <div
+          class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center flex-shrink-0"
+        >
+          <i class="bi bi-person text-sky-500 text-lg"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <h2
+            class="text-base md:text-lg font-semibold text-slate-900 dark:text-slate-50"
+          >
+            {{ isEditMode ? "Edit Data Mempelai Pria" : "Data Mempelai Pria" }}
+          </h2>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+            ID: <span class="font-medium">{{ invitationId }}</span>
+          </p>
+        </div>
+      </div>
     </div>
 
-    <form @submit.prevent="submitForm" class="space-y-6">
-      <FormBaseInput
-        v-model="formData.full_name"
-        type="text"
-        label="Nama Lengkap Mempelai Pria"
-        :required="true"
-        :error="validationErrors.full_name"
-        @input="handleInput('full_name', formData.full_name)"
-      />
+    <form @submit.prevent="submitForm" class="space-y-4 md:space-y-6">
+      <!-- Personal Information Section -->
+      <div
+        class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-3 md:space-y-6"
+      >
+        <div class="flex items-center gap-2 mb-1 md:mb-4">
+          <div
+            class="w-8 h-8 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center"
+          >
+            <i class="bi bi-person-badge text-sky-500"></i>
+          </div>
+          <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-50">
+            Informasi Pribadi
+          </h3>
+        </div>
 
-      <FormBaseInput
-        v-model="formData.father"
-        type="text"
-        label="Nama Ayah"
-        :required="true"
-        :error="validationErrors.father"
-        @input="handleInput('father', formData.father)"
-      />
+        <FormBaseInput
+          v-model="formData.full_name"
+          type="text"
+          label="Nama Lengkap"
+          placeholder="Masukkan nama lengkap mempelai pria"
+          :required="true"
+          :error="validationErrors.full_name"
+          @input="handleInput('full_name', formData.full_name)"
+        />
 
-      <FormBaseInput
-        v-model="formData.mother"
-        type="text"
-        label="Nama Ibu"
-        :required="true"
-        :error="validationErrors.mother"
-        @input="handleInput('mother', formData.mother)"
-      />
+        <FormBaseInput
+          v-model="formData.instagram"
+          type="text"
+          label="Instagram"
+          placeholder="contoh: budi_sanjaya"
+          :error="validationErrors.instagram"
+          @input="handleInput('instagram', formData.instagram)"
+        >
+          <template #hint>
+            <span class="text-xs text-slate-400 dark:text-slate-500">
+              Opsional - Tanpa tanda @
+            </span>
+          </template>
+        </FormBaseInput>
+      </div>
 
-      <FormBaseInput
-        v-model="formData.instagram"
-        type="text"
-        label="Instagram (Opsional)"
-        placeholder="contoh: budi_sanjaya"
-        :error="validationErrors.instagram"
-        @input="handleInput('instagram', formData.instagram)"
-      />
+      <!-- Parents Information Section -->
+      <div
+        class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-3 md:space-y-6"
+      >
+        <div class="flex items-center gap-2 mb-1 md:mb-4">
+          <div
+            class="w-8 h-8 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center"
+          >
+            <i class="bi bi-people text-sky-500"></i>
+          </div>
+          <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-50">
+            Orang Tua
+          </h3>
+        </div>
 
-      <FormImageUpload
-        ref="groomPhotoInput"
-        label="Foto Mempelai Pria (Opsional)"
-        :preview="groomPhotoPreview"
-        :error="validationErrors.photo"
-        @change="
-          (e) => {
-            const file = handleGroomPhotoUpload(e);
-            if (file) formData.photo = file;
-          }
-        "
-        @remove="
-          () => {
-            removeGroomPhoto();
-            formData.photo = null;
-            clearBackendError('photo');
-          }
-        "
-      />
+        <FormBaseInput
+          v-model="formData.father"
+          type="text"
+          label="Nama Ayah"
+          placeholder="Masukkan nama ayah"
+          :required="true"
+          :error="validationErrors.father"
+          @input="handleInput('father', formData.father)"
+        />
 
-      <div class="border-t border-gray-200 dark:border-gray-700 my-6"></div>
+        <FormBaseInput
+          v-model="formData.mother"
+          type="text"
+          label="Nama Ibu"
+          placeholder="Masukkan nama ibu"
+          :required="true"
+          :error="validationErrors.mother"
+          @input="handleInput('mother', formData.mother)"
+        />
+      </div>
 
-      <div class="flex gap-4 pt-6">
+      <!-- Photo Upload Section -->
+      <div
+        class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800"
+      >
+        <div class="flex items-center gap-2 mb-3 md:mb-4">
+          <div
+            class="w-8 h-8 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center"
+          >
+            <i class="bi bi-image text-sky-500"></i>
+          </div>
+          <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-50">
+            Foto Mempelai
+            <span class="text-xs text-slate-400 font-normal">(Opsional)</span>
+          </h3>
+        </div>
+
+        <FormImageUpload
+          ref="groomPhotoInput"
+          label="Foto Mempelai Pria (Opsional)"
+          :preview="groomPhotoPreview"
+          :error="validationErrors.photo"
+          @change="
+            (e) => {
+              const file = handleGroomPhotoUpload(e);
+              if (file) formData.photo = file;
+            }
+          "
+          @remove="
+            () => {
+              removeGroomPhoto();
+              formData.photo = null;
+              clearBackendError('photo');
+            }
+          "
+        />
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-3">
         <button
           type="button"
           @click="resetForm"
           :disabled="ui.isSubmitting"
-          class="flex-1 px-6 py-3 bg-gray-300 dark:bg-gray-800 dark:text-slate-300 text-gray-700 font-medium rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
+          class="flex-shrink-0 w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition-all active:scale-95 flex items-center justify-center font-medium"
         >
-          Reset
+          <i class="bi bi-arrow-clockwise text-lg"></i>
         </button>
         <button
           type="submit"
           :disabled="ui.isSubmitting || !isFormValid"
-          class="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:transform-none"
+          class="flex-1 h-12 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-semibold shadow-lg shadow-sky-500/25 disabled:opacity-50 disabled:shadow-none transition-all active:scale-[0.98] flex items-center justify-center gap-2"
         >
           <span v-if="!ui.isSubmitting">
-            {{ isEditMode ? "Perbarui Data" : "Simpan Data" }}
+            <i
+              :class="isEditMode ? 'bi-check-circle' : 'bi-save'"
+              class="bi mr-1"
+            ></i>
+            {{ isEditMode ? "Perbarui" : "Simpan" }}
           </span>
-          <span v-else class="flex items-center justify-center gap-2">
+          <span v-else class="flex items-center gap-2">
             <Spinner />
             {{ isEditMode ? "Memperbarui..." : "Menyimpan..." }}
           </span>

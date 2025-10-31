@@ -2,78 +2,101 @@
 const props = defineProps({
   guests: {
     type: Array,
+    default: () => [],
   },
 });
+
+const totalGuests = computed(() => props.guests.length);
+
+const attendingGuests = computed(
+  () =>
+    props.guests.filter((guest) => guest.attendance_status === "attending")
+      .length
+);
+
+const notAttendingGuests = computed(
+  () =>
+    props.guests.filter((guest) => guest.attendance_status === "not_attending")
+      .length
+);
+
+const pendingGuests = computed(
+  () =>
+    props.guests.filter(
+      (guest) =>
+        guest.attendance_status === "pending" || !guest.attendance_status
+    ).length
+);
 </script>
 
 <template>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+    <!-- Total Tamu -->
     <div
-      class="text-center p-4 bg-white dark:bg-dark rounded-3xl shadow-xl border border-gray-100/50 dark:border-gray-700/50 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+      class="text-center bg-white dark:bg-slate-900 rounded-3xl p-4 shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 md:space-y-6"
     >
       <div
-        class="w-10 h-10 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/40 dark:to-blue-800/40 flex items-center justify-center"
+        class="w-9 h-9 md:w-10 md:h-10 mx-auto mb-2 rounded-xl bg-sky-500 flex items-center justify-center"
       >
-        <i class="bi bi-people text-blue-600 dark:text-blue-400"></i>
+        <i class="bi bi-people text-white text-sm md:text-base"></i>
       </div>
-      <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
-        {{ props.guests.length }}
+      <p
+        class="text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
+      >
+        {{ totalGuests }}
       </p>
-      <p class="text-xs text-gray-600 dark:text-gray-400">Total Tamu</p>
+      <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Total Tamu</p>
     </div>
 
+    <!-- Hadir -->
     <div
-      class="text-center p-4 bg-white dark:bg-dark rounded-3xl shadow-xl border border-gray-100/50 dark:border-gray-700/50 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+      class="text-center bg-white dark:bg-slate-900 rounded-3xl p-4 shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 md:space-y-6"
     >
       <div
-        class="w-10 h-10 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/40 dark:to-green-800/40 flex items-center justify-center"
+        class="w-9 h-9 md:w-10 md:h-10 mx-auto mb-2 rounded-xl bg-emerald-500 flex items-center justify-center"
       >
-        <i class="bi bi-check-circle text-green-600 dark:text-green-400"></i>
+        <i class="bi bi-check-circle text-white text-sm md:text-base"></i>
       </div>
-      <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
-        {{
-          props.guests.filter((guest) => {
-            guest.attendance_status == "attending";
-          }).length
-        }}
+      <p
+        class="text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
+      >
+        {{ attendingGuests }}
       </p>
-      <p class="text-xs text-gray-600 dark:text-gray-400">Hadir</p>
+      <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Hadir</p>
     </div>
 
+    <!-- Tidak Hadir -->
     <div
-      class="text-center p-4 bg-white dark:bg-dark rounded-3xl shadow-xl border border-gray-100/50 dark:border-gray-700/50 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+      class="text-center bg-white dark:bg-slate-900 rounded-3xl p-4 shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 md:space-y-6"
     >
       <div
-        class="w-10 h-10 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-red-100 to-red-200 dark:from-red-900/40 dark:to-red-800/40 flex items-center justify-center"
+        class="w-9 h-9 md:w-10 md:h-10 mx-auto mb-2 rounded-xl bg-red-500 flex items-center justify-center"
       >
-        <i class="bi bi-x-circle text-red-600 dark:text-red-400"></i>
+        <i class="bi bi-x-circle text-white text-sm md:text-base"></i>
       </div>
-      <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
-        {{
-          props.guests.filter((guest) => {
-            guest.attendance_status == "not_attending";
-          }).length
-        }}
+      <p
+        class="text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
+      >
+        {{ notAttendingGuests }}
       </p>
-      <p class="text-xs text-gray-600 dark:text-gray-400">Tidak Hadir</p>
+      <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Tidak Hadir</p>
     </div>
 
+    <!-- Pending -->
     <div
-      class="text-center p-4 bg-white dark:bg-dark rounded-3xl shadow-xl border border-gray-100/50 dark:border-gray-700/50 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+      class="text-center bg-white dark:bg-slate-900 rounded-3xl p-4 shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 md:space-y-6"
     >
       <div
-        class="w-10 h-10 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200 dark:from-amber-900/40 dark:to-amber-800/40 flex items-center justify-center"
+        class="w-9 h-9 md:w-10 md:h-10 mx-auto mb-2 rounded-xl bg-amber-500 flex items-center justify-center"
       >
-        <i class="bi bi-hourglass-split text-amber-600 dark:text-amber-400"></i>
+        <i class="bi bi-hourglass-split text-white text-sm md:text-base"></i>
       </div>
-      <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
-        {{
-          props.guests.filter((guest) => {
-            guest.attendance_status == "not_attending";
-          }).length
-        }}
+      <p
+        class="text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
+      >
+        {{ pendingGuests }}
       </p>
-      <p class="text-xs text-gray-600 dark:text-gray-400">Pending</p>
+      <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Pending</p>
     </div>
   </div>
 </template>

@@ -3,7 +3,7 @@ const { userOrders, userOrdersPending } = storeToRefs(useOrderStore());
 </script>
 
 <template>
-  <div>
+  <div class="px-4 md:px-6">
     <div v-if="userOrdersPending" class="grid gap-4">
       <UserTransactionSkeletonLoading v-for="(n, index) in 3" :key="index" />
     </div>

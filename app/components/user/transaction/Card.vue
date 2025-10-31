@@ -12,21 +12,22 @@ const getStatusConfig = (status) => {
     pending: {
       text: "Menunggu pembayaran",
       class:
-        "bg-amber-50/80 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300",
+        "bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800",
     },
     paid: {
       text: "Dibayar",
       class:
-        "bg-emerald-50/80 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300",
+        "bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800",
     },
     expired: {
       text: "Kadaluarsa",
-      class: "bg-red-50/80 text-red-700 dark:bg-red-950/40 dark:text-red-300",
+      class:
+        "bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800",
     },
     canceled: {
       text: "Dibatalkan",
       class:
-        "bg-slate-50/80 text-slate-700 dark:bg-slate-950/40 dark:text-slate-300",
+        "bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-400 border border-slate-200 dark:border-slate-800",
     },
   };
 
@@ -38,20 +39,22 @@ const getButtonConfig = (status) => {
     pending: {
       text: "Bayar Sekarang",
       show: true,
-      bg: "from-sky-500 to-sky-600 shadow-sky-500/30 hover:shadow-sky-500/60",
+      class: "bg-sky-500 hover:bg-sky-600 shadow-sky-500/25",
     },
     paid: {
       text: "Isi Undangan",
       show: true,
-      bg: "from-emerald-500 to-emerald-600 shadow-emerald-500/30 hover:shadow-emerald-500/60",
+      class: "bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/25",
     },
     expired: {
       text: "",
       show: false,
+      class: "",
     },
     canceled: {
       text: "",
       show: false,
+      class: "",
     },
   };
 
@@ -101,101 +104,93 @@ const handlePaymentClosed = () => {
     <UserInvitationCheckoutPaymentSuccessModal v-if="showSuccessAlert" />
 
     <div
-      class="relative group cursor-pointer transform transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1"
+      class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 transition-all hover:border-slate-300 dark:hover:border-slate-700"
     >
-      <!-- Card Content -->
-      <div
-        class="relative p-4 md:p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/10 dark:border-slate-800/10"
-      >
-        <div class="flex flex-col sm:flex-row sm:justify-between gap-2">
-          <!-- Transaction Info -->
-          <div class="flex items-start space-x-4 flex-1">
-            <!-- Transaction Icon -->
-            <div class="relative flex-shrink-0">
-              <div
-                class="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transition-all duration-300 group-hover:scale-110 bg-gradient-to-r from-sky-500 to-sky-600"
-              >
-                <i
-                  class="bi bi-box text-white text-xl transition-transform duration-300 group-hover:rotate-12"
-                ></i>
-              </div>
-            </div>
-
-            <!-- Transaction Details -->
-            <div class="flex-1 min-w-0">
-              <div class="flex items-start justify-between mb-2">
-                <div class="flex-1">
-                  <h3
-                    class="text-lg font-bold text-slate-900 dark:text-slate-50 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors duration-300 truncate"
-                  >
-                    Paket {{ props.order?.package?.name }}
-                  </h3>
-                  <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">
-                    {{ props.order?.payment_method }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <p
-              class="text-lg text-sky-600 dark:text-sky-400 font-bold transition-colors duration-300"
-            >
-              Rp {{ formatRupiah(props.order?.amount) }}
-            </p>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">IDR</p>
-          </div>
-        </div>
-        <div class="flex items-center mt-4">
-          <div class="flex items-center space-x-4">
-            <!-- Date -->
-            <div class="flex items-center space-x-2">
-              <div
-                class="w-6 h-6 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-sky-50 dark:group-hover:bg-sky-950/40 transition-all duration-300"
-              >
-                <i
-                  class="bi bi-calendar3 text-xs text-slate-600 dark:text-slate-300 group-hover:text-sky-600 dark:group-hover:text-sky-400"
-                ></i>
-              </div>
-              <span class="text-xs text-slate-600 dark:text-slate-300">
-                {{ formatRelativeDate(props.order.created_at) }}
-              </span>
-            </div>
-
-            <!-- Time -->
-            <div class="flex items-center space-x-2">
-              <div
-                class="w-6 h-6 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-sky-50 dark:group-hover:bg-sky-950/40 transition-all duration-300"
-              >
-                <i
-                  class="bi bi-clock text-xs text-slate-600 dark:text-slate-300 group-hover:text-sky-600 dark:group-hover:text-sky-400"
-                ></i>
-              </div>
-              <span class="text-xs text-slate-600 dark:text-slate-300">
-                {{ formatTimeToIndonesian(props.order.created_at) }}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div class="flex justify-between items-end mt-4">
-          <!-- Status Badge -->
+      <!-- Header Section -->
+      <div class="flex items-start justify-between gap-4">
+        <!-- Left: Icon & Info -->
+        <div class="flex items-start gap-3 flex-1 min-w-0">
+          <!-- Package Icon -->
           <div
-            class="px-3 py-1 rounded-xl text-xs font-semibold backdrop-blur-sm transition-all duration-300"
-            :class="getStatusConfig(props.order?.payment_status).class"
+            class="w-12 h-12 rounded-2xl bg-sky-500 flex items-center justify-center flex-shrink-0"
           >
-            {{ getStatusConfig(props.order?.payment_status).text }}
+            <i class="bi bi-box text-white text-xl"></i>
           </div>
-          <button
-            v-if="getButtonConfig(props.order?.payment_status).show"
-            @click="handleButtonAction"
-            type="button"
-            class="px-6 py-3 bg-gradient-to-r text-white rounded-2xl font-medium shadow-lg hover:scale-105 transition-all duration-300"
-            :class="getButtonConfig(props.order?.payment_status).bg"
-          >
-            {{ getButtonConfig(props.order?.payment_status).text }}
-            <i class="bi bi-arrow-right ml-2"></i>
-          </button>
+
+          <!-- Package Details -->
+          <div class="flex-1 min-w-0">
+            <h3
+              class="text-base md:text-lg font-semibold text-slate-900 dark:text-slate-50 truncate mb-1"
+            >
+              Paket {{ props.order?.package?.name }}
+            </h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300">
+              {{ props.order?.payment_method }}
+            </p>
+          </div>
         </div>
+
+        <!-- Right: Price -->
+        <div class="text-right flex-shrink-0">
+          <p class="text-lg md:text-xl font-bold text-sky-500">
+            Rp {{ formatRupiah(props.order?.amount) }}
+          </p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">IDR</p>
+        </div>
+      </div>
+
+      <!-- Meta Information -->
+      <div class="flex items-center gap-4 flex-wrap">
+        <!-- Date -->
+        <div class="flex items-center gap-2">
+          <div
+            class="w-7 h-7 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-center justify-center"
+          >
+            <i
+              class="bi bi-calendar3 text-xs text-slate-600 dark:text-slate-400"
+            ></i>
+          </div>
+          <span class="text-xs text-slate-600 dark:text-slate-300">
+            {{ formatRelativeDate(props.order.created_at) }}
+          </span>
+        </div>
+
+        <!-- Time -->
+        <div class="flex items-center gap-2">
+          <div
+            class="w-7 h-7 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-center justify-center"
+          >
+            <i
+              class="bi bi-clock text-xs text-slate-600 dark:text-slate-400"
+            ></i>
+          </div>
+          <span class="text-xs text-slate-600 dark:text-slate-300">
+            {{ formatTimeToIndonesian(props.order.created_at) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Footer: Status & Action -->
+      <div class="flex items-end justify-between gap-3 pt-2">
+        <!-- Status Badge -->
+        <div
+          class="px-3 py-1.5 rounded-xl text-xs font-semibold"
+          :class="getStatusConfig(props.order?.payment_status).class"
+        >
+          {{ getStatusConfig(props.order?.payment_status).text }}
+        </div>
+
+        <!-- Action Button -->
+        <button
+          v-if="getButtonConfig(props.order?.payment_status).show"
+          @click="handleButtonAction"
+          type="button"
+          class="px-6 py-3 text-white rounded-2xl font-semibold shadow-lg transition-all active:scale-[0.98] flex items-center gap-2"
+          :class="getButtonConfig(props.order?.payment_status).class"
+        >
+          <span>{{ getButtonConfig(props.order?.payment_status).text }}</span>
+          <i class="bi bi-arrow-right"></i>
+        </button>
       </div>
     </div>
   </div>

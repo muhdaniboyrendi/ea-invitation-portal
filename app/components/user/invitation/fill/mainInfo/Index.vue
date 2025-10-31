@@ -372,19 +372,27 @@ onBeforeUnmount(() => {
   </div>
 
   <div v-else class="space-y-4 md:space-y-6">
+    <!-- Header Card -->
     <div
-      class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-3 md:space-y-6"
+      class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800"
     >
-      <h2
-        class="text-2xl font-semibold text-gray-900 dark:text-white flex items-center gap-3"
-      >
-        {{
-          isEditMode ? "Edit Informasi Utama" : "Tambah Informasi Utama"
-        }}
-      </h2>
-      <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-        ID Undangan: <span class="font-semibold">{{ invitationId }}</span>
-      </p>
+      <div class="flex items-center gap-3">
+        <div
+          class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center flex-shrink-0"
+        >
+          <i class="bi bi-person text-sky-500 text-lg"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <h2
+            class="text-base md:text-lg font-semibold text-slate-900 dark:text-slate-50"
+          >
+            {{ isEditMode ? "Edit Informasi Utama" : "Informasi Utama" }}
+          </h2>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+            ID: <span class="font-medium">{{ invitationId }}</span>
+          </p>
+        </div>
+      </div>
     </div>
 
     <form @submit.prevent="submitForm" class="space-y-4 md:space-y-6">

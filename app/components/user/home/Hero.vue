@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div class="relative px-4 md:px-6">
     <!-- Main container -->
     <div
       class="relative bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-12 shadow-2xl border border-slate-200/30 dark:border-slate-800/30 overflow-hidden"
@@ -54,17 +54,7 @@
 
             <!-- Button content -->
             <div class="relative flex items-center gap-4">
-              <div
-                class="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
-              >
-                <i class="bi bi-plus-circle text-xl text-white"></i>
-              </div>
               <span class="drop-shadow-sm">Buat Undangan Sekarang</span>
-              <div
-                class="w-6 h-6 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1"
-              >
-                <i class="bi bi-arrow-right text-sm text-white"></i>
-              </div>
             </div>
 
             <!-- Animated background shine -->

@@ -7,7 +7,7 @@ definePageMeta({
 <template>
   <div class="bg-off-white dark:bg-dark">
     <NuxtLayout>
-      <div class="flex flex-col gap-y-6">
+      <div class="space-y-4 md:space-y-6">
         <UserHomeHero />
         <UserHomeLatestInvitation />
         <UserMenuList />

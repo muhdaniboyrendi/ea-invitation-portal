@@ -83,22 +83,18 @@ const shareOptions = computed(() => [
   {
     name: "WhatsApp",
     icon: "bi-whatsapp",
-    color: "bg-gradient-to-br from-green-500 to-emerald-600",
-    hoverColor: "hover:from-green-600 hover:to-emerald-700",
+    color: "bg-emerald-500",
+    hoverColor: "hover:bg-emerald-600",
     badge: props.whatsappPhone ? "Direct" : null,
-    badgeColor: "bg-blue-500",
+    badgeColor: "bg-sky-500",
     action: () => {
       const text = encodeURIComponent(personalizedGreeting.value);
-
       let whatsappUrl;
       if (props.whatsappPhone) {
-        // Send to specific number with personalized message
         whatsappUrl = `https://wa.me/${props.whatsappPhone}?text=${text}`;
       } else {
-        // Open WhatsApp with message only (user can choose recipient)
         whatsappUrl = `https://wa.me/?text=${text}`;
       }
-
       window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     },
   },
@@ -120,48 +116,10 @@ const shareOptions = computed(() => [
     },
   },
   {
-    name: "Facebook",
-    icon: "bi-facebook",
-    color: "bg-gradient-to-br from-blue-600 to-blue-700",
-    hoverColor: "hover:from-blue-700 hover:to-blue-800",
-    badge: null,
-    action: () => {
-      const url = encodeURIComponent(props.shareUrl);
-      const quote = encodeURIComponent(
-        props.guestName
-          ? `Undangan spesial untuk ${props.guestName}! 🎉`
-          : "Undangan spesial untukmu! 🎉"
-      );
-      window.open(
-        `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`,
-        "_blank",
-        "noopener,noreferrer"
-      );
-    },
-  },
-  {
-    name: "Twitter",
-    icon: "bi-twitter-x",
-    color: "bg-gradient-to-br from-gray-800 to-black",
-    hoverColor: "hover:from-gray-900 hover:to-gray-950",
-    badge: null,
-    action: () => {
-      const text = encodeURIComponent(
-        `🎉 Undangan Spesial! 💕\n\nAda moment bahagia yang ingin kami bagikan! Yuk cek undangan digitalnya! ✨`
-      );
-      const url = encodeURIComponent(props.shareUrl);
-      window.open(
-        `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
-        "_blank",
-        "noopener,noreferrer"
-      );
-    },
-  },
-  {
     name: "Telegram",
     icon: "bi-telegram",
-    color: "bg-gradient-to-br from-sky-500 to-blue-600",
-    hoverColor: "hover:from-sky-600 hover:to-blue-700",
+    color: "bg-sky-500",
+    hoverColor: "hover:bg-sky-600",
     badge: null,
     action: () => {
       const text = encodeURIComponent(personalizedGreeting.value);
@@ -170,22 +128,6 @@ const shareOptions = computed(() => [
         "_blank",
         "noopener,noreferrer"
       );
-    },
-  },
-  {
-    name: "Email",
-    icon: "bi-envelope-fill",
-    color: "bg-gradient-to-br from-red-500 to-rose-600",
-    hoverColor: "hover:from-red-600 hover:to-rose-700",
-    badge: null,
-    action: () => {
-      const subject = encodeURIComponent(
-        props.guestName
-          ? `🎉 Undangan Spesial untuk ${props.guestName}`
-          : "🎉 Undangan Spesial Untukmu"
-      );
-      const body = encodeURIComponent(personalizedGreeting.value);
-      window.location.href = `mailto:?subject=${subject}&body=${body}`;
     },
   },
 ]);
@@ -237,7 +179,7 @@ onUnmounted(() => {
     >
       <div
         v-if="show"
-        class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
+        class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
         @click.self="handleClose"
       >
         <Transition
@@ -250,58 +192,61 @@ onUnmounted(() => {
         >
           <div
             v-if="show"
-            class="relative bg-white dark:bg-dark border border-white/10 rounded-3xl shadow-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto scrollbar-hide"
+            class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl max-w-md w-full p-4 md:p-6 max-h-[90vh] overflow-y-auto scrollbar-hide"
           >
             <!-- Close Button -->
             <button
               @click="handleClose"
-              class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors z-10"
+              class="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
             >
-              <i class="bi-x-lg text-dark dark:text-white"></i>
+              <i class="bi-x-lg text-slate-600 dark:text-slate-300"></i>
             </button>
 
             <!-- Icon Share -->
             <div class="flex justify-center mb-4">
               <div
-                class="w-16 h-16 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30"
+                class="w-16 h-16 rounded-3xl flex items-center justify-center bg-sky-50 dark:bg-sky-950"
               >
-                <i
-                  class="bi-send text-3xl text-blue-600 dark:text-blue-400"
-                ></i>
+                <i class="bi-send text-3xl text-sky-500"></i>
               </div>
             </div>
 
             <!-- Title -->
             <h3
-              class="text-xl font-bold text-center text-dark dark:text-white mb-2"
+              class="text-xl font-bold text-center text-slate-900 dark:text-slate-50 mb-2"
             >
               {{ title }}
             </h3>
 
             <!-- Description -->
             <p
-              class="text-center text-black/70 dark:text-white/70 mb-6 text-sm"
+              class="text-center text-slate-600 dark:text-slate-300 mb-6 text-sm"
             >
               {{ message }}
             </p>
 
             <!-- Preview Message Section -->
             <div
-              class="mb-6 p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl border border-blue-200/50 dark:border-blue-700/30"
+              class="mb-6 p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800"
             >
               <div class="flex items-center gap-2 mb-3">
-                <span class="text-sm font-semibold text-dark dark:text-white"
-                  >Preview Pesan</span
+                <i
+                  class="bi-chat-text text-slate-600 dark:text-slate-400 text-sm"
+                ></i>
+                <span
+                  class="text-sm font-semibold text-slate-900 dark:text-slate-50"
                 >
+                  Preview Pesan
+                </span>
               </div>
               <div
-                class="bg-white dark:bg-dark/50 rounded-xl p-3 text-xs text-dark dark:text-white/80 whitespace-pre-line max-h-40 overflow-y-auto scrollbar-hide border border-black/5 dark:border-white/5"
+                class="bg-white dark:bg-slate-900 rounded-xl p-3 text-xs text-slate-600 dark:text-slate-300 whitespace-pre-line max-h-40 overflow-y-auto scrollbar-hide border border-slate-200 dark:border-slate-800"
               >
                 {{ personalizedGreeting }}
               </div>
               <button
                 @click="copyMessageAndLink"
-                class="w-full mt-3 px-3 py-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white text-xs font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 hover:scale-105 active:scale-95"
+                class="w-full mt-3 h-10 bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
               >
                 <i class="bi-clipboard"></i>
                 Salin Pesan Lengkap
@@ -311,60 +256,68 @@ onUnmounted(() => {
             <!-- Share Options Grid -->
             <div class="mb-6">
               <div class="flex items-center gap-2 mb-3">
-                <i class="bi-send-fill text-gray-600 dark:text-gray-400"></i>
-                <span class="text-sm font-semibold text-dark dark:text-white"
-                  >Pilih Platform</span
+                <i
+                  class="bi-send-fill text-slate-600 dark:text-slate-400 text-sm"
+                ></i>
+                <span
+                  class="text-sm font-semibold text-slate-900 dark:text-slate-50"
                 >
+                  Pilih Platform
+                </span>
               </div>
               <div class="grid grid-cols-3 gap-3">
                 <button
                   v-for="option in shareOptions"
                   :key="option.name"
                   @click="option.action"
-                  class="relative flex flex-col items-center gap-2 p-3 transition-all duration-300 hover:scale-105 active:scale-95"
+                  class="relative w-fit mx-auto flex flex-col items-center gap-2 p-2 transition-all active:scale-95 cursor-pointer"
                 >
                   <!-- Badge for WhatsApp Direct -->
                   <span
                     v-if="option.badge"
-                    class="absolute top-1 right-4 px-1.5 py-0.5 text-[10px] font-bold text-white rounded-full shadow-md"
+                    class="absolute -top-1 -right-1 px-1.5 py-0.5 text-[10px] font-bold text-white rounded-full shadow-md z-10"
                     :class="option.badgeColor"
                   >
                     {{ option.badge }}
                   </span>
 
                   <span
-                    class="h-12 aspect-square rounded-2xl flex justify-center items-center"
+                    class="w-12 h-12 rounded-2xl flex justify-center items-center transition-colors"
                     :class="[option.color, option.hoverColor]"
                   >
                     <i :class="option.icon" class="text-3xl text-white"></i>
                   </span>
-                  <span class="text-xs font-medium text-dark dark:text-white">{{
-                    option.name
-                  }}</span>
+                  <span
+                    class="text-xs font-medium text-slate-900 dark:text-slate-50"
+                  >
+                    {{ option.name }}
+                  </span>
                 </button>
               </div>
             </div>
 
             <!-- Copy Link Only Section -->
             <div class="space-y-3">
-              <div class="flex items-center gap-2 mb-2">
-                <i class="bi-link-45deg text-gray-600 dark:text-gray-400"></i>
-                <span class="text-sm font-semibold text-dark dark:text-white"
-                  >Link Undangan</span
-                >
-              </div>
               <div class="flex items-center gap-2">
-                <div
-                  class="flex-1 px-4 py-2.5 bg-black/5 dark:bg-white/5 rounded-xl text-xs text-dark dark:text-white truncate border border-black/5 dark:border-white/5"
+                <i
+                  class="bi-link-45deg text-slate-600 dark:text-slate-400 text-sm"
+                ></i>
+                <span
+                  class="text-sm font-semibold text-slate-900 dark:text-slate-50"
                 >
-                  {{ shareUrl }}
-                </div>
+                  Link Undangan
+                </span>
+              </div>
+              <div
+                class="px-4 py-2.5 bg-slate-50 dark:bg-slate-950 rounded-xl text-xs text-slate-600 dark:text-slate-300 truncate border border-slate-200 dark:border-slate-800"
+              >
+                {{ shareUrl }}
               </div>
               <button
                 @click="copyToClipboard"
-                class="w-full px-4 py-2.5 bg-gradient-to-r from-gray-600 to-slate-600 hover:from-gray-700 hover:to-slate-700 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 hover:scale-105 active:scale-95 shadow-lg"
+                class="w-full h-10 bg-slate-600 dark:bg-slate-700 hover:bg-slate-700 dark:hover:bg-slate-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 active:scale-[0.98] shadow-sm"
               >
-                <i class="bi-link-45deg"></i>
+                <i class="bi-link-45deg text-lg"></i>
                 Salin Link Saja
               </button>
             </div>
@@ -384,10 +337,12 @@ onUnmounted(() => {
     >
       <div
         v-if="toast.show"
-        class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[70] px-6 py-3 bg-dark dark:bg-white text-white dark:text-dark rounded-full shadow-2xl flex items-center gap-2"
+        class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] px-5 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl shadow-2xl flex items-center gap-2 border border-slate-700 dark:border-slate-200"
       >
-        <i class="bi-check-circle-fill text-green-400"></i>
-        <span class="font-medium">{{ toast.message }}</span>
+        <i
+          class="bi-check-circle-fill text-emerald-400 dark:text-emerald-500"
+        ></i>
+        <span class="font-semibold text-sm">{{ toast.message }}</span>
       </div>
     </Transition>
   </Teleport>

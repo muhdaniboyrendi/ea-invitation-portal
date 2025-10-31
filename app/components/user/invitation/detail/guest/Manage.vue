@@ -140,7 +140,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div class="px-4 md:px-6">
     <!-- Alert Notification -->
     <FormAlertNotification
       :show="ui.alert.show"
@@ -152,9 +152,10 @@ onMounted(() => {
 
     <UserInvitationDetailGuestSkeletonLoading v-if="ui.pending" />
 
-    <div v-else class="space-y-6">
+    <div v-else class="space-y-4 md:space-y-6">
+      <!-- Stats & Add Button Card -->
       <div
-        class="p-6 md:p-8 bg-off-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50"
+        class="space-y-4 md:space-y-6"
       >
         <!-- Stats -->
         <UserInvitationDetailGuestStatsCard :guests="guests" />
@@ -163,15 +164,18 @@ onMounted(() => {
         <button
           @click="toggleForm"
           :disabled="!ui.showForm && !ui.editingGuest && isGuestLimitReached"
+          class="w-full h-12 rounded-2xl font-semibold shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2"
           :class="[
-            'w-full px-6 py-3 font-semibold rounded-2xl shadow-lg transition-all duration-300',
             !ui.showForm && !ui.editingGuest && isGuestLimitReached
-              ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-              : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white transform hover:scale-105',
+              ? 'bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed shadow-none'
+              : 'bg-sky-500 hover:bg-sky-600 text-white shadow-sky-500/25',
           ]"
         >
-          <i :class="ui.showForm ? 'bi bi-x-lg' : 'bi bi-plus-lg'"></i>
-          {{ ui.showForm ? "Batal" : "Tambah Tamu" }}
+          <i
+            :class="ui.showForm ? 'bi-x-lg' : 'bi-plus-lg'"
+            class="text-lg"
+          ></i>
+          <span>{{ ui.showForm ? "Batal" : "Tambah Tamu" }}</span>
         </button>
       </div>
 

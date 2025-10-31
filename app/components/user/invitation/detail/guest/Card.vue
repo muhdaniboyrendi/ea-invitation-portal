@@ -13,7 +13,7 @@ const props = defineProps({
 const emit = defineEmits(["edit", "delete"]);
 
 const config = useRuntimeConfig();
-const appUrl = config.public.appUrl;
+const mainAppUrl = config.public.mainAppUrl;
 
 const showShareModal = ref(false);
 const showActions = ref(false);
@@ -28,19 +28,19 @@ const getStatusBadge = (status) => {
       text: "Hadir",
       icon: "bi-check-circle-fill",
       class:
-        "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 border border-emerald-500/20",
+        "bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800",
     },
     not_attending: {
       text: "Tidak Hadir",
       icon: "bi-x-circle-fill",
       class:
-        "bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400 border border-rose-500/20",
+        "bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800",
     },
     pending: {
       text: "Menunggu",
       icon: "bi-clock-fill",
       class:
-        "bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 border border-amber-500/20",
+        "bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800",
     },
   };
   return badges[status] || badges.pending;
@@ -48,7 +48,7 @@ const getStatusBadge = (status) => {
 
 // Generate invitation URL
 const invitationUrl = computed(() => {
-  return `${appUrl}/${props.invitationSlug}?guest=${props.guest.slug}`;
+  return `${mainAppUrl}/${props.invitationSlug}?guest=${props.guest.slug}`;
 });
 
 // Generate personalized share text
@@ -104,7 +104,6 @@ const handleCopyLink = async () => {
   } catch (err) {
     showToast("Gagal menyalin link", "error");
   } finally {
-    // Small delay for better UX
     setTimeout(() => {
       copying.value = false;
     }, 300);
@@ -136,17 +135,10 @@ const handleDelete = () => {
 
 // Keyboard shortcuts
 const handleKeydown = (e) => {
-  // ESC to close modals/dropdowns
   if (e.key === "Escape") {
-    if (showActions.value) {
-      showActions.value = false;
-    }
-    if (showShareModal.value) {
-      showShareModal.value = false;
-    }
-    if (showDeleteConfirm.value) {
-      showDeleteConfirm.value = false;
-    }
+    if (showActions.value) showActions.value = false;
+    if (showShareModal.value) showShareModal.value = false;
+    if (showDeleteConfirm.value) showDeleteConfirm.value = false;
   }
 };
 
@@ -162,23 +154,23 @@ onUnmounted(() => {
 <template>
   <div>
     <div
-      class="bg-white dark:bg-dark rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-300 overflow-hidden"
+      class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800"
     >
-      <!-- Header Section -->
-      <div class="p-4 sm:p-5">
+      <!-- Main Content -->
+      <div>
         <div class="flex items-start justify-between gap-3 mb-3">
           <!-- Guest Info -->
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2 mb-2 flex-wrap">
               <h4
-                class="text-base sm:text-lg font-bold text-gray-900 dark:text-white truncate"
+                class="text-sm md:text-base font-semibold text-slate-900 dark:text-slate-50 truncate"
                 :title="props.guest.name"
               >
                 {{ props.guest.name }}
               </h4>
               <span
                 v-if="props.guest.is_group"
-                class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-purple-500/10 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400 border border-purple-500/20 shrink-0"
+                class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-sky-50 dark:bg-sky-950 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800 shrink-0"
                 role="status"
                 aria-label="Tamu grup"
               >
@@ -190,17 +182,14 @@ onUnmounted(() => {
             <!-- Status Badge -->
             <span
               :class="[
-                'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold',
+                'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-semibold border',
                 getStatusBadge(props.guest.attendance_status).class,
               ]"
               role="status"
-              :aria-label="`Status kehadiran: ${
-                getStatusBadge(props.guest.attendance_status).text
-              }`"
             >
               <i
                 :class="getStatusBadge(props.guest.attendance_status).icon"
-                class="text-sm"
+                class="text-xs"
                 aria-hidden="true"
               ></i>
               {{ getStatusBadge(props.guest.attendance_status).text }}
@@ -208,18 +197,15 @@ onUnmounted(() => {
           </div>
 
           <!-- Actions Menu Button -->
-          <div ref="actionsRef" class="relative actions-container">
+          <div ref="actionsRef" class="relative">
             <button
               @click="toggleActions"
-              class="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+              class="w-9 h-9 flex items-center justify-center rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-all active:scale-95"
               :aria-label="`Menu aksi untuk ${props.guest.name}`"
               aria-haspopup="true"
               :aria-expanded="showActions"
             >
-              <i
-                class="bi bi-three-dots-vertical text-lg"
-                aria-hidden="true"
-              ></i>
+              <i class="bi bi-three-dots-vertical text-lg"></i>
             </button>
 
             <!-- Actions Dropdown -->
@@ -233,32 +219,26 @@ onUnmounted(() => {
             >
               <div
                 v-if="showActions"
-                class="absolute right-0 top-full mt-2 w-48 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden z-30"
+                class="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 overflow-hidden z-30"
                 role="menu"
-                aria-orientation="vertical"
               >
                 <button
                   @click="
                     emit('edit', props.guest);
                     showActions = false;
                   "
-                  class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200 focus:outline-none focus:bg-blue-50 dark:focus:bg-blue-900/20"
+                  class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-900 dark:text-slate-50 hover:bg-sky-50 dark:hover:bg-sky-950 transition-colors"
                   role="menuitem"
-                  aria-label="Edit data tamu"
                 >
-                  <i
-                    class="bi bi-pencil-fill text-blue-500"
-                    aria-hidden="true"
-                  ></i>
+                  <i class="bi bi-pencil-fill text-sky-500"></i>
                   <span>Edit Tamu</span>
                 </button>
 
                 <button
                   @click="handleCopyLink"
                   :disabled="copying"
-                  class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors duration-200 focus:outline-none focus:bg-purple-50 dark:focus:bg-purple-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-900 dark:text-slate-50 hover:bg-sky-50 dark:hover:bg-sky-950 transition-colors disabled:opacity-50"
                   role="menuitem"
-                  aria-label="Salin link undangan"
                 >
                   <i
                     :class="
@@ -266,24 +246,19 @@ onUnmounted(() => {
                         ? 'bi-hourglass-split animate-spin'
                         : 'bi-clipboard-fill'
                     "
-                    class="text-purple-500"
-                    aria-hidden="true"
+                    class="text-sky-500"
                   ></i>
                   <span>{{ copying ? "Menyalin..." : "Salin Link" }}</span>
                 </button>
 
-                <div
-                  class="h-px bg-gray-200 dark:bg-gray-800"
-                  role="separator"
-                ></div>
+                <div class="h-px bg-slate-200 dark:bg-slate-800"></div>
 
                 <button
                   @click="confirmDelete"
-                  class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors duration-200 focus:outline-none focus:bg-rose-50 dark:focus:bg-rose-900/20"
+                  class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
                   role="menuitem"
-                  aria-label="Hapus tamu"
                 >
-                  <i class="bi bi-trash-fill" aria-hidden="true"></i>
+                  <i class="bi bi-trash-fill"></i>
                   <span>Hapus Tamu</span>
                 </button>
               </div>
@@ -292,39 +267,33 @@ onUnmounted(() => {
         </div>
 
         <!-- Contact Info -->
-        <div class="space-y-2.5 mb-4">
+        <div class="space-y-2 mb-3">
           <div
-            class="flex items-center gap-2.5 text-sm text-gray-600 dark:text-gray-400"
-            role="group"
-            aria-label="Informasi kontak"
+            class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300"
           >
             <div
-              class="w-8 h-8 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0"
-              aria-hidden="true"
+              class="w-7 h-7 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center shrink-0"
             >
               <i
-                class="bi bi-telephone-fill text-gray-500 dark:text-gray-400"
+                class="bi bi-telephone-fill text-slate-500 dark:text-slate-400 text-xs"
               ></i>
             </div>
-            <span class="font-medium">{{
+            <span class="font-medium truncate">{{
               props.guest.phone || "Tidak ada nomor"
             }}</span>
           </div>
 
           <div
-            class="flex items-start gap-2.5 text-xs text-gray-500 dark:text-gray-500"
-            role="group"
-            aria-label="Link undangan"
+            class="flex items-start gap-2 text-xs text-slate-500 dark:text-slate-500"
           >
             <div
-              class="w-8 h-8 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0"
-              aria-hidden="true"
+              class="w-7 h-7 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center shrink-0"
             >
               <i
-                class="bi bi-link-45deg text-gray-500 dark:text-gray-400 text-sm"
+                class="bi bi-link-45deg text-slate-500 dark:text-slate-400"
               ></i>
             </div>
-            <span class="break-all leading-relaxed pt-1.5">{{
+            <span class="break-all leading-relaxed pt-0.5">{{
               invitationUrl
             }}</span>
           </div>
@@ -333,10 +302,9 @@ onUnmounted(() => {
         <!-- Share Button -->
         <button
           @click="openShareModal"
-          class="w-full py-3 px-4 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98] shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-          aria-label="Bagikan undangan"
+          class="w-full h-10 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm"
         >
-          <i class="bi bi-send-fill" aria-hidden="true"></i>
+          <i class="bi bi-send-fill"></i>
           <span>Bagikan Undangan</span>
         </button>
       </div>
@@ -367,9 +335,6 @@ onUnmounted(() => {
           v-if="showDeleteConfirm"
           class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           @click.self="showDeleteConfirm = false"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="delete-dialog-title"
         >
           <Transition
             enter-active-class="transition-all duration-300 ease-out"
@@ -381,32 +346,30 @@ onUnmounted(() => {
           >
             <div
               v-if="showDeleteConfirm"
-              class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-700"
+              class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-800"
             >
               <!-- Icon -->
               <div
-                class="w-14 h-14 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center mx-auto mb-4"
+                class="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-950 flex items-center justify-center mx-auto mb-4"
               >
                 <i
-                  class="bi bi-exclamation-triangle-fill text-rose-600 dark:text-rose-400 text-2xl"
-                  aria-hidden="true"
+                  class="bi bi-exclamation-triangle-fill text-red-500 text-2xl"
                 ></i>
               </div>
 
               <!-- Title -->
               <h3
-                id="delete-dialog-title"
-                class="text-xl font-bold text-gray-900 dark:text-white text-center mb-2"
+                class="text-xl font-bold text-slate-900 dark:text-slate-50 text-center mb-2"
               >
                 Hapus Tamu?
               </h3>
 
               <!-- Description -->
               <p
-                class="text-sm text-gray-600 dark:text-gray-400 text-center mb-6"
+                class="text-sm text-slate-600 dark:text-slate-300 text-center mb-6"
               >
                 Apakah Anda yakin ingin menghapus
-                <span class="font-semibold text-gray-900 dark:text-white">{{
+                <span class="font-semibold text-slate-900 dark:text-slate-50">{{
                   props.guest.name
                 }}</span
                 >? Tindakan ini tidak dapat dibatalkan.
@@ -416,15 +379,13 @@ onUnmounted(() => {
               <div class="flex gap-3">
                 <button
                   @click="showDeleteConfirm = false"
-                  class="flex-1 py-3 px-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-semibold text-sm transition-all duration-200 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-                  aria-label="Batal hapus tamu"
+                  class="flex-1 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold text-sm transition-all active:scale-[0.98]"
                 >
                   Batal
                 </button>
                 <button
                   @click="handleDelete"
-                  class="flex-1 py-3 px-4 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-semibold text-sm transition-all duration-200 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-                  aria-label="Konfirmasi hapus tamu"
+                  class="flex-1 h-12 rounded-2xl bg-red-500 hover:bg-red-600 text-white font-semibold text-sm transition-all active:scale-[0.98] shadow-lg shadow-red-500/25"
                 >
                   Hapus
                 </button>
@@ -447,14 +408,13 @@ onUnmounted(() => {
       >
         <div
           v-if="toast.show"
-          class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-2.5 max-w-[calc(100vw-2rem)] backdrop-blur-sm"
+          class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 max-w-[calc(100vw-2rem)] border"
           :class="
             toast.type === 'success'
-              ? 'bg-gray-900/95 dark:bg-white/95 text-white dark:text-gray-900 border border-gray-700 dark:border-gray-200'
-              : 'bg-rose-500/95 text-white border border-rose-600'
+              ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-700 dark:border-slate-200'
+              : 'bg-red-500 text-white border-red-600'
           "
           role="alert"
-          aria-live="polite"
         >
           <i
             :class="
@@ -463,7 +423,6 @@ onUnmounted(() => {
                 : 'bi-x-circle-fill'
             "
             class="text-lg"
-            aria-hidden="true"
           ></i>
           <span class="font-semibold text-sm">{{ toast.message }}</span>
         </div>

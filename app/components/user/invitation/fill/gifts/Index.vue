@@ -4,7 +4,7 @@ const props = defineProps({
   packageId: { type: [Number, String], required: true },
 });
 
-const emit = defineEmits(["success", "error", "next"]);
+const emit = defineEmits(["success", "info", "error", "next"]);
 
 const { fetchGifts, createGift, updateGift, deleteGift } = useGiftStore();
 
@@ -245,7 +245,7 @@ const handleNext = () => {
 const copyToClipboard = async (text, label) => {
   try {
     await navigator.clipboard.writeText(text);
-    emit("success", `${label} berhasil disalin!`);
+    emit("info", `${label} berhasil disalin!`);
   } catch (error) {
     emit("error", "Gagal menyalin ke clipboard");
   }
@@ -257,91 +257,114 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="ui.isLoading" class="text-center py-8">
-    <div
-      class="flex flex-col items-center justify-center gap-3 text-gray-600 dark:text-gray-400"
-    >
+  <!-- Loading State -->
+  <div
+    v-if="ui.isLoading"
+    class="min-h-[60vh] flex items-center justify-center"
+  >
+    <div class="text-center space-y-4 md:space-y-6">
       <div
-        class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"
-      ></div>
-      <p>Memuat data hadiah...</p>
+        class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-sky-50 dark:bg-sky-950 backdrop-blur-sm"
+      >
+        <div
+          class="w-10 h-10 border-3 border-sky-500 border-t-transparent rounded-full animate-spin"
+        ></div>
+      </div>
+      <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
+        Memuat data hadiah...
+      </p>
     </div>
   </div>
 
-  <div v-else>
-    <!-- Gift List -->
-    <div v-if="gifts.length > 0" class="mb-8 space-y-4">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-          Daftar Hadiah ({{ gifts.length }})
-        </h3>
+  <div v-else class="space-y-4 md:space-y-6">
+    <!-- Gift List Header -->
+    <div
+      class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800"
+    >
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center flex-shrink-0"
+          >
+            <i class="bi bi-gift text-sky-500 text-lg"></i>
+          </div>
+          <div>
+            <h2
+              class="text-base md:text-lg font-semibold text-slate-900 dark:text-slate-50"
+            >
+              Rekening Hadiah
+            </h2>
+            <p class="text-xs text-slate-600 dark:text-slate-300">
+              {{ gifts.length }} rekening tersimpan
+            </p>
+          </div>
+        </div>
       </div>
+    </div>
 
+    <!-- Gift List -->
+    <div v-if="gifts.length > 0" class="space-y-3">
       <div
         v-for="gift in gifts"
         :key="gift.id"
-        class="bg-white dark:bg-dark rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow"
+        class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-md transition-shadow"
       >
-        <div class="p-6">
-          <div class="flex justify-between items-start mb-4">
-            <div class="flex items-center gap-3 flex-1">
-              <div
-                class="w-14 h-14 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 rounded-xl flex items-center justify-center text-3xl"
-              >
-                {{ getBankLogo(gift.bank_name) }}
-              </div>
-              <div class="flex-1">
-                <h4
-                  class="text-xl font-bold text-gray-900 dark:text-white mb-1"
-                >
-                  {{ gift.bank_name }}
-                </h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">
-                  {{ gift.account_holder }}
-                </p>
-              </div>
-            </div>
-            <div class="flex gap-2 ml-4">
-              <button
-                @click="handleEdit(gift)"
-                class="h-8 aspect-square bg-gradient-to-br from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 hover:scale-105 active:scale-95 text-white rounded-lg transition-all duration-300"
-                title="Edit"
-              >
-                <i class="bi bi-pencil-fill"></i>
-              </button>
-              <button
-                @click="openDeleteModal(gift)"
-                class="h-8 aspect-square bg-gradient-to-br from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 hover:scale-105 active:scale-95 text-white rounded-lg transition-all duration-300"
-                title="Hapus"
-              >
-                <i class="bi bi-trash-fill"></i>
-              </button>
-            </div>
-          </div>
-
+        <div class="flex items-start gap-3 mb-4">
           <div
-            class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700"
+            class="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-50 to-sky-100 dark:from-sky-950 dark:to-sky-900 flex items-center justify-center text-2xl flex-shrink-0"
           >
-            <div class="flex items-center justify-between">
-              <div class="flex-1">
-                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                  Nomor Rekening atau E-Wallet
-                </p>
-                <p
-                  class="text-lg font-mono font-bold text-gray-900 dark:text-white tracking-wider"
-                >
-                  {{ gift.account_number }}
-                </p>
-              </div>
-              <button
-                @click="copyToClipboard(gift.account_number, 'Nomor rekening')"
-                class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
-                title="Salin nomor rekening"
+            {{ getBankLogo(gift.bank_name) }}
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4
+              class="text-sm md:text-base font-semibold text-slate-900 dark:text-slate-50 mb-1"
+            >
+              {{ gift.bank_name }}
+            </h4>
+            <p class="text-xs text-slate-600 dark:text-slate-300">
+              {{ gift.account_holder }}
+            </p>
+          </div>
+          <div class="flex gap-2 flex-shrink-0">
+            <button
+              @click="handleEdit(gift)"
+              class="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-950 border border-sky-200 dark:border-sky-800 text-sky-500 hover:bg-sky-100 dark:hover:bg-sky-900 transition-all active:scale-95"
+              title="Edit"
+            >
+              <i class="bi bi-pencil text-sm"></i>
+            </button>
+            <button
+              @click="openDeleteModal(gift)"
+              class="w-9 h-9 rounded-xl bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 transition-all active:scale-95"
+              title="Hapus"
+            >
+              <i class="bi bi-trash text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="bg-slate-50 dark:bg-slate-800 rounded-2xl p-3 md:p-4 border border-slate-200 dark:border-slate-700"
+        >
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex-1 min-w-0">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                Nomor Rekening/E-Wallet
+              </p>
+              <p
+                class="text-sm md:text-base font-mono font-bold text-slate-900 dark:text-slate-50 tracking-wider truncate"
               >
-                <i class="bi bi-clipboard"></i>
-                Salin
-              </button>
+                {{ gift.account_number }}
+              </p>
             </div>
+            <button
+              @click="copyToClipboard(gift.account_number, 'Nomor rekening')"
+              class="flex-shrink-0 px-3 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-xl transition-all active:scale-95 flex items-center gap-2 text-xs font-medium"
+              title="Salin nomor"
+            >
+              <i class="bi bi-clipboard"></i>
+              <span class="hidden sm:inline">Salin</span>
+            </button>
           </div>
         </div>
       </div>
@@ -350,49 +373,58 @@ onMounted(() => {
     <!-- Empty State -->
     <div
       v-else
-      class="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-xl p-8 text-center mb-8 border-2 border-dashed border-blue-200 dark:border-blue-800"
+      class="bg-slate-50 dark:bg-slate-900 rounded-3xl p-8 md:p-12 text-center border-2 border-dashed border-slate-200 dark:border-slate-800"
     >
-      <i class="bi bi-gift text-6xl text-blue-300 dark:text-blue-700"></i>
-      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2 mt-4">
+      <div
+        class="w-16 h-16 mx-auto rounded-2xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center mb-4"
+      >
+        <i class="bi bi-gift text-sky-500 text-3xl"></i>
+      </div>
+      <h3
+        class="text-base font-semibold text-slate-900 dark:text-slate-50 mb-2"
+      >
         Belum Ada Rekening Hadiah
       </h3>
-      <p class="text-gray-600 dark:text-gray-400">
+      <p class="text-sm text-slate-600 dark:text-slate-300">
         Tambahkan rekening untuk menerima hadiah dari tamu
       </p>
     </div>
 
-    <!-- Add/Edit Form Toggle Button -->
-    <div class="mb-6">
-      <button
-        @click="toggleForm"
-        class="w-full px-6 py-3 bg-gradient-to-r text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
-        :class="
-          ui.showForm
-            ? 'from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600'
-            : 'from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600'
-        "
-      >
-        <i :class="ui.showForm ? 'bi bi-x-lg' : 'bi bi-plus-lg'"></i>
-        {{ ui.showForm ? "Batal" : "Tambah Rekening Baru" }}
-      </button>
-    </div>
+    <!-- Toggle Form Button -->
+    <button
+      @click="toggleForm"
+      class="w-full h-12 rounded-2xl font-semibold shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+      :class="
+        ui.showForm
+          ? 'bg-slate-500 hover:bg-slate-600 text-white shadow-slate-500/25'
+          : 'bg-sky-500 hover:bg-sky-600 text-white shadow-sky-500/25'
+      "
+    >
+      <i :class="ui.showForm ? 'bi-x-lg' : 'bi-plus-lg'"></i>
+      {{ ui.showForm ? "Batal" : "Tambah Rekening Baru" }}
+    </button>
 
     <!-- Add/Edit Form -->
-    <div v-if="ui.showForm">
-      <div class="mb-6">
-        <h3
-          class="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2"
+    <div
+      v-if="ui.showForm"
+      class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-3 md:space-y-6"
+    >
+      <div class="flex items-center gap-2 mb-1 md:mb-4">
+        <div
+          class="w-8 h-8 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center"
         >
-          <i class="bi bi-bank text-blue-500"></i>
+          <i class="bi bi-bank text-sky-500"></i>
+        </div>
+        <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-50">
           {{ isEditMode ? "Edit Rekening" : "Tambah Rekening Baru" }}
         </h3>
       </div>
 
-      <form @submit.prevent="submitForm" class="space-y-6">
+      <form @submit.prevent="submitForm" class="space-y-3 md:space-y-6">
         <FormBaseInput
           v-model="formData.bank_name"
           type="text"
-          label="Nama Bank atau e-wallet"
+          label="Nama Bank/E-Wallet"
           placeholder="contoh: Bank BCA atau GoPay"
           :required="true"
           :error="validationErrors.bank_name"
@@ -402,7 +434,7 @@ onMounted(() => {
         <FormBaseInput
           v-model="formData.account_number"
           type="text"
-          label="Nomor Rekening atau e-wallet"
+          label="Nomor Rekening/E-Wallet"
           placeholder="contoh: 1234567890"
           :required="true"
           :error="validationErrors.account_number"
@@ -412,33 +444,35 @@ onMounted(() => {
         <FormBaseInput
           v-model="formData.account_holder"
           type="text"
-          label="Nama Pemilik Rekening atau e-wallet"
+          label="Nama Pemilik"
           placeholder="contoh: John Doe"
           :required="true"
           :error="validationErrors.account_holder"
           @input="handleInput('account_holder', formData.account_holder)"
         />
 
-        <div class="border-t border-gray-200 dark:border-gray-700 my-6"></div>
-
-        <div class="flex gap-4">
+        <div class="flex gap-3 pt-3">
           <button
             type="button"
             @click="toggleForm"
             :disabled="ui.isSubmitting"
-            class="flex-1 px-6 py-3 bg-gray-300 dark:bg-gray-700 dark:text-slate-300 text-gray-700 font-medium rounded-xl hover:bg-gray-400 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
+            class="flex-shrink-0 w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition-all active:scale-95 flex items-center justify-center"
           >
-            Batal
+            <i class="bi bi-x-lg text-lg"></i>
           </button>
           <button
             type="submit"
             :disabled="ui.isSubmitting || !isFormValid"
-            class="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:transform-none"
+            class="flex-1 h-12 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-semibold shadow-lg shadow-sky-500/25 disabled:opacity-50 disabled:shadow-none transition-all active:scale-[0.98] flex items-center justify-center gap-2"
           >
             <span v-if="!ui.isSubmitting">
-              {{ isEditMode ? "Perbarui Rekening" : "Simpan Rekening" }}
+              <i
+                :class="isEditMode ? 'bi-check-circle' : 'bi-save'"
+                class="bi mr-1"
+              ></i>
+              {{ isEditMode ? "Perbarui" : "Simpan" }}
             </span>
-            <span v-else class="flex items-center justify-center gap-2">
+            <span v-else class="flex items-center gap-2">
               <Spinner />
               {{ isEditMode ? "Memperbarui..." : "Menyimpan..." }}
             </span>
@@ -448,15 +482,15 @@ onMounted(() => {
     </div>
 
     <!-- Next Button -->
-    <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+    <div class="pt-2">
       <button
         @click="handleNext"
-        class="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+        class="w-full h-12 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-semibold shadow-lg shadow-sky-500/25 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
       >
         Lanjutkan
-        <i class="bi bi-arrow-right ml-2"></i>
+        <i class="bi bi-arrow-right"></i>
       </button>
-      <p class="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
+      <p class="text-center text-xs text-slate-500 dark:text-slate-400 mt-2">
         Rekening hadiah bersifat opsional, Anda bisa melewatinya
       </p>
     </div>

@@ -8,7 +8,11 @@ definePageMeta({
   <div class="bg-off-white dark:bg-dark">
     <NuxtLayout>
       <div class="flex flex-col gap-y-6">
-        <UserTransactionHeader />
+        <Header
+          title="Riwayat Transaksi"
+          :has-button="false"
+          icon="bi-wallet"
+        />
         <UserTransactionList />
       </div>
     </NuxtLayout>

@@ -87,13 +87,13 @@ const isFormValid = computed(() => {
   );
 });
 
-watch(
-  isEditMode,
-  (newValue) => {
-    emit("step-status", newValue);
-  },
-  { immediate: true }
-);
+// watch(
+//   isEditMode,
+//   (newValue) => {
+//     emit("step-status", newValue);
+//   },
+//   { immediate: true }
+// );
 
 // Validation Methods
 const validateField = (field, value) => {
@@ -109,7 +109,6 @@ const validateForm = () => {
   if (!validateField("date", formData.date)) isValid = false;
   if (!validateField("time_start", formData.time_start)) isValid = false;
 
-  // Optional fields validation
   if (formData.maps_url && !validateField("maps_url", formData.maps_url))
     isValid = false;
   if (
@@ -143,8 +142,9 @@ const fetchData = async () => {
   ui.isLoading = true;
   try {
     const response = await fetchEvents(props.invitationId);
-    events.value = response || [];
+
     emit("step-status", true);
+    events.value = response || [];
   } catch (error) {
     console.error("Failed to fetch events:", error);
   } finally {
@@ -224,11 +224,9 @@ const openDeleteModal = (event) => {
 };
 
 const closeDeleteModal = () => {
-  // if (!deleteModal.isDeleting) {
   deleteModal.show = false;
   deleteModal.eventId = null;
   deleteModal.eventName = "";
-  // }
 };
 
 const confirmDelete = async () => {
@@ -279,83 +277,125 @@ const handleNext = () => {
 };
 
 onMounted(() => {
+  emit("step-status", false);
   fetchData();
 });
 </script>
 
 <template>
-  <div v-if="ui.isLoading" class="text-center py-8">
-    <div
-      class="flex flex-col items-center justify-center gap-3 text-gray-600 dark:text-gray-400"
-    >
+  <!-- Loading State -->
+  <div
+    v-if="ui.isLoading"
+    class="min-h-[60vh] flex items-center justify-center"
+  >
+    <div class="text-center space-y-4 md:space-y-6">
       <div
-        class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"
-      ></div>
-      <p>Memuat data acara...</p>
+        class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-sky-50 dark:bg-sky-950 backdrop-blur-sm"
+      >
+        <div
+          class="w-10 h-10 border-3 border-sky-500 border-t-transparent rounded-full animate-spin"
+        ></div>
+      </div>
+      <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
+        Memuat data acara...
+      </p>
     </div>
   </div>
 
-  <div v-else>
-    <!-- Event List -->
-    <div v-if="events.length > 0" class="mb-8 space-y-4">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-          Daftar Acara ({{ events.length }})
-        </h3>
+  <div v-else class="space-y-4 md:space-y-6">
+    <!-- Event List Header -->
+    <div
+      class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800"
+    >
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center flex-shrink-0"
+          >
+            <i class="bi bi-calendar-event text-sky-500 text-lg"></i>
+          </div>
+          <div>
+            <h2
+              class="text-base md:text-lg font-semibold text-slate-900 dark:text-slate-50"
+            >
+              Daftar Acara
+            </h2>
+            <p class="text-xs text-slate-600 dark:text-slate-300">
+              {{ events.length }} acara tersimpan
+            </p>
+          </div>
+        </div>
       </div>
+    </div>
 
+    <!-- Event List -->
+    <div v-if="events.length > 0" class="space-y-3">
       <div
         v-for="event in events"
         :key="event.id"
-        class="bg-white dark:bg-dark rounded-xl shadow-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-shadow duration-300"
+        class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-md transition-shadow"
       >
-        <div class="flex justify-between items-start mb-4">
-          <div class="flex-1">
-            <h4 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
+        <div class="flex items-start gap-3 mb-3">
+          <div
+            class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center flex-shrink-0"
+          >
+            <i class="bi bi-calendar-check text-sky-500"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4
+              class="text-sm md:text-base font-semibold text-slate-900 dark:text-slate-50 mb-1"
+            >
               {{ event.name }}
             </h4>
             <p
-              class="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2"
+              class="text-xs text-slate-600 dark:text-slate-300 flex items-center gap-1.5"
             >
-              <i class="bi bi-geo-alt-fill"></i>
+              <i class="bi bi-geo-alt-fill text-sky-500"></i>
               {{ event.venue }}
             </p>
           </div>
-          <div class="flex gap-2">
+          <div class="flex gap-2 flex-shrink-0">
             <button
               @click="handleEdit(event)"
-              class="h-8 aspect-square bg-linear-to-br from-blue-500 to-purple-500 hover:fromm-blue-600 hover:to-purple-600 hover:scale-105 active:scale-95 text-white rounded-lg transition-all duration-300"
+              class="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-950 border border-sky-200 dark:border-sky-800 text-sky-500 hover:bg-sky-100 dark:hover:bg-sky-900 transition-all active:scale-95"
               title="Edit"
             >
-              <i class="bi bi-pencil-fill"></i>
+              <i class="bi bi-pencil text-sm"></i>
             </button>
             <button
               @click="openDeleteModal(event)"
-              class="h-8 aspect-square bg-linear-to-br from-red-500 to-rose-500 hover:fromm-red-600 hover:to-rose-600 hover:scale-105 active:scale-95 text-white rounded-lg transition-all duration-300"
+              class="w-9 h-9 rounded-xl bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 transition-all active:scale-95"
               title="Hapus"
             >
-              <i class="bi bi-trash-fill"></i>
+              <i class="bi bi-trash text-sm"></i>
             </button>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div class="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-            <i class="bi bi-calendar-event"></i>
-            <span>{{ formatDate(event.date) }}</span>
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div
+            class="flex items-center gap-2 text-slate-600 dark:text-slate-300"
+          >
+            <i class="bi bi-calendar3 text-sky-500"></i>
+            <span class="truncate">{{ formatDate(event.date) }}</span>
           </div>
-          <div class="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-            <i class="bi bi-clock"></i>
+          <div
+            class="flex items-center gap-2 text-slate-600 dark:text-slate-300"
+          >
+            <i class="bi bi-clock text-sky-500"></i>
             <span>{{ event.time_start }}</span>
           </div>
         </div>
 
         <div
           v-if="event.address"
-          class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700"
+          class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-800"
         >
-          <p class="text-sm text-gray-600 dark:text-gray-400">
-            <i class="bi bi-map"></i> {{ event.address }}
+          <p
+            class="text-xs text-slate-600 dark:text-slate-300 flex items-start gap-2"
+          >
+            <i class="bi bi-map text-sky-500 flex-shrink-0 mt-0.5"></i>
+            <span>{{ event.address }}</span>
           </p>
         </div>
 
@@ -363,9 +403,9 @@ onMounted(() => {
           <a
             :href="event.maps_url"
             target="_blank"
-            class="text-sm text-blue-500 hover:text-blue-600 flex items-center gap-1"
+            class="inline-flex items-center gap-1.5 text-xs text-sky-500 hover:text-sky-600 dark:hover:text-sky-400 font-medium transition-colors"
           >
-            <i class="bi bi-link-45deg"></i>
+            <i class="bi bi-box-arrow-up-right"></i>
             Buka di Google Maps
           </a>
         </div>
@@ -375,44 +415,54 @@ onMounted(() => {
     <!-- Empty State -->
     <div
       v-else
-      class="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-xl p-8 text-center mb-8 border-2 border-dashed border-blue-200 dark:border-blue-800"
+      class="bg-slate-50 dark:bg-slate-900 rounded-3xl p-8 md:p-12 text-center border-2 border-dashed border-slate-200 dark:border-slate-800"
     >
-      <i
-        class="bi bi-calendar-event text-6xl text-blue-300 dark:text-blue-700"
-      ></i>
-      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2 mt-4">
+      <div
+        class="w-16 h-16 mx-auto rounded-2xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center mb-4"
+      >
+        <i class="bi bi-calendar-event text-sky-500 text-3xl"></i>
+      </div>
+      <h3
+        class="text-base font-semibold text-slate-900 dark:text-slate-50 mb-2"
+      >
         Belum Ada Acara
       </h3>
-      <p class="text-gray-600 dark:text-gray-400">
+      <p class="text-sm text-slate-600 dark:text-slate-300">
         Tambahkan acara-acara penting untuk undangan Anda
       </p>
     </div>
 
-    <!-- Add/Edit Form Toggle Button -->
-    <div class="mb-6">
-      <button
-        @click="toggleForm"
-        class="w-full px-6 py-3 bg-gradient-to-r text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
-        :class="
-          ui.showForm
-            ? 'from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600'
-            : 'from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600'
-        "
-      >
-        <i :class="ui.showForm ? 'bi bi-x-lg' : 'bi bi-plus-lg'"></i>
-        {{ ui.showForm ? "Batal" : "Tambah Acara Baru" }}
-      </button>
-    </div>
+    <!-- Toggle Form Button -->
+    <button
+      @click="toggleForm"
+      class="w-full h-12 rounded-2xl font-semibold shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+      :class="
+        ui.showForm
+          ? 'bg-slate-500 hover:bg-slate-600 text-white shadow-slate-500/25'
+          : 'bg-sky-500 hover:bg-sky-600 text-white shadow-sky-500/25'
+      "
+    >
+      <i :class="ui.showForm ? 'bi-x-lg' : 'bi-plus-lg'"></i>
+      {{ ui.showForm ? "Batal" : "Tambah Acara Baru" }}
+    </button>
 
     <!-- Add/Edit Form -->
-    <div v-if="ui.showForm">
-      <div class="mb-6">
-        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+    <div
+      v-if="ui.showForm"
+      class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-3 md:space-y-6"
+    >
+      <div class="flex items-center gap-2 mb-1 md:mb-4">
+        <div
+          class="w-8 h-8 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center"
+        >
+          <i class="bi bi-pencil-square text-sky-500"></i>
+        </div>
+        <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-50">
           {{ isEditMode ? "Edit Acara" : "Tambah Acara Baru" }}
         </h3>
       </div>
 
-      <form @submit.prevent="submitForm" class="space-y-6">
+      <form @submit.prevent="submitForm" class="space-y-3 md:space-y-6">
         <FormBaseInput
           v-model="formData.name"
           type="text"
@@ -433,11 +483,11 @@ onMounted(() => {
           @input="handleInput('venue', formData.venue)"
         />
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-2 gap-3">
           <FormBaseInput
             v-model="formData.date"
             type="date"
-            label="Tanggal Acara"
+            label="Tanggal"
             :required="true"
             :error="validationErrors.date"
             @input="handleInput('date', formData.date)"
@@ -446,7 +496,7 @@ onMounted(() => {
           <FormBaseInput
             v-model="formData.time_start"
             type="time"
-            label="Waktu Mulai"
+            label="Jam Mulai"
             :required="true"
             :error="validationErrors.time_start"
             @input="handleInput('time_start', formData.time_start)"
@@ -455,51 +505,71 @@ onMounted(() => {
 
         <FormBaseTextarea
           v-model="formData.address"
-          label="Alamat Lengkap (Opsional)"
+          label="Alamat Lengkap"
           placeholder="contoh: Jl. Melati No. 123, Jakarta Selatan"
           :rows="3"
           :error="validationErrors.address"
           @input="handleInput('address', formData.address)"
-        />
+        >
+          <template #hint>
+            <span class="text-xs text-slate-400 dark:text-slate-500">
+              Opsional
+            </span>
+          </template>
+        </FormBaseTextarea>
 
         <FormBaseInput
           v-model="formData.maps_url"
           type="url"
-          label="Link Google Maps (Opsional)"
+          label="Link Google Maps"
           placeholder="https://maps.google.com/..."
           :error="validationErrors.maps_url"
           @input="handleInput('maps_url', formData.maps_url)"
-        />
+        >
+          <template #hint>
+            <span class="text-xs text-slate-400 dark:text-slate-500">
+              Opsional
+            </span>
+          </template>
+        </FormBaseInput>
 
         <FormBaseInput
           v-model="formData.maps_embed_url"
           type="url"
-          label="Link Embed Google Maps (Opsional)"
+          label="Link Embed Google Maps"
           placeholder="https://www.google.com/maps/embed?..."
           :error="validationErrors.maps_embed_url"
           @input="handleInput('maps_embed_url', formData.maps_embed_url)"
-        />
+        >
+          <template #hint>
+            <span class="text-xs text-slate-400 dark:text-slate-500">
+              Opsional
+            </span>
+          </template>
+        </FormBaseInput>
 
-        <div class="border-t border-gray-200 dark:border-gray-700 my-6"></div>
-
-        <div class="flex gap-4">
+        <div class="flex gap-3 pt-3">
           <button
             type="button"
             @click="toggleForm"
             :disabled="ui.isSubmitting"
-            class="flex-1 px-6 py-3 bg-gray-300 dark:bg-gray-700 dark:text-slate-300 text-gray-700 font-medium rounded-xl hover:bg-gray-400 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
+            class="flex-shrink-0 w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition-all active:scale-95 flex items-center justify-center"
           >
-            Batal
+            <i class="bi bi-x-lg text-lg"></i>
           </button>
           <button
             type="submit"
             :disabled="ui.isSubmitting || !isFormValid"
-            class="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:transform-none"
+            class="flex-1 h-12 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-semibold shadow-lg shadow-sky-500/25 disabled:opacity-50 disabled:shadow-none transition-all active:scale-[0.98] flex items-center justify-center gap-2"
           >
             <span v-if="!ui.isSubmitting">
-              {{ isEditMode ? "Perbarui Acara" : "Simpan Acara" }}
+              <i
+                :class="isEditMode ? 'bi-check-circle' : 'bi-save'"
+                class="bi mr-1"
+              ></i>
+              {{ isEditMode ? "Perbarui" : "Simpan" }}
             </span>
-            <span v-else class="flex items-center justify-center gap-2">
+            <span v-else class="flex items-center gap-2">
               <Spinner />
               {{ isEditMode ? "Memperbarui..." : "Menyimpan..." }}
             </span>
@@ -509,18 +579,18 @@ onMounted(() => {
     </div>
 
     <!-- Next Button -->
-    <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+    <div class="pt-2">
       <button
         @click="handleNext"
         :disabled="events.length === 0"
-        class="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:transform-none"
+        class="w-full h-12 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-semibold shadow-lg shadow-sky-500/25 disabled:opacity-50 disabled:shadow-none transition-all active:scale-[0.98] flex items-center justify-center gap-2"
       >
         Lanjutkan
-        <i class="bi bi-arrow-right ml-2"></i>
+        <i class="bi bi-arrow-right"></i>
       </button>
       <p
         v-if="events.length === 0"
-        class="text-center text-sm text-red-500 dark:text-red-400 mt-2"
+        class="text-center text-xs text-red-500 dark:text-red-400 mt-2"
       >
         Tambahkan minimal satu acara untuk melanjutkan
       </p>

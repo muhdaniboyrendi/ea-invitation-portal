@@ -1,94 +1,110 @@
 <!-- UserInvitationDetailGuest -->
 <script setup>
 const props = defineProps(["invitationData"]);
+
+const totalGuests = computed(() => props.invitationData.guests.length);
+const attendingGuests = computed(
+  () =>
+    props.invitationData.guests.filter(
+      (guest) => guest.attendance_status === "attending"
+    ).length
+);
+const notAttendingGuests = computed(
+  () =>
+    props.invitationData.guests.filter(
+      (guest) => guest.attendance_status === "not_attending"
+    ).length
+);
 </script>
 
 <template>
   <div
-    class="relative bg-off-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden"
+    class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 md:space-y-6"
   >
-    <div class="relative p-6">
-      <!-- Header -->
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center gap-4">
-          <div
-            class="h-12 w-12 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex justify-center items-center shadow-lg"
-          >
-            <i class="bi bi-people-fill text-white text-xl"></i>
-          </div>
-          <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-              Daftar Tamu
-            </h2>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-              Kelola dan pantau daftar tamu undangan
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Stats -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div
-          class="text-center p-4 bg-white dark:bg-dark rounded-2xl shadow-lg border border-gray-100/50 dark:border-gray-700/50"
-        >
-          <div
-            class="w-10 h-10 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/40 dark:to-blue-800/40 flex items-center justify-center"
-          >
-            <i class="bi bi-people text-blue-600 dark:text-blue-400"></i>
-          </div>
-          <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
-            {{ props.invitationData.guests.length }}
-          </p>
-          <p class="text-xs text-gray-600 dark:text-gray-400">Total Tamu</p>
-        </div>
-
-        <div
-          class="text-center p-4 bg-white dark:bg-dark rounded-2xl shadow-lg border border-gray-100/50 dark:border-gray-700/50"
-        >
-          <div
-            class="w-10 h-10 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/40 dark:to-green-800/40 flex items-center justify-center"
-          >
-            <i
-              class="bi bi-check-circle text-green-600 dark:text-green-400"
-            ></i>
-          </div>
-          <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
-            {{
-              props.invitationData.guests.filter((guest) => {
-                guest.attendance_status == "attending";
-              }).length
-            }}
-          </p>
-          <p class="text-xs text-gray-600 dark:text-gray-400">Hadir</p>
-        </div>
-
-        <div
-          class="text-center p-4 bg-white dark:bg-dark rounded-2xl shadow-lg border border-gray-100/50 dark:border-gray-700/50"
-        >
-          <div
-            class="w-10 h-10 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-red-100 to-red-200 dark:from-red-900/40 dark:to-red-800/40 flex items-center justify-center"
-          >
-            <i class="bi bi-x-circle text-red-600 dark:text-red-400"></i>
-          </div>
-          <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
-            {{
-              props.invitationData.guests.filter((guest) => {
-                guest.attendance_status == "not_attending";
-              }).length
-            }}
-          </p>
-          <p class="text-xs text-gray-600 dark:text-gray-400">Tidak Hadir</p>
-        </div>
-      </div>
-
-      <NuxtLink
-        :to="`/invitation/${props.invitationData.id}/guests`"
-        class="w-full block py-3 px-6 rounded-xl bg-linear-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white text-center font-semibold hover:scale-103 active:scale-95 transition-all duration-300 cursor-pointer"
+    <!-- Header -->
+    <div class="flex items-center gap-3">
+      <div
+        class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center flex-shrink-0"
       >
-        <i class="bi bi-person-lines-fill mr-2"></i>
-        Kelola Tamu
-      </NuxtLink>
+        <i class="bi bi-people-fill text-sky-500 text-lg"></i>
+      </div>
+      <div class="flex-1 min-w-0">
+        <h2
+          class="text-base md:text-lg font-semibold text-slate-900 dark:text-slate-50"
+        >
+          Daftar Tamu
+        </h2>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+          Kelola dan pantau daftar tamu undangan
+        </p>
+      </div>
     </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-3 gap-2 md:gap-3">
+      <!-- Total Tamu -->
+      <div
+        class="text-center p-3 md:p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800"
+      >
+        <div
+          class="w-8 h-8 md:w-10 md:h-10 mx-auto mb-2 rounded-xl bg-sky-500 flex items-center justify-center"
+        >
+          <i class="bi bi-people text-white text-sm md:text-base"></i>
+        </div>
+        <p
+          class="text-lg md:text-2xl font-bold text-slate-900 dark:text-slate-50"
+        >
+          {{ totalGuests }}
+        </p>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">
+          Total Tamu
+        </p>
+      </div>
+
+      <!-- Hadir -->
+      <div
+        class="text-center p-3 md:p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800"
+      >
+        <div
+          class="w-8 h-8 md:w-10 md:h-10 mx-auto mb-2 rounded-xl bg-emerald-500 flex items-center justify-center"
+        >
+          <i class="bi bi-check-circle text-white text-sm md:text-base"></i>
+        </div>
+        <p
+          class="text-lg md:text-2xl font-bold text-slate-900 dark:text-slate-50"
+        >
+          {{ attendingGuests }}
+        </p>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Hadir</p>
+      </div>
+
+      <!-- Tidak Hadir -->
+      <div
+        class="text-center p-3 md:p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800"
+      >
+        <div
+          class="w-8 h-8 md:w-10 md:h-10 mx-auto mb-2 rounded-xl bg-red-500 flex items-center justify-center"
+        >
+          <i class="bi bi-x-circle text-white text-sm md:text-base"></i>
+        </div>
+        <p
+          class="text-lg md:text-2xl font-bold text-slate-900 dark:text-slate-50"
+        >
+          {{ notAttendingGuests }}
+        </p>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">
+          Tidak Hadir
+        </p>
+      </div>
+    </div>
+
+    <!-- Action Button -->
+    <NuxtLink
+      :to="`/invitation/${props.invitationData.id}/guests`"
+      class="w-full h-12 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-semibold shadow-lg shadow-sky-500/25 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+    >
+      <i class="bi bi-person-lines-fill"></i>
+      <span>Kelola Tamu</span>
+    </NuxtLink>
   </div>
 </template>

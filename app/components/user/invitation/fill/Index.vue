@@ -83,12 +83,14 @@ const notification = reactive({
   show: false,
   type: "info",
   message: "",
+  position: "top-right",
 });
 
-const showNotification = (type, message) => {
+const showNotification = (type, message, position) => {
   notification.type = type;
   notification.message = message;
   notification.show = true;
+  notification.position = position;
 };
 
 const closeNotification = () => {
@@ -96,11 +98,15 @@ const closeNotification = () => {
 };
 
 const handleFormSuccess = (message) => {
-  showNotification("success", message);
+  showNotification("success", message, "top-center");
+};
+
+const handleFormInfo = (message) => {
+  showNotification("info", message, "bottom-right");
 };
 
 const handleFormError = (message) => {
-  showNotification("error", message);
+  showNotification("error", message, "top-center");
 };
 
 const handleNextStep = () => {
@@ -130,7 +136,7 @@ onMounted(() => {
       :type="notification.type"
       :message="notification.message"
       :show="notification.show"
-      position="top-center"
+      :position="notification.position"
       :duration="5000"
       @close="closeNotification"
     />
@@ -304,6 +310,7 @@ onMounted(() => {
           :invitation-id="invitationId"
           :package-id="invitationData.order.package_id"
           @success="handleFormSuccess"
+          @info="handleFormInfo"
           @error="handleFormError"
           @next="handleNextStep"
         />

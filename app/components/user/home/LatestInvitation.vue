@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div class="relative px-4 md:px-6">
     <!-- Main container -->
     <div
       class="relative bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-2xl border border-slate-200/30 dark:border-slate-800/30 overflow-hidden"

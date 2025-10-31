@@ -145,7 +145,6 @@ watch(
         invitation_id: props.invitationId,
         name: newGuest.name || "",
         phone: newGuest.phone || "",
-        // PERBAIKAN: Konversi ke boolean eksplisit
         is_group: Boolean(newGuest.is_group),
       });
     } else {
@@ -169,20 +168,34 @@ watch(
 <template>
   <div
     v-if="showForm"
-    class="mb-8 p-6 md:p-8 bg-off-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50"
+    class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 md:space-y-6 mb-4 md:mb-6"
   >
-    <div class="mb-6 flex items-center gap-4">
+    <!-- Header -->
+    <div class="flex items-center gap-3">
       <div
-        class="h-12 aspect-square rounded-2xl bg-linear-to-br from-blue-500 to-purple-500 text-white flex justify-center items-center"
+        class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center flex-shrink-0"
       >
-        <i class="bi bi-person-plus-fill text-2xl"></i>
+        <i
+          :class="isEditMode ? 'bi-pencil-square' : 'bi-person-plus-fill'"
+          class="bi text-sky-500 text-lg"
+        ></i>
       </div>
-      <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-        {{ isEditMode ? "Edit Tamu" : "Tambah Tamu Baru" }}
-      </h3>
+      <div class="flex-1 min-w-0">
+        <h3
+          class="text-base md:text-lg font-semibold text-slate-900 dark:text-slate-50"
+        >
+          {{ isEditMode ? "Edit Tamu" : "Tambah Tamu Baru" }}
+        </h3>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+          {{
+            isEditMode ? "Perbarui informasi tamu" : "Isi data tamu undangan"
+          }}
+        </p>
+      </div>
     </div>
 
-    <form @submit.prevent="submitForm" class="space-y-6">
+    <form @submit.prevent="submitForm" class="space-y-4">
+      <!-- Name Input -->
       <FormBaseInput
         v-model="formData.name"
         type="text"
@@ -193,40 +206,61 @@ watch(
         @input="handleInput('name', formData.name)"
       />
 
+      <!-- Phone Input -->
       <FormBaseInput
         v-model="formData.phone"
         type="tel"
-        label="Nomor Telepon (Opsional)"
+        label="Nomor Telepon"
         placeholder="contoh: 08**********"
         :error="validationErrors.phone"
         @input="handleInput('phone', formData.phone)"
-      />
+      >
+        <template #label-suffix>
+          <span class="text-xs text-slate-400 font-normal ml-1"
+            >(Opsional)</span
+          >
+        </template>
+      </FormBaseInput>
 
-      <!-- Modern Checkbox Card -->
+      <!-- Group Checkbox Card -->
       <label
         for="is_group"
-        class="block p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl border-2 transition-all duration-300 cursor-pointer hover:shadow-lg hover:scale-[1.02]"
+        class="block p-4 rounded-2xl border-2 transition-all cursor-pointer"
         :class="
           formData.is_group
-            ? 'border-blue-500 dark:border-blue-400 shadow-md'
-            : 'border-blue-100 dark:border-gray-700'
+            ? 'bg-sky-50 dark:bg-sky-950 border-sky-200 dark:border-sky-800'
+            : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
         "
       >
         <div class="flex items-center justify-between">
-          <div class="flex-1">
+          <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2 mb-1">
-              <i class="bi bi-people-fill text-blue-500 text-lg"></i>
-              <span class="text-sm font-semibold text-gray-900 dark:text-white">
+              <i
+                class="bi bi-people-fill text-lg"
+                :class="
+                  formData.is_group
+                    ? 'text-sky-500'
+                    : 'text-slate-600 dark:text-slate-400'
+                "
+              ></i>
+              <span
+                class="text-sm font-semibold"
+                :class="
+                  formData.is_group
+                    ? 'text-slate-900 dark:text-slate-50'
+                    : 'text-slate-900 dark:text-slate-50'
+                "
+              >
                 Tamu Grup / Keluarga
               </span>
             </div>
-            <p class="text-xs text-gray-600 dark:text-gray-400 ml-7">
+            <p class="text-xs text-slate-600 dark:text-slate-300 ml-7">
               Tandai jika ini adalah grup/keluarga (otomatis hadir)
             </p>
           </div>
 
-          <!-- Modern Checkbox -->
-          <div class="relative ml-4">
+          <!-- Custom Checkbox -->
+          <div class="relative ml-4 flex-shrink-0">
             <input
               v-model="formData.is_group"
               type="checkbox"
@@ -234,43 +268,45 @@ watch(
               class="sr-only peer"
             />
             <div
-              class="w-7 h-7 rounded-lg border-2 transition-all duration-300 flex items-center justify-center"
+              class="w-9 h-9 rounded-xl border-2 transition-all flex items-center justify-center"
               :class="
                 formData.is_group
-                  ? 'bg-gradient-to-br from-blue-500 to-purple-500 border-blue-500 dark:border-blue-400'
-                  : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600'
+                  ? 'bg-sky-500 border-sky-500'
+                  : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700'
               "
             >
               <i
                 v-if="formData.is_group"
-                class="bi bi-check-lg text-white text-xl font-bold"
+                class="bi bi-check-lg text-white text-lg font-bold"
               ></i>
             </div>
           </div>
         </div>
       </label>
 
-      <div class="border-t border-gray-200 dark:border-gray-700 my-6"></div>
-
-      <div class="flex gap-4">
+      <!-- Action Buttons -->
+      <div class="flex gap-3 pt-2">
         <button
           type="button"
           @click="handleCancel"
           :disabled="ui.isSubmitting"
-          class="flex-1 px-6 py-3 bg-gray-300 dark:bg-gray-700 dark:text-slate-300 text-gray-700 font-medium rounded-xl hover:bg-gray-400 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
+          class="flex-shrink-0 w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition-all active:scale-95 flex items-center justify-center"
         >
-          Batal
+          <i class="bi bi-x-lg text-lg"></i>
         </button>
         <button
           type="submit"
           :disabled="ui.isSubmitting || !isFormValid"
-          class="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:transform-none"
-          :class="ui.isSubmitting || !isFormValid ? 'cursor-not-allowed' : ''"
+          class="flex-1 h-12 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-semibold shadow-lg shadow-sky-500/25 disabled:opacity-50 disabled:shadow-none transition-all active:scale-[0.98] flex items-center justify-center gap-2"
         >
           <span v-if="!ui.isSubmitting">
-            {{ isEditMode ? "Perbarui Tamu" : "Simpan Tamu" }}
+            <i
+              :class="isEditMode ? 'bi-check-circle' : 'bi-save'"
+              class="bi mr-1"
+            ></i>
+            {{ isEditMode ? "Perbarui" : "Simpan" }}
           </span>
-          <span v-else class="flex items-center justify-center gap-2">
+          <span v-else class="flex items-center gap-2">
             <Spinner />
             {{ isEditMode ? "Memperbarui..." : "Menyimpan..." }}
           </span>
