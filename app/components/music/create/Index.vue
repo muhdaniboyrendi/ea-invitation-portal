@@ -20,6 +20,8 @@ const props = defineProps({
       icon="bi-music-note-list"
     />
 
-    <MusicCreateForm :music-id="musicId" />
+    <div class="px-4 md:px-6">
+      <MusicCreateForm :music-id="musicId" />
+    </div>
   </div>
 </template>

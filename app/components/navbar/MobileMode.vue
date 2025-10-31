@@ -19,8 +19,18 @@ const filteredRoutes = computed(() => {
 });
 
 const activeTab = computed(() => {
-  const path = route.path;
-  const activeRoute = filteredRoutes.value.find((route) => route.path === path);
+  const currentPath = route.path;
+
+  // Cari route yang path-nya cocok dengan awalan currentPath
+  const activeRoute = filteredRoutes.value.find((routeItem) => {
+    // Untuk home/beranda, harus exact match
+    if (routeItem.path === "/") {
+      return currentPath === "/";
+    }
+    // Untuk route lainnya, cek apakah currentPath dimulai dengan route.path
+    return currentPath.startsWith(routeItem.path);
+  });
+
   return activeRoute ? activeRoute.name : "beranda";
 });
 </script>

@@ -39,7 +39,7 @@ const handleInput = (e) => {
       :maxlength="maxlength"
       @input="handleInput"
       @blur="emit('blur', $event)"
-      class="w-full px-4 py-3 bg-white dark:bg-gray-800 dark:text-slate-300 border-2 rounded-xl focus:outline-none transition-colors resize-y"
+      class="w-full px-4 py-3 bg-white dark:bg-gray-800 dark:text-slate-300 border-2 rounded-2xl focus:outline-none transition-colors resize-y"
       :class="
         error
           ? 'border-red-500 focus:border-red-500'

@@ -213,41 +213,38 @@ onMounted(() => {
       leave-to-class="opacity-0 -translate-y-4"
     >
       <div
-        class="relative p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/10 dark:border-slate-800/10 shadow-xl"
+        class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800"
       >
-        <!-- Header Form -->
+        <!-- Header -->
         <header class="flex items-center justify-between mb-6">
           <div class="flex items-center gap-3">
             <div
-              class="w-10 h-10 bg-gradient-to-br from-sky-500 to-sky-600 rounded-2xl flex items-center justify-center"
+              class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center flex-shrink-0"
             >
               <i
-                :class="isEditMode ? 'bi bi-pencil-square' : 'bi bi-plus-lg'"
-                class="text-white text-lg"
+                :class="isEditMode ? 'bi-pencil-square' : 'bi-plus-lg'"
+                class="text-sky-500 text-lg"
               />
             </div>
-            <div>
-              <h3 class="text-lg font-bold text-slate-900 dark:text-slate-50">
-                {{ isEditMode ? "Edit Kategori" : "Tambah Kategori Baru" }}
-              </h3>
-            </div>
+            <h3
+              class="text-lg md:text-xl font-semibold text-slate-900 dark:text-slate-50"
+            >
+              {{ isEditMode ? "Edit Kategori" : "Tambah Kategori Baru" }}
+            </h3>
           </div>
 
           <!-- Close Button -->
           <button
             @click="closeForm"
             :disabled="ui.isSubmitting"
-            class="h-8 aspect-square bg-red-50 dark:bg-red-950/70 hover:bg-red-500 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed group"
-            aria-label="Close form"
+            class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-red-50 dark:hover:bg-red-950 text-slate-600 dark:text-slate-300 hover:text-red-500 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-800 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center"
           >
-            <i
-              class="bi bi-x-lg text-red-500 dark:text-red-400 text-lg group-hover:text-white"
-            ></i>
+            <i class="bi bi-x-lg text-lg"></i>
           </button>
         </header>
 
         <!-- Form Content -->
-        <form @submit.prevent="handleSubmit" class="space-y-6">
+        <form @submit.prevent="handleSubmit" class="space-y-4 md:space-y-6">
           <!-- Category Name -->
           <FormBaseInput
             v-model="formData.name"
@@ -265,7 +262,7 @@ onMounted(() => {
               class="block text-sm font-semibold text-slate-900 dark:text-slate-50 mb-2"
             >
               Deskripsi
-              <span class="text-red-500">*</span>
+              <span class="text-red-500 ml-0.5">*</span>
             </label>
             <textarea
               v-model="formData.description"
@@ -275,11 +272,11 @@ onMounted(() => {
               @blur="() => validateField('description', formData.description)"
               rows="4"
               maxlength="500"
-              class="w-full px-4 py-3 bg-white dark:bg-slate-800 border-2 rounded-xl text-slate-900 dark:text-slate-50 placeholder-slate-400 dark:placeholder-slate-500 resize-none transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none"
+              class="w-full px-4 py-3 bg-white dark:bg-slate-800 border-2 rounded-2xl text-slate-900 dark:text-slate-50 placeholder-slate-400 dark:placeholder-slate-500 resize-none transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none"
               :class="
                 validationErrors.description
-                  ? 'border-red-500 dark:border-red-500/50 focus:border-red-600 focus:ring-2 focus:ring-red-500/20'
-                  : 'border-slate-200 dark:border-slate-700 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20'
+                  ? 'border-red-500 dark:border-red-500 focus:border-red-600 focus:ring-2 focus:ring-red-500/20'
+                  : 'border-slate-200 dark:border-slate-800 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20'
               "
             ></textarea>
 
@@ -299,33 +296,29 @@ onMounted(() => {
           </div>
 
           <!-- Action Buttons -->
-          <div
-            class="flex gap-4 pt-6 border-t border-slate-200/10 dark:border-slate-800/10"
-          >
+          <div class="flex gap-3 pt-2">
             <button
               type="button"
               @click="closeForm"
               :disabled="ui.isSubmitting"
-              class="flex-1 px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-50 font-medium rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              class="flex-1 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center"
             >
               Batal
             </button>
             <button
               type="submit"
               :disabled="!isFormValid || ui.isSubmitting"
-              class="flex-1 px-4 py-3 bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              class="flex-1 h-12 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-semibold shadow-lg shadow-sky-500/25 disabled:opacity-50 disabled:shadow-none transition-all active:scale-[0.98] flex items-center justify-center gap-2"
             >
-              <span
-                v-if="!ui.isSubmitting"
-                class="flex items-center justify-center gap-2"
-              >
-                <i :class="isEditMode ? 'bi bi-check-lg' : 'bi bi-plus-lg'"></i>
-                {{ isEditMode ? "Perbarui Kategori" : "Simpan Kategori" }}
+              <span v-if="!ui.isSubmitting" class="flex items-center gap-2">
+                <i
+                  :class="isEditMode ? 'bi-check-circle' : 'bi-save'"
+                  class="bi"
+                ></i>
+                {{ isEditMode ? "Perbarui" : "Simpan" }}
               </span>
-              <span v-else class="flex items-center justify-center gap-2">
-                <span
-                  class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
-                ></span>
+              <span v-else class="flex items-center gap-2">
+                <Spinner />
                 {{ isEditMode ? "Memperbarui..." : "Menyimpan..." }}
               </span>
             </button>

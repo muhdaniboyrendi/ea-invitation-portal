@@ -19,6 +19,8 @@ const props = defineProps({
       button-link="/themes"
     />
 
-    <ThemesCreateForm :theme-id="themeId" />
+    <div class="px-4 md:px-6">
+      <ThemesCreateForm :theme-id="themeId" />
+    </div>
   </div>
 </template>

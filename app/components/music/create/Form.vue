@@ -73,7 +73,7 @@ const {
   setPreview: setAudioPreview,
 } = useFileUpload({
   allowedTypes: /^audio\/(mpeg|mp3|wav|ogg)$/i,
-  maxSize: 20 * 1024 * 1024, // 10MB
+  maxSize: 20 * 1024 * 1024,
   onSuccess: (file) => {
     formData.audio = file;
     clearBackendError("audio");
@@ -97,7 +97,7 @@ const {
   setPreview: setThumbnailPreview,
 } = useFileUpload({
   allowedTypes: /^image\/(jpeg|jpg|png|webp)$/i,
-  maxSize: 5 * 1024 * 1024, // 5MB
+  maxSize: 5 * 1024 * 1024,
   onSuccess: (file) => {
     formData.thumbnail = file;
     clearBackendError("thumbnail");
@@ -126,7 +126,7 @@ const ui = reactive({
   isFormTouched: false,
 });
 
-// Timeout refs untuk cleanup - FIX MEMORY LEAK
+// Timeout refs untuk cleanup
 const nameValidationTimeout = ref(null);
 const artistValidationTimeout = ref(null);
 
@@ -179,13 +179,12 @@ const resetForm = () => {
   resetThumbnailUpload();
   ui.isFormTouched = false;
 
-  // Clear timeouts
   if (nameValidationTimeout.value) clearTimeout(nameValidationTimeout.value);
   if (artistValidationTimeout.value)
     clearTimeout(artistValidationTimeout.value);
 };
 
-// Input handlers with debounce - OPTIMIZED
+// Input handlers with debounce
 const handleNameInput = () => {
   ui.isFormTouched = true;
   clearBackendError("name");
@@ -286,7 +285,6 @@ const submitForm = async () => {
   try {
     const dataToSubmit = { ...formData };
 
-    // Don't send files if not updated in edit mode
     if (isEditMode.value) {
       if (!isAudioUpdated.value) {
         dataToSubmit.audio = null;
@@ -351,7 +349,7 @@ watch(
   }
 );
 
-// Lifecycle - CLEANUP UNTUK PREVENT MEMORY LEAK
+// Lifecycle
 onMounted(() => {
   if (isEditMode.value) {
     fetchMusicData();
@@ -359,21 +357,20 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  // Clear all timeouts
   if (nameValidationTimeout.value) {
     clearTimeout(nameValidationTimeout.value);
   }
   if (artistValidationTimeout.value) {
     clearTimeout(artistValidationTimeout.value);
   }
-
-  // Clear any other resources if needed
   resetForm();
 });
 </script>
 
 <template>
-  <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-8">
+  <div
+    class="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800"
+  >
     <!-- Notification -->
     <FormAlertNotification
       :type="notification.type"
@@ -386,36 +383,40 @@ onUnmounted(() => {
 
     <!-- Header -->
     <header class="mb-6">
-      <h2
-        class="text-2xl font-semibold text-slate-900 dark:text-slate-50 flex items-center gap-3"
-      >
+      <div class="flex items-center gap-3">
         <div
-          class="w-8 h-8 bg-sky-50 dark:bg-sky-950/30 rounded-lg flex items-center justify-center"
+          class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center flex-shrink-0"
         >
           <i
-            :class="
-              isEditMode ? 'bi bi-pencil-square' : 'bi bi-music-note-beamed'
-            "
-            class="text-sky-500 dark:text-sky-400"
+            :class="isEditMode ? 'bi-pencil-square' : 'bi-music-note-beamed'"
+            class="text-sky-500 text-lg"
           />
         </div>
-        {{ isEditMode ? "Edit Musik" : "Tambah Musik" }}
-      </h2>
+        <h2
+          class="text-lg md:text-xl font-semibold text-slate-900 dark:text-slate-50"
+        >
+          {{ isEditMode ? "Edit Musik" : "Tambah Musik" }}
+        </h2>
+      </div>
     </header>
 
     <!-- Loading State -->
-    <div v-if="ui.isLoading" class="text-center py-8">
+    <div v-if="ui.isLoading" class="text-center py-12">
       <div
-        class="flex items-center justify-center gap-3 text-slate-600 dark:text-slate-300"
+        class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-sky-50 dark:bg-sky-950 mb-4"
       >
-        <Spinner />
-        <p>Memuat data musik...</p>
+        <div
+          class="w-10 h-10 border-3 border-sky-500 border-t-transparent rounded-full animate-spin"
+        ></div>
       </div>
+      <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
+        Memuat data musik...
+      </p>
     </div>
 
     <!-- Form Content -->
     <div v-else>
-      <form @submit.prevent="submitForm" class="space-y-6">
+      <form @submit.prevent="submitForm" class="space-y-4 md:space-y-6">
         <!-- Music Name -->
         <FormBaseInput
           v-model="formData.name"
@@ -459,24 +460,28 @@ onUnmounted(() => {
         />
 
         <!-- Action Buttons -->
-        <div class="flex gap-4 pt-6">
+        <div class="flex gap-3">
           <button
             type="button"
             @click="resetForm"
             :disabled="ui.isSubmitting"
-            class="flex-1 px-6 py-3 bg-slate-100 dark:bg-slate-800 dark:text-slate-300 text-slate-900 font-medium rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            class="flex-shrink-0 w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition-all active:scale-95 flex items-center justify-center"
           >
-            Reset
+            <i class="bi bi-arrow-clockwise text-lg"></i>
           </button>
           <button
             type="submit"
             :disabled="ui.isSubmitting || !isFormValid"
-            class="flex-1 px-6 py-3 bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            class="flex-1 h-12 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-semibold shadow-lg shadow-sky-500/25 disabled:opacity-50 disabled:shadow-none transition-all active:scale-[0.98] flex items-center justify-center gap-2"
           >
             <span v-if="!ui.isSubmitting">
-              {{ isEditMode ? "Perbarui Musik" : "Simpan Musik" }}
+              <i
+                :class="isEditMode ? 'bi-check-circle' : 'bi-save'"
+                class="bi mr-1"
+              ></i>
+              {{ isEditMode ? "Perbarui" : "Simpan" }}
             </span>
-            <span v-else class="flex items-center justify-center gap-2">
+            <span v-else class="flex items-center gap-2">
               <Spinner />
               {{ isEditMode ? "Memperbarui..." : "Menyimpan..." }}
             </span>

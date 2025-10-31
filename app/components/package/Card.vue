@@ -210,7 +210,7 @@ const confirmDelete = async () => {
       </div>
 
       <!-- CTA Buttons -->
-      <div v-if="user.role === 'admin'" class="flex gap-6">
+      <div v-if="user?.role === 'admin'" class="flex gap-6">
         <NuxtLink
           :to="`/packages/${props.package.id}`"
           class="w-full group/btn relative inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r text-white font-semibold rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300"

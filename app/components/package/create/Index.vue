@@ -21,6 +21,8 @@ const props = defineProps({
       button-link="/packages"
     />
 
-    <PackageCreateForm :package-id="packageId" />
+    <div class="px-4 md:px-6">
+      <PackageCreateForm :package-id="packageId" />
+    </div>
   </div>
 </template>

@@ -1,117 +1,129 @@
 <template>
-  <div
-    class="relative bg-off-white dark:bg-gray-900 rounded-3xl p-4 lg:p-6 shadow-xl border border-white/30 dark:border-gray-700/30 overflow-hidden"
-  >
-    <div>
-      <div class="w-full flex items-center gap-4 mb-6">
-        <div
-          class="h-12 aspect-square rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex justify-center items-center"
-        >
-          <i class="bi bi-person-badge text-white text-2xl"></i>
+  <div class="px-4 md:px-6">
+    <div
+      class="relative bg-white dark:bg-slate-900 rounded-3xl p-4 lg:p-6 shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden"
+    >
+      <div>
+        <div class="w-full flex items-center gap-4 mb-6">
+          <div
+            class="w-12 h-12 rounded-2xl bg-sky-50 dark:bg-sky-950 flex justify-center items-center"
+          >
+            <i class="bi bi-person-badge text-sky-500 text-2xl"></i>
+          </div>
+          <h4
+            class="text-slate-900 dark:text-slate-50 font-bold text-lg md:text-xl"
+          >
+            Tentang EA Invitation
+          </h4>
         </div>
-        <h4 class="text-dark dark:text-white font-bold text-xl">
-          Tentang EA Invitation
-        </h4>
+        <p class="text-slate-600 dark:text-slate-300 text-sm mb-6">
+          Kenali lebih dekat tentang kami, layanan, tim, dan cara menghubungi
+          kami.
+        </p>
       </div>
-      <p class="text-gray-600 dark:text-gray-300 text-sm mb-8">
-        Kenali lebih dekat tentang kami, layanan, tim, dan cara menghubungi
-        kami.
-      </p>
-    </div>
 
-    <!-- Menu List -->
-    <div class="space-y-4">
-      <!-- Tentang Kami -->
-      <NuxtLink
-        to="/about"
-        class="flex items-center gap-4 p-4 rounded-2xl bg-white/50 dark:bg-gray-800/50 border border-gray-200/30 dark:border-gray-700/30 hover:bg-white/80 dark:hover:bg-gray-800/80 hover:scale-[1.02] transition duration-300 group"
-      >
-        <div
-          class="h-10 aspect-square rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex justify-center items-center"
+      <!-- Menu List -->
+      <div class="space-y-3">
+        <!-- Tentang Kami -->
+        <NuxtLink
+          to="/about"
+          class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-md transition-all active:scale-[0.98] group"
         >
-          <i class="bi bi-person-circle text-white text-lg"></i>
-        </div>
-        <div class="flex-1">
-          <h5 class="text-dark dark:text-white font-semibold mb-1">
-            Tentang Kami
-          </h5>
-          <p class="text-gray-600 dark:text-gray-300 text-xs">
-            Pelajari lebih lanjut tentang perjalanan dan visi kami
-          </p>
-        </div>
-        <i
-          class="bi bi-arrow-right text-gray-400 group-hover:text-purple-500 group-hover:translate-x-1 transition duration-300"
-        ></i>
-      </NuxtLink>
+          <div
+            class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950 flex justify-center items-center flex-shrink-0"
+          >
+            <i class="bi bi-person-circle text-sky-500 text-lg"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h5
+              class="text-slate-900 dark:text-slate-50 font-semibold text-sm mb-1"
+            >
+              Tentang Kami
+            </h5>
+            <p class="text-slate-600 dark:text-slate-300 text-xs">
+              Pelajari lebih lanjut tentang perjalanan dan visi kami
+            </p>
+          </div>
+          <i
+            class="bi bi-chevron-right text-slate-400 dark:text-slate-500 group-hover:text-sky-500 group-hover:translate-x-1 transition-all flex-shrink-0"
+          ></i>
+        </NuxtLink>
 
-      <!-- Layanan Kami -->
-      <NuxtLink
-        to="/services"
-        class="flex items-center gap-4 p-4 rounded-2xl bg-white/50 dark:bg-gray-800/50 border border-gray-200/30 dark:border-gray-700/30 hover:bg-white/80 dark:hover:bg-gray-800/80 hover:scale-[1.02] transition duration-300 group"
-      >
-        <div
-          class="h-10 aspect-square rounded-xl bg-gradient-to-r from-orange-500 to-red-500 flex justify-center items-center"
+        <!-- Layanan Kami -->
+        <NuxtLink
+          to="/services"
+          class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-md transition-all active:scale-[0.98] group"
         >
-          <i class="bi bi-gear text-white text-lg"></i>
-        </div>
-        <div class="flex-1">
-          <h5 class="text-dark dark:text-white font-semibold mb-1">
-            Layanan Kami
-          </h5>
-          <p class="text-gray-600 dark:text-gray-300 text-xs">
-            Berbagai layanan profesional untuk undangan digital
-          </p>
-        </div>
-        <i
-          class="bi bi-arrow-right text-gray-400 group-hover:text-orange-500 group-hover:translate-x-1 transition duration-300"
-        ></i>
-      </NuxtLink>
+          <div
+            class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950 flex justify-center items-center flex-shrink-0"
+          >
+            <i class="bi bi-gear text-sky-500 text-lg"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h5
+              class="text-slate-900 dark:text-slate-50 font-semibold text-sm mb-1"
+            >
+              Layanan Kami
+            </h5>
+            <p class="text-slate-600 dark:text-slate-300 text-xs">
+              Berbagai layanan profesional untuk undangan digital
+            </p>
+          </div>
+          <i
+            class="bi bi-chevron-right text-slate-400 dark:text-slate-500 group-hover:text-sky-500 group-hover:translate-x-1 transition-all flex-shrink-0"
+          ></i>
+        </NuxtLink>
 
-      <!-- Tim Profesional -->
-      <NuxtLink
-        to="/team"
-        class="flex items-center gap-4 p-4 rounded-2xl bg-white/50 dark:bg-gray-800/50 border border-gray-200/30 dark:border-gray-700/30 hover:bg-white/80 dark:hover:bg-gray-800/80 hover:scale-[1.02] transition duration-300 group"
-      >
-        <div
-          class="h-10 aspect-square rounded-xl bg-gradient-to-r from-indigo-500 to-blue-600 flex justify-center items-center"
+        <!-- Tim Profesional -->
+        <NuxtLink
+          to="/team"
+          class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-md transition-all active:scale-[0.98] group"
         >
-          <i class="bi bi-people text-white text-lg"></i>
-        </div>
-        <div class="flex-1">
-          <h5 class="text-dark dark:text-white font-semibold mb-1">
-            Tim Profesional
-          </h5>
-          <p class="text-gray-600 dark:text-gray-300 text-xs">
-            Kenali tim kreatif dan berpengalaman kami
-          </p>
-        </div>
-        <i
-          class="bi bi-arrow-right text-gray-400 group-hover:text-indigo-500 group-hover:translate-x-1 transition duration-300"
-        ></i>
-      </NuxtLink>
+          <div
+            class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950 flex justify-center items-center flex-shrink-0"
+          >
+            <i class="bi bi-people text-sky-500 text-lg"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h5
+              class="text-slate-900 dark:text-slate-50 font-semibold text-sm mb-1"
+            >
+              Tim Profesional
+            </h5>
+            <p class="text-slate-600 dark:text-slate-300 text-xs">
+              Kenali tim kreatif dan berpengalaman kami
+            </p>
+          </div>
+          <i
+            class="bi bi-chevron-right text-slate-400 dark:text-slate-500 group-hover:text-sky-500 group-hover:translate-x-1 transition-all flex-shrink-0"
+          ></i>
+        </NuxtLink>
 
-      <!-- Kontak & Dukungan -->
-      <NuxtLink
-        to="/contact"
-        class="flex items-center gap-4 p-4 rounded-2xl bg-white/50 dark:bg-gray-800/50 border border-gray-200/30 dark:border-gray-700/30 hover:bg-white/80 dark:hover:bg-gray-800/80 hover:scale-[1.02] transition duration-300 group"
-      >
-        <div
-          class="h-10 aspect-square rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 flex justify-center items-center"
+        <!-- Kontak & Dukungan -->
+        <NuxtLink
+          to="/contact"
+          class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-md transition-all active:scale-[0.98] group"
         >
-          <i class="bi bi-telephone text-white text-lg"></i>
-        </div>
-        <div class="flex-1">
-          <h5 class="text-dark dark:text-white font-semibold mb-1">
-            Kontak & Dukungan
-          </h5>
-          <p class="text-gray-600 dark:text-gray-300 text-xs">
-            Hubungi kami untuk konsultasi gratis dan dukungan 24/7
-          </p>
-        </div>
-        <i
-          class="bi bi-arrow-right text-gray-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition duration-300"
-        ></i>
-      </NuxtLink>
+          <div
+            class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950 flex justify-center items-center flex-shrink-0"
+          >
+            <i class="bi bi-telephone text-emerald-500 text-lg"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h5
+              class="text-slate-900 dark:text-slate-50 font-semibold text-sm mb-1"
+            >
+              Kontak & Dukungan
+            </h5>
+            <p class="text-slate-600 dark:text-slate-300 text-xs">
+              Hubungi kami untuk konsultasi gratis dan dukungan 24/7
+            </p>
+          </div>
+          <i
+            class="bi bi-chevron-right text-slate-400 dark:text-slate-500 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all flex-shrink-0"
+          ></i>
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>

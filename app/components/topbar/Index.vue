@@ -52,13 +52,13 @@ const handleConfirmLogout = async () => {
 
   try {
     await logout();
-    showLogoutModal.value = false;
   } catch (error) {
     console.error("Logout failed:", error);
     console.error("Logout failed:", error.validationErrors);
   } finally {
-    isLoading.value = false;
+    showLogoutModal.value = false;
     isMenuOpen.value = false;
+    isLoading.value = false;
   }
 };
 
@@ -257,18 +257,18 @@ const handleLogoutModalClose = () => {
               <!-- Menu Items -->
               <div class="relative pt-3">
                 <!-- Profile -->
-                <button
-                  @click="navigateToProfile"
+                <NuxtLink
+                  to="/profile"
                   class="w-full flex items-center space-x-4 p-4 text-left hover:bg-white/40 dark:hover:bg-slate-800/40 transition-all duration-300 group relative overflow-hidden"
                 >
-                  <div
+                  <span
                     class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950/40 flex items-center justify-center group-hover:bg-sky-100 dark:group-hover:bg-sky-900/60 transition-all duration-300 shadow-sm"
                   >
                     <i
                       class="bi bi-person text-sky-600 dark:text-sky-400 text-xl"
                     ></i>
-                  </div>
-                  <div class="flex-1">
+                  </span>
+                  <span class="flex-1">
                     <p
                       class="text-sm font-semibold text-slate-900 dark:text-slate-50"
                     >
@@ -277,11 +277,11 @@ const handleLogoutModalClose = () => {
                     <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">
                       Kelola informasi profil
                     </p>
-                  </div>
+                  </span>
                   <i
                     class="bi bi-chevron-right text-slate-400 group-hover:text-sky-500 text-sm transition-colors duration-300"
                   ></i>
-                </button>
+                </NuxtLink>
 
                 <!-- Enhanced Divider -->
                 <div class="my-4 px-6">
