@@ -83,18 +83,18 @@ export const useInvitationStore = defineStore("invitation", () => {
     }
   };
 
-  // const updateCouple = async (invitationId, coupleData) => {
-  //   try {
-  //     const response = await $fetch(`/api/invitations/${invitationId}/couple`, {
-  //       method: "PUT",
-  //       body: coupleData,
-  //     });
+  const updateCouple = async (invitationId, coupleData) => {
+    try {
+      const response = await $fetch(`/api/invitations/${invitationId}/couple`, {
+        method: "PUT",
+        body: coupleData,
+      });
 
-  //     return response.data;
-  //   } catch (error) {
-  //     throw handleApiError(error);
-  //   }
-  // };
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
 
   const updateTheme = async (invitationId, themeId) => {
     try {
@@ -118,7 +118,7 @@ export const useInvitationStore = defineStore("invitation", () => {
     createInvitation,
     fetchInvitation,
     completeInvitation,
-    // updateCouple,
+    updateCouple,
     updateTheme,
   };
 });

@@ -1,18 +1,18 @@
 <script setup>
 const emit = defineEmits(["next"]);
 const coupleNames = ref({
-  bride: "",
-  groom: "",
+  bride_name: "",
+  groom_name: "",
 });
 
 const errors = ref({
-  bride: "",
-  groom: "",
+  bride_name: "",
+  groom_name: "",
 });
 
 const isValidating = ref({
-  bride: false,
-  groom: false,
+  bride_name: false,
+  groom_name: false,
 });
 
 // Debounce function
@@ -55,39 +55,39 @@ const handleBlur = (field) => {
 // Check if form is valid
 const isFormValid = computed(() => {
   const brideValid =
-    coupleNames.value.bride.trim() !== "" &&
-    coupleNames.value.bride.length >= 2 &&
-    coupleNames.value.bride.length <= 50 &&
-    !errors.value.bride;
+    coupleNames.value.bride_name.trim() !== "" &&
+    coupleNames.value.bride_name.length >= 2 &&
+    coupleNames.value.bride_name.length <= 50 &&
+    !errors.value.bride_name;
 
   const groomValid =
-    coupleNames.value.groom.trim() !== "" &&
-    coupleNames.value.groom.length >= 2 &&
-    coupleNames.value.groom.length <= 50 &&
-    !errors.value.groom;
+    coupleNames.value.groom_name.trim() !== "" &&
+    coupleNames.value.groom_name.length >= 2 &&
+    coupleNames.value.groom_name.length <= 50 &&
+    !errors.value.groom_name;
 
   return brideValid && groomValid;
 });
 
 // Watch for real-time validation
 watch(
-  () => coupleNames.value.bride,
+  () => coupleNames.value.bride_name,
   (newValue) => {
     if (newValue) {
-      debouncedValidate("bride");
+      debouncedValidate("bride_name");
     } else {
-      errors.value.bride = "";
+      errors.value.bride_name = "";
     }
   }
 );
 
 watch(
-  () => coupleNames.value.groom,
+  () => coupleNames.value.groom_name,
   (newValue) => {
     if (newValue) {
-      debouncedValidate("groom");
+      debouncedValidate("groom_name");
     } else {
-      errors.value.groom = "";
+      errors.value.groom_name = "";
     }
   }
 );
@@ -120,24 +120,24 @@ const handleNext = () => {
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
       <!-- Groom Name -->
       <FormBaseInput
-        v-model="coupleNames.groom"
+        v-model="coupleNames.groom_name"
         label="Nama Mempelai Pria"
         placeholder="Contoh: Ahmad"
         type="text"
         :required="true"
-        :error="errors.groom"
-        @blur="handleBlur('groom')"
+        :error="errors.groom_name"
+        @blur="handleBlur('groom_name')"
       />
 
       <!-- Bride Name -->
       <FormBaseInput
-        v-model="coupleNames.bride"
+        v-model="coupleNames.bride_name"
         label="Nama Mempelai Wanita"
         placeholder="Contoh: Sarah"
         type="text"
         :required="true"
-        :error="errors.bride"
-        @blur="handleBlur('bride')"
+        :error="errors.bride_name"
+        @blur="handleBlur('bride_name')"
       />
     </div>
 

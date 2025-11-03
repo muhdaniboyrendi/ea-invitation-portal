@@ -1,5 +1,21 @@
 <script setup>
 const props = defineProps(["invitation"]);
+
+const totalGuests = computed(() => props.invitation.guests.length);
+
+const attendingGuests = computed(
+  () =>
+    props.invitation.guests.filter(
+      (guest) => guest.attendance_status === "attending"
+    ).length
+);
+
+const notAttendingGuests = computed(
+  () =>
+    props.invitation.guests.filter(
+      (guest) => guest.attendance_status === "not_attending"
+    ).length
+);
 </script>
 
 <template>
@@ -20,8 +36,8 @@ const props = defineProps(["invitation"]);
           </div>
           <div>
             <h3 class="text-xl font-bold text-slate-900 dark:text-slate-50">
-              {{ props.invitation.groom }} &
-              {{ props.invitation.bride }}
+              {{ props.invitation.groom_name }} &
+              {{ props.invitation.bride_name }}
             </h3>
             <p class="text-sm text-slate-600 dark:text-slate-300">
               Wedding Invitation
@@ -74,7 +90,7 @@ const props = defineProps(["invitation"]);
             <i class="bi bi-people text-sky-500 dark:text-sky-400"></i>
           </div>
           <p class="text-2xl font-bold text-slate-900 dark:text-slate-50">
-            {{ props.invitation.guests.length }}
+            {{ totalGuests }}
           </p>
           <p class="text-xs text-slate-600 dark:text-slate-300">Total Tamu</p>
         </div>
@@ -90,11 +106,7 @@ const props = defineProps(["invitation"]);
             ></i>
           </div>
           <p class="text-2xl font-bold text-slate-900 dark:text-slate-50">
-            {{
-              props.invitation.guests.filter((guest) => {
-                guest.attendance_status == "attending";
-              }).length
-            }}
+            {{ attendingGuests }}
           </p>
           <p class="text-xs text-slate-600 dark:text-slate-300">Hadir</p>
         </div>
@@ -108,11 +120,7 @@ const props = defineProps(["invitation"]);
             <i class="bi bi-x-circle text-red-500 dark:text-red-400"></i>
           </div>
           <p class="text-2xl font-bold text-slate-900 dark:text-slate-50">
-            {{
-              props.invitation.guests.filter((guest) => {
-                guest.attendance_status == "not_attending";
-              }).length
-            }}
+            {{ notAttendingGuests }}
           </p>
           <p class="text-xs text-slate-600 dark:text-slate-300">Tidak Hadir</p>
         </div>

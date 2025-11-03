@@ -51,8 +51,8 @@ const steps = [
 // Reactive state
 const invitationData = reactive({
   order_id: orderId,
-  groom: "",
-  bride: "",
+  groom_name: "",
+  bride_name: "",
   theme_id: null,
 });
 
@@ -65,8 +65,8 @@ const ui = reactive({
 
 // Step handlers
 const handleCoupleSaved = (coupleNames) => {
-  invitationData.bride = coupleNames.bride;
-  invitationData.groom = coupleNames.groom;
+  invitationData.bride_name = coupleNames.bride_name;
+  invitationData.groom_name = coupleNames.groom_name;
   currentStep.value = 2;
 };
 

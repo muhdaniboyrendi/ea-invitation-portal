@@ -1,12 +1,127 @@
 <script setup>
+const { updateCouple } = useInvitationStore();
 const config = useRuntimeConfig();
 const mainAppUrl = config.public.mainAppUrl;
 
 const props = defineProps(["invitationData"]);
+const emit = defineEmits(["updated"]);
+
+const isEditMode = ref(false);
+const isSaving = ref(false);
+
+// Alert state
+const alert = reactive({
+  show: false,
+  type: "info",
+  message: "",
+});
+
+// Menggunakan reactive untuk formData
+const formData = reactive({
+  groom_name: props.invitationData.groom_name,
+  bride_name: props.invitationData.bride_name,
+});
+
+const errors = reactive({
+  groom_name: "",
+  bride_name: "",
+});
+
+const showAlert = (type, message) => {
+  alert.show = true;
+  alert.type = type;
+  alert.message = message;
+};
+
+const closeAlert = () => {
+  alert.show = false;
+};
+
+const validateField = (field) => {
+  errors[field] = "";
+
+  const value = formData[field];
+
+  if (!value || value.trim() === "") {
+    errors[field] = `${
+      field === "groom_name" ? "Nama mempelai pria" : "Nama mempelai wanita"
+    } wajib diisi`;
+    return false;
+  }
+
+  if (value.trim().length < 2) {
+    errors[field] = "Nama minimal 2 karakter";
+    return false;
+  }
+
+  if (value.trim().length > 100) {
+    errors[field] = "Nama maksimal 100 karakter";
+    return false;
+  }
+
+  return true;
+};
+
+const validateForm = () => {
+  const isGroomValid = validateField("groom_name");
+  const isBrideValid = validateField("bride_name");
+  return isGroomValid && isBrideValid;
+};
+
+const toggleEditMode = () => {
+  if (isEditMode.value) {
+    // Reset form data
+    formData.groom_name = props.invitationData.groom_name;
+    formData.bride_name = props.invitationData.bride_name;
+
+    // Reset errors
+    errors.groom_name = "";
+    errors.bride_name = "";
+  }
+  isEditMode.value = !isEditMode.value;
+};
+
+const saveChanges = async () => {
+  if (!validateForm()) {
+    showAlert("error", "Mohon periksa kembali form yang Anda isi");
+    return;
+  }
+
+  isSaving.value = true;
+
+  try {
+    await updateCouple(props.invitationData.id, {
+      groom_name: formData.groom_name,
+      bride_name: formData.bride_name,
+    });
+
+    showAlert("success", "Data mempelai berhasil diperbarui");
+
+    setTimeout(() => {
+      isEditMode.value = false;
+      emit("updated");
+    }, 5000);
+  } catch (error) {
+    console.error("Error saving data:", error);
+    showAlert("error", "Gagal menyimpan data. Silakan coba lagi");
+  } finally {
+    isSaving.value = false;
+  }
+};
 </script>
 
 <template>
   <div>
+    <!-- Alert Notification -->
+    <FormAlertNotification
+      :show="alert.show"
+      :type="alert.type"
+      :message="alert.message"
+      position="top-center"
+      :duration="5000"
+      @close="closeAlert"
+    />
+
     <div
       class="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/50 dark:border-slate-800/50 overflow-hidden"
     >
@@ -25,13 +140,30 @@ const props = defineProps(["invitationData"]);
               </p>
 
               <!-- Display Mode -->
-              <div class="flex items-center gap-2">
+              <div v-if="!isEditMode" class="flex items-center gap-2">
                 <h3
                   class="text-xl font-bold text-slate-900 dark:text-slate-50 truncate"
                 >
-                  {{ props.invitationData.groom }} &
-                  {{ props.invitationData.bride }}
+                  {{ props.invitationData.groom_name }} &
+                  {{ props.invitationData.bride_name }}
                 </h3>
+                <button
+                  @click="toggleEditMode"
+                  class="p-1.5 text-slate-400 hover:text-sky-500 transition-colors flex-shrink-0"
+                  title="Edit nama"
+                >
+                  <i class="bi bi-pencil-square text-sm"></i>
+                </button>
+              </div>
+
+              <!-- Edit Mode -->
+              <div v-else class="mt-2">
+                <p
+                  class="text-xs text-sky-600 dark:text-sky-400 mb-2 flex items-center gap-1"
+                >
+                  <i class="bi bi-info-circle"></i>
+                  Sedang mengedit nama mempelai
+                </p>
               </div>
             </div>
           </div>
@@ -69,6 +201,59 @@ const props = defineProps(["invitationData"]);
             </span>
           </div>
         </div>
+
+        <!-- Edit Form -->
+        <Transition name="slide-fade">
+          <div
+            v-if="isEditMode"
+            class="mb-6 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700"
+          >
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <FormBaseInput
+                v-model="formData.groom_name"
+                label="Nama Mempelai Pria"
+                placeholder="Masukkan nama mempelai pria"
+                required
+                :error="errors.groom_name"
+                :disabled="isSaving"
+                @input="validateField('groom_name')"
+                @blur="validateField('groom_name')"
+              />
+
+              <FormBaseInput
+                v-model="formData.bride_name"
+                label="Nama Mempelai Wanita"
+                placeholder="Masukkan nama mempelai wanita"
+                required
+                :error="errors.bride_name"
+                :disabled="isSaving"
+                @input="validateField('bride_name')"
+                @blur="validateField('bride_name')"
+              />
+            </div>
+
+            <div class="flex gap-3">
+              <button
+                @click="saveChanges"
+                :disabled="isSaving"
+                class="flex-1 py-2.5 px-4 flex justify-center items-center gap-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                <i v-if="!isSaving" class="bi bi-check-lg text-sm"></i>
+                <Spinner v-else />
+                <span>{{ isSaving ? "Menyimpan..." : "Simpan" }}</span>
+              </button>
+
+              <button
+                @click="toggleEditMode"
+                :disabled="isSaving"
+                class="flex-1 py-2.5 px-4 flex justify-center items-center gap-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-semibold transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                <i class="bi bi-x-lg text-sm"></i>
+                <span>Batal</span>
+              </button>
+            </div>
+          </div>
+        </Transition>
 
         <!-- Dates Info -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
@@ -139,3 +324,24 @@ const props = defineProps(["invitationData"]);
     </div>
   </div>
 </template>
+
+<style scoped>
+/* Slide fade animation */
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from {
+  transform: translateY(-10px);
+  opacity: 0;
+}
+
+.slide-fade-leave-to {
+  transform: translateY(-10px);
+  opacity: 0;
+}
+</style>

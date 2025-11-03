@@ -46,7 +46,6 @@ export const useThemeStore = defineStore("theme", () => {
     const formData = new FormData();
     formData.append("name", themeData.name);
     formData.append("theme_category_id", themeData.theme_category_id);
-    formData.append("link", themeData.link);
     formData.append("is_premium", themeData.is_premium ? "1" : "0");
 
     if (themeData.thumbnail) {
@@ -70,7 +69,6 @@ export const useThemeStore = defineStore("theme", () => {
     formData.append("_method", "PUT");
     formData.append("name", themeData.name);
     formData.append("theme_category_id", themeData.theme_category_id);
-    formData.append("link", themeData.link);
     formData.append("is_premium", themeData.is_premium ? "1" : "0");
 
     if (themeData.thumbnail) {

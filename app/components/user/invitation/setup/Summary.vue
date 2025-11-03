@@ -1,4 +1,8 @@
 <script setup>
+const config = useRuntimeConfig();
+
+const mainAppUrl = config.public.mainAppUrl;
+
 const props = defineProps({
   invitationData: {
     type: Object,
@@ -71,7 +75,7 @@ const handleReset = () => {
               <p
                 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white leading-relaxed"
               >
-                {{ invitationData.groom || "-" }}
+                {{ invitationData.groom_name || "-" }}
               </p>
               <div class="flex items-center justify-center gap-3 my-3">
                 <div
@@ -85,7 +89,7 @@ const handleReset = () => {
               <p
                 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white leading-relaxed"
               >
-                {{ invitationData.bride || "-" }}
+                {{ invitationData.bride_name || "-" }}
               </p>
             </div>
           </div>
@@ -143,7 +147,7 @@ const handleReset = () => {
                 </div>
               </div>
               <a
-                :href="props.themeData.link"
+                :href="`${mainAppUrl}/themes/${props.themeData?.slug}` || '#'"
                 target="_blank"
                 class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-semibold text-center shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-95 transition duration-300 flex items-center justify-center gap-2"
               >

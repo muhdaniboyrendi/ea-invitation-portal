@@ -1,4 +1,8 @@
 <script setup>
+const config = useRuntimeConfig();
+
+const mainAppUrl = config.public.mainAppUrl;
+
 const props = defineProps(["theme", "isSelected"]);
 const emit = defineEmits(["selectTheme"]);
 
@@ -62,7 +66,7 @@ const selectTheme = () => {
 
         <div class="space-y-4">
           <a
-            :href="props.theme?.link || '#'"
+            :href="`${mainAppUrl}/themes/${props.theme?.slug}` || '#'"
             target="_blank"
             :rel="props.theme?.name || 'null'"
             class="group/btn relative w-full inline-flex justify-center items-center px-4 py-2 backdrop-blur-md bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 dark:hover:from-sky-400 dark:hover:to-blue-400 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"

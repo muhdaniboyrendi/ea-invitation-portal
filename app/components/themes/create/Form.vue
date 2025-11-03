@@ -19,14 +19,6 @@ const validationPatterns = {
       minLength: "Nama tema minimal 3 karakter",
     },
   },
-  link: {
-    url: /^https?:\/\/(?:[-\w.])+(?:\.[a-zA-Z]{2,})+(?:\/[^?\s]*)?(?:\?[^#\s]*)?(?:#[^\s]*)?$/,
-    required: /^.+$/,
-    message: {
-      required: "Link tema wajib diisi",
-      url: "Link harus berupa URL yang valid",
-    },
-  },
   category: {
     required: /^.+$/,
     message: {
@@ -94,7 +86,6 @@ const {
 const initialFormState = {
   name: "",
   theme_category_id: "",
-  link: "",
   thumbnail: null,
   is_premium: false,
 };
@@ -117,7 +108,6 @@ const isFormValid = computed(() => {
   return !!(
     formData.name.trim() &&
     formData.theme_category_id &&
-    formData.link.trim() &&
     formData.thumbnail
   );
 });
@@ -143,7 +133,6 @@ const validateForm = () => {
   if (!validateField("name", formData.name)) isValid = false;
   if (!validateField("theme_category_id", formData.theme_category_id))
     isValid = false;
-  if (!validateField("link", formData.link)) isValid = false;
   if (!validateField("thumbnail", formData.thumbnail)) isValid = false;
 
   return isValid;
@@ -171,15 +160,6 @@ const handleCategoryChange = () => {
   ui.isFormTouched = true;
   clearBackendError("theme_category_id");
   validateField("theme_category_id", formData.theme_category_id);
-};
-
-const handleLinkInput = () => {
-  ui.isFormTouched = true;
-  clearBackendError("link");
-  clearTimeout(window.linkValidationTimeout);
-  window.linkValidationTimeout = setTimeout(() => {
-    validateField("link", formData.link);
-  }, 300);
 };
 
 const handlePremiumChange = () => {
@@ -213,7 +193,6 @@ const fetchThemeData = async () => {
     Object.assign(formData, {
       name: themeData.name || "",
       theme_category_id: themeData.theme_category_id?.toString() || "",
-      link: themeData.link || "",
       thumbnail: themeData.thumbnail || null,
       is_premium: Boolean(themeData.is_premium),
     });
@@ -388,16 +367,6 @@ onMounted(() => {
             @change="handlePremiumChange"
           />
         </div>
-
-        <!-- Theme Link -->
-        <FormBaseInput
-          v-model="formData.link"
-          label="Link Tema"
-          placeholder="https://example.com/theme-demo"
-          :required="true"
-          :error="validationErrors.link"
-          @input="handleLinkInput"
-        />
 
         <!-- Thumbnail Upload -->
         <FormImageUpload

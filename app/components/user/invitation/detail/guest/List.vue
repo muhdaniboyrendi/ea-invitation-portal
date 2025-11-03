@@ -69,10 +69,7 @@ const confirmDelete = async () => {
 <template>
   <div>
     <!-- Guest List with Data -->
-    <div
-      v-if="guests.length > 0"
-      class="space-y-4"
-    >
+    <div v-if="guests.length > 0" class="space-y-4">
       <!-- Header with Guest Limit Info -->
       <div class="flex items-start justify-between gap-3">
         <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -124,10 +121,7 @@ const confirmDelete = async () => {
               >
                 Kuota Penuh
               </span>
-              <span
-                v-else
-                class="text-blue-600 dark:text-blue-400"
-              >
+              <span v-else class="text-blue-600 dark:text-blue-400">
                 {{ guests.length }}/{{ maxGuests }}
               </span>
             </div>
@@ -141,7 +135,7 @@ const confirmDelete = async () => {
           v-for="guest in guests"
           :key="guest.id"
           :guest="guest"
-          :invitation-slug="invitationSlug"
+          :invitation-slug="props.invitationSlug"
           @edit="handleEdit"
           @delete="openDeleteModal"
         />

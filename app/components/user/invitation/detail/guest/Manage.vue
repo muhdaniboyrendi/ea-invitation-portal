@@ -154,9 +154,7 @@ onMounted(() => {
 
     <div v-else class="space-y-4 md:space-y-6">
       <!-- Stats & Add Button Card -->
-      <div
-        class="space-y-4 md:space-y-6"
-      >
+      <div class="space-y-4 md:space-y-6">
         <!-- Stats -->
         <UserInvitationDetailGuestStatsCard :guests="guests" />
 

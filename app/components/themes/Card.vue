@@ -1,9 +1,9 @@
 <script setup>
-const authStore = useAuthStore();
-const themeStore = useThemeStore();
+const { user } = storeToRefs(useAuthStore());
+const { themesRefresh, deleteTheme } = useThemeStore();
+const config = useRuntimeConfig();
 
-const { user } = storeToRefs(authStore);
-const { themesRefresh, deleteTheme } = themeStore;
+const mainAppUrl = config.public.mainAppUrl;
 
 const props = defineProps(["theme"]);
 
@@ -125,7 +125,7 @@ const handleDeleteTheme = async () => {
 
         <div class="flex items-center gap-3">
           <a
-            :href="props.theme?.link || '#'"
+            :href="`${mainAppUrl}/themes/${props.theme?.slug}` || '#'"
             target="_blank"
             :rel="props.theme?.name || 'null'"
             class="group/btn relative h-10 w-full inline-flex justify-center items-center px-4 backdrop-blur-md bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
