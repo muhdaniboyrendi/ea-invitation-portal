@@ -11,8 +11,7 @@ const { user } = storeToRefs(useAuthStore());
     <NuxtLayout>
       <div class="flex flex-col gap-y-6">
         <Header
-          title="Buat Undangan"
-          subtitle="Siapkan data untuk membuat undangan anda."
+          title="Detail Undangan"
           :has-button="false"
           icon="bi-envelope"
         />

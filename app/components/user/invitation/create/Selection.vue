@@ -44,7 +44,7 @@ const { packages, pending, error } = storeToRefs(usePackageStore());
 
     <div
       v-else
-      class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-x-6 gap-y-8"
+      class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8"
     >
       <PackageCard v-for="pkg in packages" :key="pkg.id" :package="pkg" />
     </div>

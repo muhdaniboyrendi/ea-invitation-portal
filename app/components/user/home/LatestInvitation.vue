@@ -5,7 +5,7 @@
       class="relative bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 shadow-2xl border border-slate-200/30 dark:border-slate-800/30 overflow-hidden"
     >
       <!-- Content -->
-      <div class="relative z-10 text-center max-w-4xl mx-auto">
+      <div class="relative z-10 text-center mx-auto">
         <div
           class="inline-flex items-center px-4 py-2 mt-4 md:mt-0 backdrop-blur-md bg-white/10 dark:bg-black/20 border border-slate-200/20 dark:border-slate-800/20 rounded-full shadow-lg"
         >

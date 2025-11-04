@@ -28,7 +28,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="relative mb-12 px-4 md:px-6">
+  <div class="relative md:mb-12 px-4 md:px-6">
     <!-- Header container -->
     <div>
       <div
