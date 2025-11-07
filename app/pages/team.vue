@@ -3,29 +3,44 @@ definePageMeta({
   middleware: ["auth"],
 });
 
-useHead({
-  title: "Tim Profesional Kami - EA Invitation",
-  meta: [
-    {
-      name: "description",
-      content:
-        "Kenali tim profesional EA Invitation yang berpengalaman. 8 anggota inti dengan 30+ tahun pengalaman gabungan, 98% tingkat kepuasan klien, dan 500+ proyek berhasil diselesaikan.",
-    },
-    {
-      property: "og:title",
-      content: "Tim Profesional Kami - EA Invitation",
-    },
-    {
-      property: "og:description",
-      content:
-        "Kenali tim profesional EA Invitation yang berpengalaman. 8 anggota inti dengan 30+ tahun pengalaman gabungan, 98% tingkat kepuasan klien, dan 500+ proyek berhasil diselesaikan.",
-    },
-    {
-      property: "og:type",
-      content: "website",
-    },
-  ],
+useSeoMeta({
+  title: "EA Invitation - Tim",
+  description:
+    "Buat undangan pernikahan digital yang indah, mudah, dan terjangkau. Pilih dari berbagai tema menarik dan bagikan kepada tamu undangan Anda dengan mudah.",
+  ogTitle: "EA Invitation - Tim",
+  ogDescription:
+    "Buat undangan pernikahan digital yang indah, mudah, dan terjangkau. Pilih dari berbagai tema menarik dan bagikan kepada tamu undangan Anda dengan mudah.",
+  ogImage: "/og-image.png",
+  ogUrl: "/",
+  twitterCard: "summary_large_image",
+  twitterTitle: "EA Invitation - Tim",
+  twitterDescription:
+    "Buat undangan pernikahan digital yang indah, mudah, dan terjangkau.",
+  twitterImage: "/og-image.png",
 });
+
+useSchemaOrg([
+  {
+    "@type": "WebSite",
+    name: "EA Invitation",
+    url: "/",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "/themes?search={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  },
+  {
+    "@type": "Organization",
+    name: "EA Invitation",
+    url: "/",
+    logo: "/favicon.ico",
+    sameAs: [
+      "https://instagram.com/ea.invitation",
+      "https://tiktok.com/ea.invitation",
+    ],
+  },
+]);
 </script>
 
 <template>

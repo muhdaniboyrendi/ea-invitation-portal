@@ -3,29 +3,44 @@ definePageMeta({
   middleware: ["auth"],
 });
 
-useHead({
-  title: "Layanan Kami - EA Invitation",
-  meta: [
-    {
-      name: "description",
-      content:
-        "Layanan lengkap undangan digital EA Invitation: pernikahan, ulang tahun, acara korporat, wisuda, dan custom event. Paket mulai Rp 75.000 dengan fitur premium dan support 24/7.",
-    },
-    {
-      property: "og:title",
-      content: "Layanan Kami - EA Invitation",
-    },
-    {
-      property: "og:description",
-      content:
-        "Layanan lengkap undangan digital EA Invitation: pernikahan, ulang tahun, acara korporat, wisuda, dan custom event. Paket mulai Rp 75.000 dengan fitur premium dan support 24/7.",
-    },
-    {
-      property: "og:type",
-      content: "website",
-    },
-  ],
+useSeoMeta({
+  title: "EA Invitation - Layanan",
+  description:
+    "Buat undangan pernikahan digital yang indah, mudah, dan terjangkau. Pilih dari berbagai tema menarik dan bagikan kepada tamu undangan Anda dengan mudah.",
+  ogTitle: "EA Invitation - Layanan",
+  ogDescription:
+    "Buat undangan pernikahan digital yang indah, mudah, dan terjangkau. Pilih dari berbagai tema menarik dan bagikan kepada tamu undangan Anda dengan mudah.",
+  ogImage: "/og-image.png",
+  ogUrl: "/",
+  twitterCard: "summary_large_image",
+  twitterTitle: "EA Invitation - Layanan",
+  twitterDescription:
+    "Buat undangan pernikahan digital yang indah, mudah, dan terjangkau.",
+  twitterImage: "/og-image.png",
 });
+
+useSchemaOrg([
+  {
+    "@type": "WebSite",
+    name: "EA Invitation",
+    url: "/",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "/themes?search={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  },
+  {
+    "@type": "Organization",
+    name: "EA Invitation",
+    url: "/",
+    logo: "/favicon.ico",
+    sameAs: [
+      "https://instagram.com/ea.invitation",
+      "https://tiktok.com/ea.invitation",
+    ],
+  },
+]);
 </script>
 
 <template>

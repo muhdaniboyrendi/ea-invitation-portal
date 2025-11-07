@@ -9,6 +9,17 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
   modules: ["@nuxtjs/color-mode", "@pinia/nuxt", "@nuxt/image", "nuxt-charts"],
+  nitro: {
+    compressPublicAssets: true,
+  },
+  app: {
+    head: {
+      title: "EA Invitation Dashboard", // default fallback title
+      htmlAttrs: {
+        lang: "id",
+      },
+    },
+  },
   runtimeConfig: {
     public: {
       // App
@@ -33,5 +44,57 @@ export default defineNuxtConfig({
     classPrefix: "",
     classSuffix: "",
     storageKey: "nuxt-color-mode",
+  },
+  site: {
+    url: "https://ea-invitation-landing.portal.app", // Ganti dengan domain Anda
+    name: "EA Invitation",
+    description:
+      "Platform undangan pernikahan digital yang elegan dan interaktif. Wujudkan momen bahagia pernikahan Anda dengan undangan digital modern.",
+    defaultLocale: "id",
+  },
+  seo: {
+    redirectToCanonicalSiteUrl: true,
+    meta: {
+      themeColor: "#8B5CF6", // Sesuaikan dengan brand color
+    },
+  },
+  sitemap: {
+    enabled: true,
+    strictNuxtContentPaths: true,
+    autoLastmod: true,
+    defaults: {
+      changefreq: "weekly",
+      priority: 0.5,
+    },
+  },
+  robots: {
+    enabled: true,
+    allow: "/",
+  },
+  ogImage: {
+    enabled: true,
+    defaults: {
+      width: 1200,
+      height: 630,
+      component: "OgImage",
+    },
+  },
+  schemaOrg: {
+    enabled: true,
+    identity: {
+      type: "Organization",
+      name: "EA Invitation",
+      url: process.env.APP_URL || "http://localhost:3000",
+      logo: "/favicon.png",
+      sameAs: [
+        "https://instagram.com/ea_invitation",
+        "https://tiktok.com/ea-invitation",
+        "https://twitter.com/ea_invitation",
+      ],
+    },
+  },
+  linkChecker: {
+    enabled: true,
+    excludeLinks: ["https://instagram.com/**"],
   },
 });
