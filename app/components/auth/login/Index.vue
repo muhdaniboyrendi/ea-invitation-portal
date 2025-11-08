@@ -1,16 +1,28 @@
 <script setup>
 const { login } = useAuthStore();
 const { loginWithGoogleRedirect } = useAuthStore();
+const config = useRuntimeConfig();
+
+const mainAppUrl = config.public.mainAppUrl;
 
 const form = reactive({
   email: "",
   password: "",
+  remember: false,
 });
 
 const showPassword = ref(false);
 const isLoading = ref(false);
 const isLoadingGoogle = ref(false);
 const isLoginFailed = ref(false);
+
+// Deteksi tema aplikasi
+const colorMode = useColorMode();
+const logoSrc = computed(() => {
+  return colorMode.value === "dark"
+    ? "/logo-text-dark.png"
+    : "/logo-text-light.png";
+});
 
 const handleLogin = async () => {
   isLoading.value = true;
@@ -19,9 +31,7 @@ const handleLogin = async () => {
     await login(form);
   } catch (error) {
     console.error("Login error:", error);
-
     form.password = "";
-
     isLoginFailed.value = true;
     setTimeout(() => {
       isLoginFailed.value = false;
@@ -34,7 +44,6 @@ const handleLogin = async () => {
 const handleGoogleRedirect = async () => {
   try {
     isLoadingGoogle.value = true;
-
     await loginWithGoogleRedirect();
   } catch (err) {
     console.error("Google Login error:", err);
@@ -49,303 +58,283 @@ const handleGoogleRedirect = async () => {
 </script>
 
 <template>
-  <div
-    id="login"
-    class="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 dark:from-black dark:via-purple-950 dark:to-dark"
-  >
-    <!-- Background Grid Pattern -->
-    <div class="absolute inset-0 overflow-hidden">
-      <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
+  <div id="login" class="relative min-h-screen bg-slate-50 dark:bg-slate-950">
+    <!-- Subtle Background Pattern -->
+    <div
+      class="absolute inset-0 overflow-hidden opacity-[0.02] dark:opacity-[0.05]"
+    >
+      <div class="absolute inset-0 bg-grid-pattern"></div>
     </div>
 
     <!-- Main Login Section -->
     <section
-      class="relative w-full max-w-7xl mx-auto z-10 flex items-center justify-center min-h-screen px-6 md:px-10 py-20"
+      class="relative z-10 flex items-center justify-center min-h-screen px-4 py-12"
     >
       <div class="w-full max-w-md">
-        <!-- Beta Badge -->
-        <div class="text-center mb-8">
-          <div
-            class="inline-flex items-center px-4 py-2 backdrop-blur-md bg-white/10 dark:bg-black/20 border border-white/20 rounded-full shadow-lg"
-          >
-            <span
-              class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"
-            ></span>
-            <span class="text-sm font-medium text-white/90"
-              >Secure Login Portal</span
-            >
-          </div>
+        <!-- Logo & Brand -->
+        <div class="text-center mb-6 md:mb-8">
+          <ClientOnly>
+            <a :href="mainAppUrl" aria-label="ea invitation">
+              <NuxtImg
+                :src="logoSrc"
+                width="200"
+                height="50"
+                loading="lazy"
+                quality="80"
+                class="mb-6 mx-auto"
+                alt="Logo"
+              />
+            </a>
+          </ClientOnly>
+          <p class="text-xs text-slate-500 dark:text-slate-500">
+            Kelola undangan digital Anda
+          </p>
         </div>
 
         <!-- Login Card -->
         <div
-          class="group relative bg-linear-to-r from-slate-900 via-purple-900 to-slate-900 dark:from-cyan-400 dark:via-purple-400 dark:to-pink-400 rounded-3xl"
+          class="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 dark:border-slate-800 space-y-6"
         >
-          <!-- Glow Effect -->
-          <div
-            class="absolute -inset-4 bg-gradient-to-r from-cyan-400/30 via-purple-400/30 to-pink-400/30 blur-2xl rounded-3xl group-hover:blur-3xl transition-all duration-500"
-          ></div>
-
-          <!-- Main Login Form -->
-          <div
-            class="relative bg-dark/10 dark:bg-dark/80 border border-white/20 rounded-3xl shadow-2xl p-6 md:p-8 lg:p-10 overflow-hidden"
+          <h1
+            class="text-2xl md:text-3xl font-bold text-center text-slate-900 dark:text-slate-50 mb-8"
           >
-            <!-- Header -->
-            <div class="text-center mb-8">
-              <div
-                class="w-16 h-16 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-2xl mb-6 flex items-center justify-center shadow-lg mx-auto"
-              >
-                <i class="bi bi-shield-lock text-white text-3xl"></i>
-              </div>
-
-              <h1
-                class="text-3xl lg:text-4xl font-bold mb-3 text-off-white dark:text-off-white/90"
-              >
-                Masuk ke
-                <br />
-                <span
-                  class="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient-x"
-                  >EA Invitation</span
-                >
-              </h1>
-
-              <p class="text-white/70">
-                Kelola undangan digital Anda dengan mudah
-              </p>
-
-              <div
-                v-if="isLoginFailed"
-                class="p-4 text-center bg-red-900/70 border border-red-400/50 rounded-2xl backdrop-blur-sm shadow-lg mt-5"
-              >
-                <p
-                  class="font-semibold mb-2 flex items-center justify-center text-red-200"
-                >
-                  <i class="bi bi-exclamation-triangle mr-2"></i> Gagal Masuk
-                </p>
-                <p class="text-sm text-red-300">
-                  Email atau Password anda salah
-                </p>
-              </div>
-            </div>
-
-            <!-- Login Form -->
-            <form @submit.prevent="handleLogin" class="space-y-6">
-              <!-- Email Input -->
-              <div class="space-y-2">
-                <label for="email" class="text-white/90 font-medium block">
-                  Email
-                </label>
-                <div class="relative">
-                  <input
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    required
-                    class="w-full px-4 py-4 backdrop-blur-md bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 transition-all duration-300"
-                    placeholder="nama@email.com"
-                  />
-                  <div
-                    class="absolute inset-y-0 right-0 pr-4 flex items-center"
-                  >
-                    <i class="bi bi-envelope text-white/40"></i>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Password Input -->
-              <div class="space-y-2">
-                <label for="password" class="text-white/90 font-medium block">
-                  Password
-                </label>
-                <div class="relative">
-                  <input
-                    id="password"
-                    v-model="form.password"
-                    :type="showPassword ? 'text' : 'password'"
-                    required
-                    class="w-full px-4 py-4 backdrop-blur-md bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 transition-all duration-300"
-                    placeholder="Masukkan password"
-                  />
-                  <button
-                    type="button"
-                    @click="showPassword = !showPassword"
-                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-white/40 hover:text-white/70 transition-colors"
-                  >
-                    <i
-                      :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"
-                    ></i>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Remember Me & Forgot Password -->
-              <div class="flex items-center justify-between">
-                <label class="flex items-center">
-                  <input
-                    v-model="form.remember"
-                    type="checkbox"
-                    class="w-4 h-4 rounded border-white/20 bg-white/5 text-cyan-400 focus:ring-cyan-400/50 focus:ring-2"
-                  />
-                  <span class="ml-2 text-white/70 text-sm">Ingat saya</span>
-                </label>
-
-                <NuxtLink
-                  to="/"
-                  class="text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
-                >
-                  Lupa password?
-                </NuxtLink>
-              </div>
-
-              <!-- Login Button -->
-              <button
-                type="submit"
-                :disabled="isLoading"
-                class="group relative w-full px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 disabled:hover:scale-100 transition-all duration-300"
-              >
-                <span
-                  v-if="!isLoading"
-                  class="relative z-10 flex items-center justify-center"
-                >
-                  Masuk
-                  <i class="bi bi-arrow-right ml-2"></i>
-                </span>
-                <span
-                  v-else
-                  class="relative z-10 flex items-center justify-center"
-                >
-                  <div
-                    class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"
-                  ></div>
-                  Memproses...
-                </span>
-              </button>
-            </form>
-
-            <!-- Divider -->
-            <div class="relative my-8">
-              <div class="absolute inset-0 flex items-center">
-                <div class="w-full border-t border-white/20"></div>
-              </div>
-              <div class="relative flex justify-center text-xs">
-                <span
-                  class="text-white bg-linear-to-r from-cyan-400 to-purple-400 rounded-full px-2 py-0.5 uppercase"
-                  >or</span
-                >
-              </div>
-            </div>
-
-            <!-- Social Login -->
-            <div class="space-y-3">
-              <button
-                @click="handleGoogleRedirect"
-                :disabled="isLoading"
-                type="button"
-                class="w-full px-4 py-3 backdrop-blur-md bg-white/5 hover:bg-white/10 border border-white/20 hover:border-white/30 text-white font-medium rounded-xl flex items-center justify-center space-x-2 transition-all duration-300 hover:scale-105"
-              >
-                <svg
-                  v-if="!isLoadingGoogle"
-                  class="w-5 h-5"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    fill="#4285F4"
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  />
-                  <path
-                    fill="#34A853"
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  />
-                  <path
-                    fill="#FBBC05"
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                  />
-                  <path
-                    fill="#EA4335"
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                  />
-                </svg>
-                <div
-                  v-else
-                  class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"
-                ></div>
-                <span>Masuk dengan Google</span>
-              </button>
-            </div>
-
-            <!-- Sign Up Link -->
-            <div class="text-center mt-8">
-              <p class="text-white/70">
-                Belum punya akun?
-                <NuxtLink
-                  to="/register"
-                  class="text-cyan-400 hover:text-cyan-300 font-medium transition-colors ml-1"
-                >
-                  Daftar sekarang
-                </NuxtLink>
-              </p>
-            </div>
-
-            <!-- Animated Bottom Line -->
+            Login
+          </h1>
+          <!-- Error Alert -->
+          <Transition
+            enter-active-class="transition-all duration-300"
+            enter-from-class="opacity-0 -translate-y-2"
+            enter-to-class="opacity-100 translate-y-0"
+            leave-active-class="transition-all duration-200"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+          >
             <div
-              class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 rounded-b-3xl"
-            ></div>
+              v-if="isLoginFailed"
+              role="alert"
+              aria-live="polite"
+              class="p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-2xl"
+            >
+              <div class="flex items-start gap-3">
+                <div
+                  class="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900 flex items-center justify-center flex-shrink-0"
+                >
+                  <i
+                    class="bi bi-exclamation-triangle text-red-500 text-sm"
+                  ></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p
+                    class="text-sm font-semibold text-red-900 dark:text-red-100 mb-1"
+                  >
+                    Login Gagal
+                  </p>
+                  <p class="text-xs text-red-600 dark:text-red-300">
+                    Email atau password yang Anda masukkan salah
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Transition>
+
+          <!-- Login Form -->
+          <form @submit.prevent="handleLogin" class="space-y-4">
+            <!-- Email Input -->
+            <div class="space-y-2">
+              <label
+                for="email"
+                class="block text-sm font-medium text-slate-900 dark:text-slate-50"
+              >
+                Email
+              </label>
+              <div class="relative">
+                <input
+                  id="email"
+                  v-model="form.email"
+                  type="email"
+                  required
+                  autocomplete="email"
+                  aria-label="Email address"
+                  class="w-full h-12 px-4 pr-12 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-50 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all"
+                  placeholder="nama@email.com"
+                  autofocus
+                />
+                <div
+                  class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none"
+                >
+                  <i
+                    class="bi bi-envelope text-slate-400 dark:text-slate-500"
+                  ></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Password Input -->
+            <div class="space-y-2">
+              <label
+                for="password"
+                class="block text-sm font-medium text-slate-900 dark:text-slate-50"
+              >
+                Password
+              </label>
+              <div class="relative">
+                <input
+                  id="password"
+                  v-model="form.password"
+                  :type="showPassword ? 'text' : 'password'"
+                  required
+                  autocomplete="current-password"
+                  aria-label="Password"
+                  class="w-full h-12 px-4 pr-12 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-50 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all"
+                  placeholder="Masukkan password"
+                />
+                <button
+                  type="button"
+                  @click="showPassword = !showPassword"
+                  :aria-label="
+                    showPassword ? 'Sembunyikan password' : 'Tampilkan password'
+                  "
+                  :aria-pressed="showPassword"
+                  class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 focus:outline-none focus:text-sky-500 transition-colors"
+                >
+                  <i
+                    :class="showPassword ? 'bi-eye-slash' : 'bi-eye'"
+                    class="bi"
+                  ></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Remember Me & Forgot Password -->
+            <div class="flex items-center justify-between text-sm">
+              <label class="flex items-center cursor-pointer group">
+                <input
+                  v-model="form.remember"
+                  type="checkbox"
+                  class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-sky-500 focus:ring-2 focus:ring-sky-500 focus:ring-offset-0 transition-colors"
+                  aria-label="Ingat saya"
+                />
+                <span
+                  class="ml-2 text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200 transition-colors"
+                >
+                  Ingat saya
+                </span>
+              </label>
+
+              <NuxtLink
+                to="/forgot-password"
+                class="text-sky-500 hover:text-sky-600 dark:hover:text-sky-400 font-medium transition-colors focus:outline-none focus:underline"
+              >
+                Lupa password?
+              </NuxtLink>
+            </div>
+
+            <!-- Login Button -->
+            <button
+              type="submit"
+              :disabled="isLoading"
+              :aria-busy="isLoading"
+              class="w-full h-12 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-semibold shadow-lg shadow-sky-500/25 disabled:opacity-50 disabled:shadow-none transition-all active:scale-[0.98] flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900"
+            >
+              <span v-if="!isLoading" class="flex items-center gap-2">
+                <i class="bi bi-box-arrow-in-right"></i>
+                Masuk
+              </span>
+              <span v-else class="flex items-center gap-2">
+                <div
+                  class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                  role="status"
+                  aria-label="Loading"
+                ></div>
+                Memproses...
+              </span>
+            </button>
+          </form>
+
+          <!-- Divider -->
+          <div class="relative">
+            <div class="absolute inset-0 flex items-center">
+              <div
+                class="w-full border-t border-slate-200 dark:border-slate-800"
+              ></div>
+            </div>
+            <div class="relative flex justify-center">
+              <span
+                class="px-3 py-1 bg-white dark:bg-slate-900 text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wider"
+              >
+                atau
+              </span>
+            </div>
           </div>
+
+          <!-- Social Login -->
+          <button
+            @click="handleGoogleRedirect"
+            :disabled="isLoading || isLoadingGoogle"
+            :aria-busy="isLoadingGoogle"
+            type="button"
+            class="w-full h-12 px-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-50 font-medium rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900"
+          >
+            <svg
+              v-if="!isLoadingGoogle"
+              class="w-5 h-5 flex-shrink-0"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                fill="#4285F4"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+              />
+              <path
+                fill="#EA4335"
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+              />
+            </svg>
+            <Spinner v-else />
+            <span>Masuk dengan Google</span>
+          </button>
         </div>
 
-        <!-- Additional Features -->
-        <div class="mt-8 grid grid-cols-3 gap-4 text-center">
-          <div class="group">
-            <div class="flex items-center justify-center mb-2">
-              <div class="w-2 h-2 bg-cyan-400 rounded-full mr-2"></div>
-              <span class="text-white/60 text-sm">Secure</span>
-            </div>
-          </div>
-          <div class="group">
-            <div class="flex items-center justify-center mb-2">
-              <div class="w-2 h-2 bg-purple-400 rounded-full mr-2"></div>
-              <span class="text-white/60 text-sm">Fast</span>
-            </div>
-          </div>
-          <div class="group">
-            <div class="flex items-center justify-center mb-2">
-              <div class="w-2 h-2 bg-pink-400 rounded-full mr-2"></div>
-              <span class="text-white/60 text-sm">Reliable</span>
-            </div>
-          </div>
+        <!-- Sign Up Link -->
+        <div class="text-center mt-6">
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            Belum punya akun?
+            <NuxtLink
+              to="/register"
+              class="text-sky-500 hover:text-sky-600 dark:hover:text-sky-400 font-semibold transition-colors focus:outline-none focus:underline ml-1"
+            >
+              Daftar sekarang
+            </NuxtLink>
+          </p>
         </div>
-
-        <AuthThemePreferences />
       </div>
     </section>
   </div>
 </template>
 
 <style scoped>
-@keyframes gradient-x {
-  0%,
-  100% {
-    background-size: 200% 200%;
-    background-position: left center;
-  }
-  50% {
-    background-size: 200% 200%;
-    background-position: right center;
-  }
-}
-
-.animate-gradient-x {
-  background-size: 200% 200%;
-  animation: gradient-x 4s ease infinite;
-}
-
-/* Grid pattern */
+/* Subtle Grid Pattern */
 .bg-grid-pattern {
-  background-image: linear-gradient(
-      rgba(255, 255, 255, 0.4) 1px,
-      transparent 1px
-    ),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.4) 1px, transparent 1px);
-  background-size: 60px 60px;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .bg-grid-pattern {
+    background-image: linear-gradient(
+        rgba(255, 255, 255, 0.03) 1px,
+        transparent 1px
+      ),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  }
 }
 </style>

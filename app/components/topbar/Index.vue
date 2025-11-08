@@ -2,13 +2,20 @@
 const { user } = storeToRefs(useAuthStore());
 const { logout } = useAuthStore();
 const colorMode = useColorMode();
+const config = useRuntimeConfig();
+
+const mainAppUrl = config.public.mainAppUrl;
 
 const isMenuOpen = ref(false);
 const isThemeMenuOpen = ref(false);
 const isLoading = ref(false);
 const showLogoutModal = ref(false);
 
-const currentTheme = ref("light");
+const logoSrc = computed(() => {
+  return colorMode.value === "dark"
+    ? "/logo-text-dark.png"
+    : "/logo-text-light.png";
+});
 
 const themeOptions = [
   {
@@ -36,17 +43,10 @@ const toggleMenu = () => {
   }
 };
 
-const navigateToProfile = () => {
-  navigateTo("/profile");
-  isMenuOpen.value = false;
-};
-
-// Handle logout button click - show confirmation modal
 const handleLogoutClick = () => {
   showLogoutModal.value = true;
 };
 
-// Handle logout confirmation
 const handleConfirmLogout = async () => {
   isLoading.value = true;
 
@@ -62,7 +62,6 @@ const handleConfirmLogout = async () => {
   }
 };
 
-// Handle logout modal close
 const handleLogoutModalClose = () => {
   if (!isLoading.value) {
     showLogoutModal.value = false;
@@ -81,34 +80,18 @@ const handleLogoutModalClose = () => {
     <header class="relative px-4 py-2">
       <div class="flex items-center justify-between mx-auto">
         <!-- Left side - App Title -->
-        <div class="flex items-center space-x-4">
-          <!-- App Logo/Icon -->
-          <div class="relative">
-            <div
-              class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center shadow-lg shadow-sky-500/25 dark:shadow-sky-400/20"
-            >
-              <i class="bi bi-cup-hot text-white text-xl"></i>
-            </div>
-            <!-- Enhanced glow effect -->
-            <div
-              class="absolute inset-0 rounded-2xl bg-gradient-to-br from-sky-500 to-sky-600 opacity-20 blur-xl animate-pulse-slow"
-            ></div>
-          </div>
-
-          <!-- App Title -->
-          <div class="flex flex-col">
-            <h1
-              class="text-2xl font-bold bg-gradient-to-r from-sky-600 via-sky-500 to-sky-600 dark:from-sky-400 dark:via-sky-500 dark:to-sky-400 bg-clip-text text-transparent"
-            >
-              EA Invitation
-            </h1>
-            <p
-              class="text-sm text-slate-600 dark:text-slate-300 -mt-1 font-medium"
-            >
-              Digital Wedding Invitation
-            </p>
-          </div>
-        </div>
+        <ClientOnly>
+          <a :href="mainAppUrl" aria-label="ea invitation">
+            <NuxtImg
+              :src="logoSrc"
+              width="160"
+              height="40"
+              loading="lazy"
+              quality="80"
+              alt="Logo"
+            />
+          </a>
+        </ClientOnly>
 
         <!-- Right side - User Menu -->
         <div class="relative">

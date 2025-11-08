@@ -19,29 +19,6 @@ useSeoMeta({
   twitterImage: "/og-image.png",
 });
 
-useSchemaOrg([
-  {
-    "@type": "WebSite",
-    name: "EA Invitation",
-    url: "/",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: "/themes?search={search_term_string}",
-      "query-input": "required name=search_term_string",
-    },
-  },
-  {
-    "@type": "Organization",
-    name: "EA Invitation",
-    url: "/",
-    logo: "/favicon.ico",
-    sameAs: [
-      "https://instagram.com/ea.invitation",
-      "https://tiktok.com/ea.invitation",
-    ],
-  },
-]);
-
 const { user } = storeToRefs(useAuthStore());
 
 // Mock user data - replace with actual data from auth store

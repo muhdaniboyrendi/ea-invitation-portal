@@ -1,5 +1,21 @@
 <!-- pages/auth/google/callback.vue -->
 <script setup>
+useSeoMeta({
+  title: "EA Invitation - Auth",
+  description:
+    "Buat undangan pernikahan digital yang indah, mudah, dan terjangkau. Pilih dari berbagai tema menarik dan bagikan kepada tamu undangan Anda dengan mudah.",
+  ogTitle: "EA Invitation - Auth",
+  ogDescription:
+    "Buat undangan pernikahan digital yang indah, mudah, dan terjangkau. Pilih dari berbagai tema menarik dan bagikan kepada tamu undangan Anda dengan mudah.",
+  ogImage: "/og-image.png",
+  ogUrl: "/",
+  twitterCard: "summary_large_image",
+  twitterTitle: "EA Invitation - Auth",
+  twitterDescription:
+    "Buat undangan pernikahan digital yang indah, mudah, dan terjangkau.",
+  twitterImage: "/og-image.png",
+});
+
 const { handleGoogleCallback } = useAuthStore();
 const route = useRoute();
 

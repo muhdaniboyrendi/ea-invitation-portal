@@ -8,7 +8,23 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  modules: ["@nuxtjs/color-mode", "@pinia/nuxt", "@nuxt/image", "nuxt-charts"],
+  modules: [
+    "@nuxtjs/color-mode",
+    "@pinia/nuxt",
+    "@nuxtjs/seo",
+    "@nuxt/image",
+    "nuxt-charts",
+  ],
+  colorMode: {
+    preference: "system",
+    fallback: "light",
+    hid: "nuxt-color-mode-script",
+    globalName: "__NUXT_COLOR_MODE__",
+    componentName: "ColorScheme",
+    classPrefix: "",
+    classSuffix: "",
+    storageKey: "nuxt-color-mode",
+  },
   nitro: {
     compressPublicAssets: true,
   },
@@ -35,16 +51,6 @@ export default defineNuxtConfig({
       midtransClientKey: process.env.MIDTRANS_CLIENT_KEY || "",
     },
   },
-  colorMode: {
-    preference: "system",
-    fallback: "light",
-    hid: "nuxt-color-mode-script",
-    globalName: "__NUXT_COLOR_MODE__",
-    componentName: "ColorScheme",
-    classPrefix: "",
-    classSuffix: "",
-    storageKey: "nuxt-color-mode",
-  },
   site: {
     url: "https://ea-invitation-landing.portal.app", // Ganti dengan domain Anda
     name: "EA Invitation",
@@ -55,7 +61,7 @@ export default defineNuxtConfig({
   seo: {
     redirectToCanonicalSiteUrl: true,
     meta: {
-      themeColor: "#8B5CF6", // Sesuaikan dengan brand color
+      themeColor: "#1c98ed", // Sesuaikan dengan brand color
     },
   },
   sitemap: {
@@ -85,7 +91,7 @@ export default defineNuxtConfig({
       type: "Organization",
       name: "EA Invitation",
       url: process.env.APP_URL || "http://localhost:3000",
-      logo: "/favicon.png",
+      logo: "/favicon.ico",
       sameAs: [
         "https://instagram.com/ea_invitation",
         "https://tiktok.com/ea-invitation",
