@@ -1,5 +1,9 @@
 <!-- UserInvitationDetailTheme -->
 <script setup>
+const config = useRuntimeConfig();
+
+const mainAppUrl = config.public.mainAppUrl;
+
 const props = defineProps(["invitationData"]);
 </script>
 
@@ -51,7 +55,7 @@ const props = defineProps(["invitationData"]);
 
         <div class="w-full flex flex-col sm:flex-row gap-x-6 gap-y-4">
           <a
-            :href="props.invitationData.theme?.link"
+            :href="`${mainAppUrl}/${props.invitationData.theme?.slug}`"
             target="_blank"
             class="w-full text-center py-3 px-6 rounded-2xl bg-gradient-to-r from-sky-500 to-sky-600 text-white transition-all duration-300 group/link shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
           >
