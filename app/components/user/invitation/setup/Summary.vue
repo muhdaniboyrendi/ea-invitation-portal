@@ -147,7 +147,7 @@ const handleReset = () => {
                 </div>
               </div>
               <a
-                :href="`${mainAppUrl}/themes/${props.themeData?.slug}` || '#'"
+                :href="`${mainAppUrl}/${props.themeData?.slug}` || '#'"
                 target="_blank"
                 class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-semibold text-center shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-95 transition duration-300 flex items-center justify-center gap-2"
               >

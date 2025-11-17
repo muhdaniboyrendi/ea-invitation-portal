@@ -81,6 +81,9 @@ const {
     formData.custom_backsound = file;
     formData.music_id = "";
     clearBackendError("custom_backsound");
+    
+    // Create preview URL for the uploaded audio file
+    createCustomAudioPreview(file);
   },
   onError: (message) => emit("error", message),
 });
@@ -102,6 +105,8 @@ const ui = reactive({
   isSubmitting: false,
   currentPlayingId: null,
   isAudioLoading: false,
+  customAudioUrl: null, // URL for custom audio preview
+  isPlayingCustom: false, // Track custom audio play state
 });
 
 // Computed
@@ -134,6 +139,14 @@ const selectedMusic = computed(() => {
 });
 
 const isPlaying = (musicId) => ui.currentPlayingId === musicId;
+
+// Custom Audio Preview
+const createCustomAudioPreview = (file) => {
+  if (ui.customAudioUrl) {
+    URL.revokeObjectURL(ui.customAudioUrl);
+  }
+  ui.customAudioUrl = URL.createObjectURL(file);
+};
 
 // Validation
 const validateField = (field, value) => {
@@ -172,6 +185,7 @@ const playMusic = async (music) => {
     ui.isAudioLoading = true;
     await audioPlayer.value.play();
     ui.currentPlayingId = music.id;
+    ui.isPlayingCustom = false;
   } catch (error) {
     emit("error", "Gagal memutar musik. Silakan coba lagi.");
     ui.currentPlayingId = null;
@@ -184,6 +198,59 @@ const pauseMusic = () => {
   if (audioPlayer.value) {
     audioPlayer.value.pause();
     ui.currentPlayingId = null;
+    ui.isPlayingCustom = false;
+  }
+};
+
+// Custom Audio Player
+const playCustomAudio = async () => {
+  try {
+    if (audioPlayer.value) {
+      audioPlayer.value.pause();
+      audioPlayer.value.currentTime = 0;
+    }
+
+    const audioUrl = ui.customAudioUrl || customBacksoundPreview.value;
+    if (!audioUrl) {
+      emit("error", "Audio tidak tersedia.");
+      return;
+    }
+
+    audioPlayer.value = new Audio(audioUrl);
+
+    audioPlayer.value.addEventListener("ended", () => {
+      ui.isPlayingCustom = false;
+    });
+
+    audioPlayer.value.addEventListener("error", () => {
+      emit("error", "Gagal memutar audio kustom.");
+      ui.isPlayingCustom = false;
+    });
+
+    ui.isAudioLoading = true;
+    await audioPlayer.value.play();
+    ui.isPlayingCustom = true;
+    ui.currentPlayingId = null;
+  } catch (error) {
+    emit("error", "Gagal memutar audio kustom. Silakan coba lagi.");
+    ui.isPlayingCustom = false;
+  } finally {
+    ui.isAudioLoading = false;
+  }
+};
+
+const pauseCustomAudio = () => {
+  if (audioPlayer.value) {
+    audioPlayer.value.pause();
+    ui.isPlayingCustom = false;
+  }
+};
+
+const handleCustomAudioPlay = () => {
+  if (ui.isPlayingCustom) {
+    pauseCustomAudio();
+  } else {
+    playCustomAudio();
   }
 };
 
@@ -193,6 +260,13 @@ const handleMusicSelect = (music) => {
   formData.custom_backsound = null;
   removeCustomBacksound();
   clearBackendError("music_id");
+  
+  // Clear custom audio preview
+  if (ui.customAudioUrl) {
+    URL.revokeObjectURL(ui.customAudioUrl);
+    ui.customAudioUrl = null;
+  }
+  ui.isPlayingCustom = false;
 };
 
 const handleMusicPlay = (music) => {
@@ -258,7 +332,9 @@ const fetchMainInfoData = async () => {
       formData.custom_backsound &&
       typeof formData.custom_backsound === "string"
     ) {
-      setCustomBacksoundPreview(response.custom_backsound_url);
+      setCustomBacksoundPreview(response.custom_music_url);
+      // Set the preview URL for existing custom audio
+      ui.customAudioUrl = response.custom_music_url;
     }
   } catch (error) {
     console.error(error);
@@ -336,6 +412,13 @@ const resetForm = () => {
   resetMainPhotoUpload();
   resetCustomBacksoundUpload();
   pauseMusic();
+  
+  // Clear custom audio preview
+  if (ui.customAudioUrl) {
+    URL.revokeObjectURL(ui.customAudioUrl);
+    ui.customAudioUrl = null;
+  }
+  ui.isPlayingCustom = false;
 };
 
 // Lifecycle
@@ -347,6 +430,11 @@ onBeforeUnmount(() => {
   if (audioPlayer.value) {
     audioPlayer.value.pause();
     audioPlayer.value = null;
+  }
+  
+  // Clean up custom audio URL
+  if (ui.customAudioUrl && formData.custom_backsound instanceof File) {
+    URL.revokeObjectURL(ui.customAudioUrl);
   }
 });
 </script>
@@ -508,25 +596,29 @@ onBeforeUnmount(() => {
           </div>
         </div>
 
-        <!-- Selected Custom Backsound -->
+        <!-- Selected Custom Backsound with Audio Player -->
         <div
           v-if="formData.custom_backsound || customBacksoundPreview"
-          class="relative overflow-hidden rounded-2xl bg-sky-50 dark:bg-sky-950 border-2 border-sky-200 dark:border-sky-800 p-3"
+          class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-sky-50 to-indigo-50 dark:from-sky-950 dark:to-indigo-950 border-2 border-sky-200 dark:border-sky-800 p-4"
         >
-          <div class="flex items-center gap-3">
+          <div class="flex items-start gap-3 mb-3">
             <div
-              class="w-11 h-11 rounded-lg bg-sky-500 flex items-center justify-center flex-shrink-0 shadow-sm"
+              class="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-500 flex items-center justify-center flex-shrink-0 shadow-lg"
             >
-              <i class="bi bi-music-note-beamed text-white text-lg"></i>
+              <i class="bi bi-music-note-beamed text-white text-xl"></i>
             </div>
             <div class="flex-1 min-w-0">
               <p
-                class="text-xs font-semibold text-slate-900 dark:text-slate-50"
+                class="text-sm font-bold text-slate-900 dark:text-slate-50 mb-0.5"
               >
                 Audio Kustom
               </p>
-              <p class="text-xs text-slate-600 dark:text-slate-300 truncate">
-                {{ customBacksoundPreview ? "Tersimpan" : "Baru dipilih" }}
+              <p class="text-xs text-slate-600 dark:text-slate-300">
+                {{
+                  customBacksoundPreview
+                    ? "Audio tersimpan"
+                    : "Audio baru dipilih"
+                }}
               </p>
             </div>
             <button
@@ -535,11 +627,70 @@ onBeforeUnmount(() => {
                 removeCustomBacksound();
                 formData.custom_backsound = null;
                 clearBackendError('custom_backsound');
+                if (
+                  ui.customAudioUrl &&
+                  formData.custom_backsound instanceof File
+                ) {
+                  URL.revokeObjectURL(ui.customAudioUrl);
+                }
+                ui.customAudioUrl = null;
+                ui.isPlayingCustom = false;
+                pauseMusic();
               "
               class="w-9 h-9 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-red-500 hover:bg-red-50 dark:hover:bg-red-950 flex items-center justify-center transition-all active:scale-95 flex-shrink-0"
             >
               <i class="bi bi-trash text-sm"></i>
             </button>
+          </div>
+
+          <!-- Audio Player Controls -->
+          <div
+            class="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-xl p-3 border border-sky-100 dark:border-sky-900"
+          >
+            <div class="flex items-center gap-3">
+              <button
+                type="button"
+                @click="handleCustomAudioPlay"
+                :disabled="ui.isAudioLoading"
+                class="w-11 h-11 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 text-white flex items-center justify-center transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex-shrink-0"
+              >
+                <i
+                  v-if="ui.isAudioLoading"
+                  class="bi bi-hourglass-split animate-spin"
+                ></i>
+                <i
+                  v-else-if="!ui.isPlayingCustom"
+                  class="bi bi-play-fill text-xl"
+                ></i>
+                <i v-else class="bi bi-pause-fill text-xl"></i>
+              </button>
+
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="flex gap-1">
+                    <div
+                      v-for="i in 3"
+                      :key="i"
+                      :class="[
+                        'w-1 rounded-full bg-sky-500 transition-all',
+                        ui.isPlayingCustom ? 'h-4 animate-pulse' : 'h-2',
+                      ]"
+                      :style="{ animationDelay: `${i * 0.15}s` }"
+                    ></div>
+                  </div>
+                  <span
+                    class="text-xs font-medium text-slate-700 dark:text-slate-200"
+                  >
+                    {{
+                      ui.isPlayingCustom ? "Sedang diputar..." : "Siap diputar"
+                    }}
+                  </span>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                  Klik tombol play untuk mendengarkan
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -616,7 +767,9 @@ onBeforeUnmount(() => {
             Pilih dari Library
           </label>
 
-          <div class="space-y-2 md:space-y-3 max-h-80 overflow-y-auto">
+          <div
+            class="space-y-2 md:space-y-3 max-h-80 overflow-y-auto scrollbar-hide"
+          >
             <UserInvitationFillMainInfoMusicCard
               v-for="music in musics"
               :key="music.id"
@@ -663,6 +816,8 @@ onBeforeUnmount(() => {
           label="Upload Audio Kustom"
           :preview="customBacksoundPreview"
           :error="validationErrors.custom_backsound"
+          :enable-compression="false"
+          help-text="Format: MP3, WAV, OGG, M4A (Maks. 20MB)"
           :disabled="!!formData.music_id"
           @change="
             (e) => {

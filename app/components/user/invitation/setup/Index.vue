@@ -84,8 +84,6 @@ const handleBackToCouple = () => {
 const submitForm = async () => {
   ui.isSubmitting = true;
   try {
-    console.log("Submitting invitation data:", invitationData);
-
     const response = await createInvitation(invitationData);
 
     showNotification("success", "Undangan berhasil dibuat!");

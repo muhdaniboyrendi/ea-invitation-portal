@@ -154,12 +154,6 @@ export const useVideoCompression = () => {
             URL.revokeObjectURL(video.src);
             video.remove();
 
-            console.log("Compression complete:", {
-              original: (file.size / (1024 * 1024)).toFixed(2) + "MB",
-              compressed:
-                (compressedFile.size / (1024 * 1024)).toFixed(2) + "MB",
-            });
-
             resolve(compressedFile);
           };
 

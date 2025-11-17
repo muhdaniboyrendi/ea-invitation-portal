@@ -17,11 +17,6 @@ export const useImageCompression = () => {
       errors.push(`${file.name}: Format tidak didukung (hanya JPG, PNG, WEBP)`);
     }
 
-    // Note: Tidak validasi size di sini karena akan dikompres
-    // if (file.size > MAX_SIZE) {
-    //   errors.push(`${file.name}: Ukuran file terlalu besar (maksimal 2MB)`);
-    // }
-
     return errors;
   };
 
@@ -83,13 +78,6 @@ export const useImageCompression = () => {
               const webpFile = new File([blob], fileName, {
                 type: COMPRESSION_SETTINGS.format,
                 lastModified: Date.now(),
-              });
-
-              console.log("Conversion complete:", {
-                original: (file.size / (1024 * 1024)).toFixed(2) + "MB",
-                compressed: (webpFile.size / (1024 * 1024)).toFixed(2) + "MB",
-                dimensions: `${width}x${height}`,
-                format: "WebP",
               });
 
               // Cleanup

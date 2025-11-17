@@ -444,6 +444,8 @@ onUnmounted(() => {
           :required="true"
           :preview="audioPreview"
           :error="validationErrors.audio"
+          :enable-compression="false"
+          help-text="Format: MP3, WAV, OGG, M4A (Maks. 20MB)"
           @change="handleAudioChange"
           @remove="handleAudioRemove"
         />
