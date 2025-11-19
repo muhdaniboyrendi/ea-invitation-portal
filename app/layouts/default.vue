@@ -1,3 +1,12 @@
+<script setup>
+// Script ini akan otomatis berlaku untuk SEMUA halaman yang pakai layout ini
+useHead({
+  meta: [
+    { name: 'robots', content: 'noindex, nofollow' }
+  ]
+})
+</script>
+
 <template>
   <div class="bg-slate-50 dark:bg-slate-950">
     <Topbar />

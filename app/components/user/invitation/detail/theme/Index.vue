@@ -11,9 +11,9 @@ const props = defineProps(["invitationData"]);
   <div
     class="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/50 dark:border-slate-800/50 overflow-hidden"
   >
-    <div class="relative p-6">
+    <div class="relative p-4 md:p-6">
       <!-- Header -->
-      <div class="flex items-center gap-4 mb-6">
+      <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
         <div
           class="h-12 w-12 rounded-2xl bg-gradient-to-r from-sky-500 to-sky-600 flex justify-center items-center shadow-lg"
         >
@@ -30,7 +30,7 @@ const props = defineProps(["invitationData"]);
       </div>
 
       <!-- Theme Details -->
-      <div class="space-y-4">
+      <div class="space-y-3 md:space-y-4">
         <div
           class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100/50 dark:border-slate-700/50"
         >
@@ -53,7 +53,7 @@ const props = defineProps(["invitationData"]);
           }}</span>
         </div>
 
-        <div class="w-full flex flex-col sm:flex-row gap-x-6 gap-y-4">
+        <div class="w-full flex flex-col sm:flex-row gap-x-4 gap-y-3 mt-4">
           <a
             :href="`${mainAppUrl}/${props.invitationData.theme?.slug}`"
             target="_blank"

@@ -4,20 +4,21 @@ definePageMeta({
 });
 
 useSeoMeta({
-  title: "EA Invitation - Masuk",
+  title: "Masuk ke Akun Anda",
+  titleTemplate: "%s - EA Invitation Dashboard",
   description:
-    "Buat undangan pernikahan digital yang indah, mudah, dan terjangkau. Pilih dari berbagai tema menarik dan bagikan kepada tamu undangan Anda dengan mudah.",
-  ogTitle: "EA Invitation - Masuk",
-  ogDescription:
-    "Buat undangan pernikahan digital yang indah, mudah, dan terjangkau. Pilih dari berbagai tema menarik dan bagikan kepada tamu undangan Anda dengan mudah.",
-  ogImage: "/og-image.png",
-  ogUrl: "/",
-  twitterCard: "summary_large_image",
-  twitterTitle: "EA Invitation - Masuk",
-  twitterDescription:
-    "Buat undangan pernikahan digital yang indah, mudah, dan terjangkau.",
-  twitterImage: "/og-image.png",
+    "Masuk ke dashboard EA Invitation untuk mulai membuat dan mengelola undangan pernikahan digital Anda.",
+  // Mencegah Google meng-cache halaman login (untuk keamanan)
+  robots: "index, noarchive",
 });
+
+// Schema: Memberitahu Google ini adalah halaman aksi potensial
+useSchemaOrg([
+  defineWebPage({
+    "@type": "CheckoutPage", // Atau 'ProfilePage', menandakan area transaksional/personal
+    name: "Login Page",
+  }),
+]);
 </script>
 
 <template>

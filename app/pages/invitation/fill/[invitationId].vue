@@ -20,6 +20,9 @@ useSeoMeta({
 });
 
 const { user } = storeToRefs(useAuthStore());
+const route = useRoute();
+
+const invitationId = route.params.invitationId;
 </script>
 
 <template>
@@ -29,8 +32,9 @@ const { user } = storeToRefs(useAuthStore());
         <Header
           title="Isi Undangan"
           subtitle="Siapkan data untuk mengisi data undangan anda."
-          :has-button="false"
           icon="bi-envelope"
+          button-text="Kembali ke Dashboard"
+          :button-link="`/invitation/${invitationId}`"
         />
         <UserInvitationFill />
       </div>

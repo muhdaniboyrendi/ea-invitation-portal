@@ -7,9 +7,9 @@ const props = defineProps(["invitationData"]);
   <div
     class="relative bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden"
   >
-    <div class="relative p-6">
+    <div class="relative p-4 md:p-6">
       <!-- Header -->
-      <div class="flex items-center gap-4 mb-6">
+      <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
         <div
           class="h-12 w-12 rounded-2xl bg-sky-500 flex justify-center items-center shadow-sm"
         >
@@ -27,7 +27,7 @@ const props = defineProps(["invitationData"]);
 
       <!-- Payment Status Badge & Action -->
       <div
-        class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
+        class="mb-4 md:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
       >
         <div
           :class="{
@@ -74,17 +74,17 @@ const props = defineProps(["invitationData"]);
           </span>
         </div>
 
-        <button
+        <!-- <button
           class="py-3 px-6 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-semibold hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg shadow-sky-500/25 flex items-center gap-2"
         >
           <span>Tingkatkan Paket</span>
           <i class="bi bi-chevron-double-up"></i>
-        </button>
+        </button> -->
       </div>
 
       <!-- Package Info -->
       <div
-        class="mb-6 p-4 rounded-2xl bg-sky-50 dark:bg-sky-950 border border-sky-200 dark:border-sky-800"
+        class="mb-4 md:mb-6 p-4 rounded-2xl bg-sky-50 dark:bg-sky-950 border border-sky-200 dark:border-sky-800"
       >
         <div class="flex items-center justify-between">
           <div>

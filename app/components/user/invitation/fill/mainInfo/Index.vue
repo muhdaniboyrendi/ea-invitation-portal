@@ -81,7 +81,7 @@ const {
     formData.custom_backsound = file;
     formData.music_id = "";
     clearBackendError("custom_backsound");
-    
+
     // Create preview URL for the uploaded audio file
     createCustomAudioPreview(file);
   },
@@ -260,7 +260,7 @@ const handleMusicSelect = (music) => {
   formData.custom_backsound = null;
   removeCustomBacksound();
   clearBackendError("music_id");
-  
+
   // Clear custom audio preview
   if (ui.customAudioUrl) {
     URL.revokeObjectURL(ui.customAudioUrl);
@@ -412,7 +412,7 @@ const resetForm = () => {
   resetMainPhotoUpload();
   resetCustomBacksoundUpload();
   pauseMusic();
-  
+
   // Clear custom audio preview
   if (ui.customAudioUrl) {
     URL.revokeObjectURL(ui.customAudioUrl);
@@ -431,7 +431,7 @@ onBeforeUnmount(() => {
     audioPlayer.value.pause();
     audioPlayer.value = null;
   }
-  
+
   // Clean up custom audio URL
   if (ui.customAudioUrl && formData.custom_backsound instanceof File) {
     URL.revokeObjectURL(ui.customAudioUrl);
@@ -801,6 +801,7 @@ onBeforeUnmount(() => {
         </div>
 
         <div
+          v-if="props.packageId != 1"
           class="relative w-full border-t border-slate-200 dark:border-slate-800"
         >
           <span

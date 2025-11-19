@@ -4,17 +4,21 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   compatibilityDate: "2025-08-15",
   devtools: { enabled: true },
+
   css: ["~/assets/css/main.css", "bootstrap-icons/font/bootstrap-icons.css"],
+
   vite: {
     plugins: [tailwindcss()],
   },
+
   modules: [
     "@nuxtjs/color-mode",
     "@pinia/nuxt",
-    "@nuxtjs/seo",
     "@nuxt/image",
     "nuxt-charts",
+    "@nuxtjs/seo",
   ],
+
   colorMode: {
     preference: "system",
     fallback: "light",
@@ -25,82 +29,78 @@ export default defineNuxtConfig({
     classSuffix: "",
     storageKey: "nuxt-color-mode",
   },
+
   nitro: {
     compressPublicAssets: true,
   },
-  app: {
-    head: {
-      title: "EA Invitation Dashboard", // default fallback title
-      htmlAttrs: {
-        lang: "id",
-      },
-    },
-  },
+
   runtimeConfig: {
     public: {
       // App
       mainAppUrl: process.env.MAIN_APP_URL || "http://localhost:3000",
       appUrl: process.env.APP_URL || "http://localhost:3001",
-
       // API
       apiBaseUrl: process.env.API_BASE_URL || "http://127.0.0.1:8000/api",
       storageBaseUrl:
         process.env.STORAGE_BASE_URL || "http://127.0.0.1:8000/storage",
-
       // Midtrans
       midtransClientKey: process.env.MIDTRANS_CLIENT_KEY || "",
     },
   },
+
+  // --- OPTIMASI SEO & SECURITY ---
   site: {
-    url: "https://ea-invitation-landing.portal.app", // Ganti dengan domain Anda
-    name: "EA Invitation",
-    description:
-      "Platform undangan pernikahan digital yang elegan dan interaktif. Wujudkan momen bahagia pernikahan Anda dengan undangan digital modern.",
-    defaultLocale: "id",
+    url: "https://app.eainvitation.com",
+    name: "EA Invitation Dashboard",
+    indexable: true,
   },
-  seo: {
-    redirectToCanonicalSiteUrl: true,
-    meta: {
-      themeColor: "#1c98ed", // Sesuaikan dengan brand color
-    },
-  },
-  sitemap: {
-    enabled: true,
-    strictNuxtContentPaths: true,
-    autoLastmod: true,
-    defaults: {
-      changefreq: "weekly",
-      priority: 0.5,
-    },
-  },
+
+  // 1. Robots.txt: Gunakan logic Folder Level
+  // "Disallow: /invitation" otomatis memblokir "/invitation/create", "/invitation/123", dll.
   robots: {
-    enabled: true,
-    allow: "/",
+    allow: ["/login", "/register", "/forgot-password"],
+    disallow: [
+      "/dashboard",
+      "/invitation", // Memblokir semua sub-path invitation
+      "/themes", // Memblokir semua sub-path themes
+      "/packages",
+      "/musics",
+      "/transaction",
+      "/profile",
+      "/auth",
+      "/api",
+      "/admin",
+      "/_nuxt", // Best practice: blokir file internal nuxt
+    ],
   },
-  ogImage: {
-    enabled: true,
-    defaults: {
-      width: 1200,
-      height: 630,
-      component: "OgImage",
-    },
+
+  // 2. Sitemap: Gunakan Wildcard (**)
+  sitemap: {
+    // Hanya masukkan halaman publik. Sisanya exclude dengan pattern.
+    exclude: [
+      "/dashboard/**", // ** artinya: folder ini dan semua isinya sedalam apapun
+      "/invitation/**",
+      "/themes/**",
+      "/packages/**",
+      "/musics/**",
+      "/transaction/**",
+      "/profile/**",
+      "/auth/**",
+      "/api/**",
+      "/admin/**",
+    ],
   },
-  schemaOrg: {
-    enabled: true,
-    identity: {
-      type: "Organization",
-      name: "EA Invitation",
-      url: process.env.APP_URL || "http://localhost:3000",
-      logo: "/favicon.ico",
-      sameAs: [
-        "https://instagram.com/ea_invitation",
-        "https://tiktok.com/ea-invitation",
-        "https://twitter.com/ea_invitation",
-      ],
-    },
-  },
-  linkChecker: {
-    enabled: true,
-    excludeLinks: ["https://instagram.com/**"],
+
+  // 3. BONUS: Route Rules (Security Layer Tambahan)
+  // Ini memaksa server mengirim header 'X-Robots-Tag: noindex' untuk route sensitif.
+  // Lebih kuat daripada robots.txt (karena robots.txt hanya himbauan, ini perintah server).
+  routeRules: {
+    "/dashboard/**": { robots: false },
+    "/invitation/**": { robots: false },
+    "/profile/**": { robots: false },
+    "/transaction/**": { robots: false },
+    // Pastikan Login/Register tetap bisa diakses
+    "/login": { robots: true },
+    "/register": { robots: true },
   },
 });

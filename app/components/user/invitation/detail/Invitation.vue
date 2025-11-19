@@ -125,9 +125,11 @@ const saveChanges = async () => {
     <div
       class="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/50 dark:border-slate-800/50 overflow-hidden"
     >
-      <div class="relative p-6">
+      <div class="relative p-4 md:p-6">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row justify-between mb-6 gap-y-6">
+        <div
+          class="flex flex-col sm:flex-row justify-between mb-4 md:mb-6 gap-y-4 md:gap-y-6"
+        >
           <div class="flex items-center space-x-3 flex-1">
             <div
               class="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center shadow-lg flex-shrink-0"
@@ -256,7 +258,9 @@ const saveChanges = async () => {
         </Transition>
 
         <!-- Dates Info -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6"
+        >
           <div
             class="p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100/50 dark:border-slate-700/50"
           >
@@ -301,7 +305,7 @@ const saveChanges = async () => {
         </div>
 
         <!-- Action Buttons -->
-        <div class="w-full flex flex-col sm:flex-row gap-x-6 gap-y-4">
+        <div class="w-full flex flex-col sm:flex-row gap-3 md:gap-4">
           <NuxtLink
             :to="`/invitation/fill/${props.invitationData.id}`"
             class="w-full py-3 px-6 flex justify-center items-center gap-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white rounded-2xl font-semibold transition-all duration-300 hover:scale-105 active:scale-95"

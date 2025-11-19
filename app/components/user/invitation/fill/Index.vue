@@ -1,6 +1,6 @@
 <script setup>
-const route = useRoute();
 const { fetchInvitation } = useInvitationStore();
+const route = useRoute();
 
 const invitationId = route.params.invitationId;
 
@@ -16,8 +16,8 @@ const baseStepDetails = [
   { id: 2, title: "Mempelai Pria", icon: "bi-person-fill", alwaysShow: true },
   { id: 3, title: "Mempelai Wanita", icon: "bi-person-fill", alwaysShow: true },
   { id: 4, title: "Daftar Acara", icon: "bi-calendar-event", alwaysShow: true },
-  { id: 5, title: "Kisah Cinta", icon: "bi-book-heart", alwaysShow: true },
-  { id: 6, title: "Daftar Hadiah", icon: "bi-gift", alwaysShow: true },
+  { id: 5, title: "Kisah Cinta", icon: "bi-heart", alwaysShow: true },
+  { id: 6, title: "Daftar Hadiah", icon: "bi-gift", alwaysShow: false },
   { id: 7, title: "Galeri Foto", icon: "bi-images", alwaysShow: true },
   { id: 8, title: "Video", icon: "bi-play-circle", alwaysShow: false },
   { id: 9, title: "Selesai", icon: "bi-check-circle-fill", alwaysShow: true },
@@ -26,9 +26,9 @@ const baseStepDetails = [
 const stepDetails = computed(() => {
   const packageId = Number(invitationData.value?.order?.package_id);
 
-  // Jika package_id === 1, hapus step Video (id: 8)
+  // Jika package_id === 1, hapus step Video (id: 8) dan Daftar Hadiah (id: 6)
   if (packageId === 1) {
-    return baseStepDetails.filter((step) => step.id !== 8);
+    return baseStepDetails.filter((step) => step.id !== 8 && step.id !== 6);
   }
 
   return baseStepDetails;
@@ -36,17 +36,27 @@ const stepDetails = computed(() => {
 
 const totalSteps = computed(() => stepDetails.value.length);
 
+const currentStepId = computed(() => {
+  const step = stepDetails.value[currentStep.value - 1];
+  return step ? step.id : null;
+});
+
 const currentTitle = computed(() => {
-  const step = stepDetails.value.find((s) => s.id === currentStep.value);
+  const step = stepDetails.value[currentStep.value - 1];
   return step ? step.title : "";
 });
 
 const currentIcon = computed(() => {
-  const step = stepDetails.value.find((s) => s.id === currentStep.value);
+  const step = stepDetails.value[currentStep.value - 1];
   return step ? step.icon : "bi-circle";
 });
 
 const hasVideoStep = computed(() => {
+  const packageId = Number(invitationData.value?.order?.package_id);
+  return packageId !== 1;
+});
+
+const hasGiftsStep = computed(() => {
   const packageId = Number(invitationData.value?.order?.package_id);
   return packageId !== 1;
 });
@@ -304,9 +314,9 @@ onMounted(() => {
           @next="handleNextStep"
         />
 
-        <!-- Step 6: Daftar Hadiah -->
+        <!-- Step 6: Daftar Hadiah (Conditional) -->
         <UserInvitationFillGifts
-          v-if="currentStep === 6"
+          v-if="currentStep === 6 && hasGiftsStep"
           :invitation-id="invitationId"
           :package-id="invitationData.order.package_id"
           @success="handleFormSuccess"
@@ -317,7 +327,10 @@ onMounted(() => {
 
         <!-- Step 7: Galeri Foto -->
         <UserInvitationFillGalleries
-          v-if="currentStep === 7"
+          v-if="
+            (hasGiftsStep && hasVideoStep && currentStep === 7) ||
+            (!hasGiftsStep && !hasVideoStep && currentStep === 6)
+          "
           :invitation-id="invitationId"
           :package-id="invitationData.order.package_id"
           @success="handleFormSuccess"
@@ -339,7 +352,9 @@ onMounted(() => {
         <UserInvitationFillComplete
           v-if="
             (currentStep === 9 && hasVideoStep) ||
-            (currentStep === 8 && !hasVideoStep)
+            (currentStep === 8 && !hasVideoStep) ||
+            (currentStep === 7 && !hasGiftsStep && !hasVideoStep) ||
+            (currentStep === 6 && !hasGiftsStep && hasVideoStep)
           "
           :invitation-id="invitationId"
           :package-id="invitationData.order.package_id"
