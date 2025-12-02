@@ -11,14 +11,6 @@ useSeoMeta({
   // Mencegah Google meng-cache halaman login (untuk keamanan)
   robots: "index, noarchive",
 });
-
-// Schema: Memberitahu Google ini adalah halaman aksi potensial
-useSchemaOrg([
-  defineWebPage({
-    "@type": "CheckoutPage", // Atau 'ProfilePage', menandakan area transaksional/personal
-    name: "Login Page",
-  }),
-]);
 </script>
 
 <template>

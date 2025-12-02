@@ -306,6 +306,8 @@ const submitForm = async () => {
     musicsRefresh();
     emit("success");
   } catch (error) {
+    console.error(error);
+    console.error(error.validationErrors);
     console.error(
       `Error ${isEditMode.value ? "updating" : "creating"} music:`,
       error
