@@ -1,8 +1,6 @@
-import { defineStore } from "pinia";
-
 export const useOrderStore = defineStore("order", () => {
   const config = useRuntimeConfig();
-  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiBaseUrlPublic = config.public.apiBaseUrlPublic;
 
   const handleApiError = (error) => {
     const err = new Error(

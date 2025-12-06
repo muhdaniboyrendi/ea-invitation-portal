@@ -1,6 +1,6 @@
 export const useMainInfoStore = defineStore("mainInfo", () => {
   const config = useRuntimeConfig();
-  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiBaseUrlPublic = config.public.apiBaseUrlPublic;
 
   const handleApiError = (error) => {
     const err = new Error(
@@ -13,7 +13,7 @@ export const useMainInfoStore = defineStore("mainInfo", () => {
 
   const fetchMainInfo = async (id) => {
     try {
-      const response = await $fetch(`${apiBaseUrl}/main-infos/${id}`, {
+      const response = await $fetch(`${apiBaseUrlPublic}/main-infos/${id}`, {
         method: "GET",
         headers: {
           Accept: "application/json",

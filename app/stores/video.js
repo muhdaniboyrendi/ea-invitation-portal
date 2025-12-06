@@ -1,6 +1,6 @@
 export const useVideoStore = defineStore("video", () => {
   const config = useRuntimeConfig();
-  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiBaseUrlPublic = config.public.apiBaseUrlPublic;
 
   const handleApiError = (error) => {
     const err = new Error(
@@ -13,13 +13,16 @@ export const useVideoStore = defineStore("video", () => {
 
   const fetchVideos = async (invitationId) => {
     try {
-      const response = await $fetch(`${apiBaseUrl}/videos/${invitationId}`, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await $fetch(
+        `${apiBaseUrlPublic}/videos/${invitationId}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       return response.data;
     } catch (error) {

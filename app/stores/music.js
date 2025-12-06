@@ -1,13 +1,13 @@
 export const useMusicStore = defineStore("music", () => {
   const config = useRuntimeConfig();
-  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiBaseUrlPublic = config.public.apiBaseUrlPublic;
 
   const {
     data: musics,
     error: musicsError,
     pending: musicsPending,
     refresh: musicsRefresh,
-  } = useFetch(`${apiBaseUrl}/musics`, {
+  } = useFetch(`${apiBaseUrlPublic}/musics`, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -28,7 +28,7 @@ export const useMusicStore = defineStore("music", () => {
 
   const fetchMusic = async (id) => {
     try {
-      const response = await $fetch(`${apiBaseUrl}/musics/${id}`, {
+      const response = await $fetch(`${apiBaseUrlPublic}/musics/${id}`, {
         method: "GET",
         headers: {
           Accept: "application/json",

@@ -1,13 +1,13 @@
 export const useThemeCategoryStore = defineStore("themeCategory", () => {
   const config = useRuntimeConfig();
-  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiBaseUrlPublic = config.public.apiBaseUrlPublic;
 
   const {
     data: categories,
     error: categoryError,
     pending: categoriesPending,
     refresh: categoriesRefresh,
-  } = useFetch(`${apiBaseUrl}/categories`, {
+  } = useFetch(`${apiBaseUrlPublic}/categories`, {
     method: "GET",
     headers: {
       Accept: "application/json",

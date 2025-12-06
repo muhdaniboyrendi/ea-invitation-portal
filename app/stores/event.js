@@ -1,6 +1,6 @@
 export const useEventStore = defineStore("event", () => {
   const config = useRuntimeConfig();
-  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiBaseUrlPublic = config.public.apiBaseUrlPublic;
 
   const handleApiError = (error) => {
     const err = new Error(
@@ -13,7 +13,7 @@ export const useEventStore = defineStore("event", () => {
 
   const fetchEvents = async (invitationId) => {
     try {
-      const response = await $fetch(`${apiBaseUrl}/events/${invitationId}`, {
+      const response = await $fetch(`${apiBaseUrlPublic}/events/${invitationId}`, {
         method: "GET",
         headers: {
           Accept: "application/json",

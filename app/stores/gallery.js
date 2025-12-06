@@ -1,6 +1,6 @@
 export const useGalleryStore = defineStore("gallery", () => {
   const config = useRuntimeConfig();
-  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiBaseUrlPublic = config.public.apiBaseUrlPublic;
 
   const handleApiError = (error) => {
     const err = new Error(
@@ -13,7 +13,7 @@ export const useGalleryStore = defineStore("gallery", () => {
 
   const fetchGalleries = async (invitationId) => {
     try {
-      const response = await $fetch(`${apiBaseUrl}/galleries/${invitationId}`, {
+      const response = await $fetch(`${apiBaseUrlPublic}/galleries/${invitationId}`, {
         method: "GET",
         headers: {
           Accept: "application/json",

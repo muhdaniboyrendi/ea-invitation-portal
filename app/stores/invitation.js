@@ -1,6 +1,6 @@
 export const useInvitationStore = defineStore("invitation", () => {
   const config = useRuntimeConfig();
-  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiBaseUrlPublic = config.public.apiBaseUrlPublic;
 
   const {
     data: userInvitations,

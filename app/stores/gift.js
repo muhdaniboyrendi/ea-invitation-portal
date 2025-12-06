@@ -1,6 +1,6 @@
 export const useGiftStore = defineStore("gift", () => {
   const config = useRuntimeConfig();
-  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiBaseUrlPublic = config.public.apiBaseUrlPublic;
 
   const handleApiError = (error) => {
     const err = new Error(
@@ -13,7 +13,7 @@ export const useGiftStore = defineStore("gift", () => {
 
   const fetchGifts = async (invitationId) => {
     try {
-      const response = await $fetch(`${apiBaseUrl}/gifts/${invitationId}`, {
+      const response = await $fetch(`${apiBaseUrlPublic}/gifts/${invitationId}`, {
         method: "GET",
         headers: {
           Accept: "application/json",

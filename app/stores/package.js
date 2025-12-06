@@ -1,13 +1,13 @@
 export const usePackageStore = defineStore("package", () => {
   const config = useRuntimeConfig();
-  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiBaseUrlPublic = config.public.apiBaseUrlPublic;
 
   const {
     data: packages,
     error,
     pending,
     refresh,
-  } = useFetch(`${apiBaseUrl}/packages`, {
+  } = useFetch(`${apiBaseUrlPublic}/packages`, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -28,7 +28,7 @@ export const usePackageStore = defineStore("package", () => {
 
   const fetchPackage = async (id) => {
     try {
-      const response = await $fetch(`${apiBaseUrl}/packages/${id}`, {
+      const response = await $fetch(`${apiBaseUrlPublic}/packages/${id}`, {
         method: "GET",
         headers: {
           Accept: "application/json",

@@ -1,7 +1,7 @@
 // app/stores/auth.js
 export const useAuthStore = defineStore("auth", () => {
   const config = useRuntimeConfig();
-  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiBaseUrlPublic = config.public.apiBaseUrlPublic;
 
   const user = useState("user", () => null);
   const isLoggedIn = computed(() => !!user.value);
@@ -109,7 +109,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   const loginWithGoogleRedirect = async () => {
     try {
-      const response = await $fetch(`${apiBaseUrl}/auth/google/redirect`, {
+      const response = await $fetch(`${apiBaseUrlPublic}/auth/google/redirect`, {
         method: "GET",
       });
 

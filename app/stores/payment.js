@@ -2,7 +2,7 @@ export const usePaymentStore = defineStore("payment", () => {
   const config = useRuntimeConfig();
   const { userOrdersRefresh } = useOrderStore();
 
-  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiBaseUrlPublic = config.public.apiBaseUrlPublic;
 
   const handleApiError = (error) => {
     const err = new Error(
@@ -56,7 +56,7 @@ export const usePaymentStore = defineStore("payment", () => {
 
   const getUserOrder = async () => {
     try {
-      const res = await $fetch(`${apiBaseUrl}/payments/orders`, {
+      const res = await $fetch(`${apiBaseUrlPublic}/payments/orders`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -70,7 +70,7 @@ export const usePaymentStore = defineStore("payment", () => {
 
   const getOrderStatus = async (orderId) => {
     try {
-      const res = await $fetch(`${apiBaseUrl}/payments/orders/${orderId}`, {
+      const res = await $fetch(`${apiBaseUrlPublic}/payments/orders/${orderId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

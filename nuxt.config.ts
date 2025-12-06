@@ -37,15 +37,15 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       // App
-      mainAppUrl:
-        process.env.NUXT_PUBLIC_MAIN_APP_URL || "http://localhost:3000",
-      appUrl: process.env.NUXT_PUBLIC_APP_URL || "http://localhost:3001",
+      mainAppUrl: process.env.NUXT_PUBLIC_MAIN_APP_URL,
+      appUrl: process.env.NUXT_PUBLIC_APP_URL,
+
       // API
-      apiBaseUrl:
-        process.env.NUXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api",
-      storageBaseUrl:
-        process.env.NUXT_PUBLIC_STORAGE_BASE_URL ||
-        "http://localhost:8000/storage",
+      apiBaseUrlPublic: process.env.NUXT_PUBLIC_API_BASE_URL_PUBLIC,
+      storageBaseUrlPublic: process.env.NUXT_PUBLIC_STORAGE_BASE_URL_PUBLIC,
+      apiBaseUrl: process.env.API_BASE_URL,
+      storageBaseUrl: process.env.STORAGE_BASE_URL,
+
       // Midtrans
       midtransClientKey: process.env.MIDTRANS_CLIENT_KEY || "",
     },

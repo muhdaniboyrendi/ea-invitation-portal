@@ -1,6 +1,6 @@
 export const useGroomStore = defineStore("groom", () => {
   const config = useRuntimeConfig();
-  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiBaseUrlPublic = config.public.apiBaseUrlPublic;
 
   const handleApiError = (error) => {
     const err = new Error(
@@ -13,7 +13,7 @@ export const useGroomStore = defineStore("groom", () => {
 
   const fetchGroom = async (id) => {
     try {
-      const response = await $fetch(`${apiBaseUrl}/grooms/${id}`, {
+      const response = await $fetch(`${apiBaseUrlPublic}/grooms/${id}`, {
         method: "GET",
         headers: {
           Accept: "application/json",

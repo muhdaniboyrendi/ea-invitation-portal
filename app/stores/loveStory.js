@@ -1,6 +1,6 @@
 export const useLoveStoryStore = defineStore("loveStory", () => {
   const config = useRuntimeConfig();
-  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiBaseUrlPublic = config.public.apiBaseUrlPublic;
 
   const handleApiError = (error) => {
     const err = new Error(
@@ -14,7 +14,7 @@ export const useLoveStoryStore = defineStore("loveStory", () => {
   const fetchLoveStories = async (invitationId) => {
     try {
       const response = await $fetch(
-        `${apiBaseUrl}/love-stories/${invitationId}`,
+        `${apiBaseUrlPublic}/love-stories/${invitationId}`,
         {
           method: "GET",
           headers: {

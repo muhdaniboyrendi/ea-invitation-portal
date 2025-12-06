@@ -1,6 +1,6 @@
 export const useBrideStore = defineStore("bride", () => {
   const config = useRuntimeConfig();
-  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiBaseUrlPublic = config.public.apiBaseUrlPublic;
 
   const handleApiError = (error) => {
     const err = new Error(
@@ -13,7 +13,7 @@ export const useBrideStore = defineStore("bride", () => {
 
   const fetchBride = async (id) => {
     try {
-      const response = await $fetch(`${apiBaseUrl}/brides/${id}`, {
+      const response = await $fetch(`${apiBaseUrlPublic}/brides/${id}`, {
         method: "GET",
         headers: {
           Accept: "application/json",
